@@ -1,0 +1,36 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { LiveSkyWheel } from "@/components/LiveSkyWheel";
+import { getPublishedPosts, postDateLabel } from "@/lib/posts";
+
+export const metadata: Metadata = {
+  title: "Clima astral",
+  description: "El clima astral de cada semana, por Alshain: los movimientos del cielo y lo que pueden significar para ti.",
+};
+
+export const revalidate = 300;
+
+export default async function ClimaAstralPage() {
+  const posts = await getPublishedPosts(50);
+  return (
+    <section className="hero">
+      <div className="container reading">
+        <h1 style={{ color: "var(--oro)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Clima astral</h1>
+
+        <div style={{ marginTop: 40 }}>
+          <LiveSkyWheel />
+        </div>
+
+        <div className="post-list" style={{ marginTop: 40 }}>
+          {posts.map((p) => (
+            <Link key={p.id} href={`/clima-astral/${p.slug}`} className="post-item">
+              <span className="date">{postDateLabel(p)}</span>
+              <h3 style={{ marginTop: 6 }}>{p.title}</h3>
+              {p.excerpt && <p className="muted" style={{ marginBottom: 0 }}>{p.excerpt}</p>}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
