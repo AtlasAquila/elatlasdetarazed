@@ -13,7 +13,6 @@ function fechaUtc(iso: string) {
 export function CicloLunar({ ciclo }: { ciclo: Ciclo }) {
   return (
     <div className="ciclo">
-      <p className="ciclo-kicker">Ciclo lunar</p>
       <h2 className="ciclo-titulo">{ciclo.titulo}</h2>
       <p className="ciclo-periodo">{ciclo.periodo}</p>
       <p className="ciclo-utc">Todas las horas en UTC</p>

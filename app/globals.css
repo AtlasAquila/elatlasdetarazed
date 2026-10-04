@@ -646,9 +646,9 @@ td .sym { color: var(--oro); font-size: 22px; font-variant-emoji: text; }
 }
 
 /* ── Clima astral: ciclo lunar de Luna llena a Luna llena ─────────────────────────── */
-.ciclo { margin-top: 48px; }
-.ciclo-kicker { text-align: center; font-family: var(--font-display), Georgia, serif; letter-spacing: 0.22em; text-transform: uppercase; color: var(--estrella-oro); font-size: 14px; margin: 0; }
-.ciclo-titulo { text-align: center; color: var(--oro); font-size: clamp(28px, 6vw, 40px); line-height: 1.15; margin: 10px 0 6px; }
+.ciclo { margin-top: 4px; }
+.ciclo-desplegable { margin-top: 16px; }
+.ciclo-titulo { text-align: center; color: var(--oro); font-size: clamp(28px, 6vw, 40px); line-height: 1.15; margin: 0 0 6px; }
 .ciclo-periodo { text-align: center; color: var(--estrella); font-style: italic; margin: 0; }
 .ciclo-utc { text-align: center; color: var(--ink-muted); font-size: 14px; margin: 4px 0 0; }
 .ciclo-lunas { display: flex; justify-content: center; margin: 28px 0 8px; }
