@@ -33,8 +33,8 @@ export default async function ClimaAstralPage() {
           </div>
         </details>
 
-        <details className="rueda-desplegable lecturas-desplegable">
-          <summary>Lecturas</summary>
+        <details className="rueda-desplegable semana-desplegable">
+          <summary>Clima de la semana</summary>
           <div className="rueda-desplegable-cuerpo">
             <div className="post-list">
               {posts.map((p) => (
