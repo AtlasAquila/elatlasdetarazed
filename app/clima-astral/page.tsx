@@ -33,15 +33,20 @@ export default async function ClimaAstralPage() {
           </div>
         </details>
 
-        <div className="post-list" style={{ marginTop: 40 }}>
-          {posts.map((p) => (
-            <Link key={p.id} href={`/clima-astral/${p.slug}`} className="post-item">
-              <span className="date">{postDateLabel(p)}</span>
-              <h3 style={{ marginTop: 6 }}>{p.title}</h3>
-              {p.excerpt && <p className="muted" style={{ marginBottom: 0 }}>{p.excerpt}</p>}
-            </Link>
-          ))}
-        </div>
+        <details className="rueda-desplegable lecturas-desplegable">
+          <summary>Lecturas</summary>
+          <div className="rueda-desplegable-cuerpo">
+            <div className="post-list">
+              {posts.map((p) => (
+                <Link key={p.id} href={`/clima-astral/${p.slug}`} className="post-item">
+                  <span className="date">{postDateLabel(p)}</span>
+                  <h3 style={{ marginTop: 6 }}>{p.title}</h3>
+                  {p.excerpt && <p className="muted" style={{ marginBottom: 0 }}>{p.excerpt}</p>}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </details>
       </div>
     </section>
   );

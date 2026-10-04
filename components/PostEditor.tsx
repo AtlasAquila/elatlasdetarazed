@@ -51,7 +51,7 @@ export function PostEditor({ post, saved, kind = "clima" }: { post?: Post; saved
         <label htmlFor="body">Texto</label>
         <textarea id="body" name="body" className="textarea" required defaultValue={post?.body} />
         <span className="small muted">
-          Deja una línea en blanco entre párrafos. «## » al principio de una línea crea un subtítulo; «- » crea una lista; **así** va en negrita.
+          Deja una línea en blanco entre párrafos. «## » al principio de una línea crea un subtítulo; «- » crea una lista; **así** va en negrita; [texto](/ruta) crea un enlace a otra página de la web.
         </span>
       </div>
       {state.error && (
