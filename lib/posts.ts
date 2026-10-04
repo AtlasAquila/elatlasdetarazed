@@ -18,28 +18,9 @@ export type Post = {
 
 const POST_COLUMNS = "id, slug, title, excerpt, body, week_start, published, published_at, kind, category";
 
-/** Publicación de muestra mientras no haya ninguna real en la base de datos. */
-export const SAMPLE_POST: Post = {
-  id: "muestra",
-  slug: "bienvenida",
-  title: "Bienvenida al clima astral",
-  excerpt: "Cada semana, Alshain leerá el cielo: los movimientos de los planetas y lo que pueden significar para ti.",
-  body: [
-    "Cada lunes encontrarás aquí el clima astral de la semana: los cambios de signo de los planetas, las lunas nuevas y llenas, las retrogradaciones y los aspectos más importantes.",
-    "## Cómo leer el clima astral",
-    "El clima astral describe el cielo que compartimos todos. Para saber cómo te afecta a ti, hay que mirar en qué casa de tu carta natal ocurre cada movimiento.",
-    "Muy pronto podrás calcular tu carta en El atlas de Tarazed y ver esa conexión directamente.",
-  ].join("\n\n"),
-  week_start: null,
-  published: true,
-  published_at: null,
-  kind: "clima",
-  category: null,
-};
-
 export async function getPublishedPosts(limit = 20, kind: PostKind = "clima"): Promise<Post[]> {
   const supabase = await createClient();
-  if (!supabase) return kind === "clima" ? [SAMPLE_POST] : [];
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("posts")
     .select(POST_COLUMNS)
@@ -47,15 +28,11 @@ export async function getPublishedPosts(limit = 20, kind: PostKind = "clima"): P
     .eq("kind", kind)
     .order("published_at", { ascending: false })
     .limit(limit);
-  if (error || !data || data.length === 0) return kind === "clima" ? [SAMPLE_POST] : [];
+  if (error || !data || data.length === 0) return [];
   return data as Post[];
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  if (slug === SAMPLE_POST.slug) {
-    const posts = await getPublishedPosts(1, "clima");
-    if (posts[0]?.id === SAMPLE_POST.id) return SAMPLE_POST;
-  }
   const supabase = await createClient();
   if (!supabase) return null;
   const { data } = await supabase.from("posts").select(POST_COLUMNS).eq("slug", slug).maybeSingle();
