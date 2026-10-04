@@ -58,7 +58,6 @@ export function CicloLunar({ ciclo }: { ciclo: Ciclo }) {
           );
         })}
       </ol>
-      <p className="ciclo-pie">Calculado con el motor de El atlas de Tarazed · Se renueva en cada Luna llena</p>
     </div>
   );
 }

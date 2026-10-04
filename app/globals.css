@@ -642,7 +642,6 @@ td .sym { color: var(--oro); font-size: 22px; font-variant-emoji: text; }
 .ciclo-grado { color: var(--estrella-oro); font-size: 15px; font-style: italic; }
 .ciclo-tag { display: inline-block; margin-left: 6px; vertical-align: 3px; padding: 1px 7px; border-radius: 4px; background: var(--oro); color: var(--on-oro); font-family: var(--font-display), Georgia, serif; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
 .ciclo-ev p { margin: 2px 0 0; color: #cfc8b8; font-size: 17px; }
-.ciclo-pie { margin: 32px 0 0; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; color: var(--ink-muted); font-size: 14px; }
 @media (max-width: 560px) {
   .ciclo-lista::before { left: 70px; }
   .ciclo-ev { grid-template-columns: 56px 30px minmax(0, 1fr); gap: 0 12px; }
