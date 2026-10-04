@@ -74,7 +74,6 @@ export const TEXT_GROUPS: TextGroup[] = [
     id: "blog",
     title: "Blog",
     fields: [
-      { key: "blog.title", label: "Título", kind: "line", default: "Notas al margen del cielo" },
       { key: "blog.lead", label: "Texto de presentación", kind: "paragraph", default: "Astrología, ciencia, historia, mitología, conocimientos antiguos, revelaciones del alma y aprendizajes humanos: todo siendo uno." },
     ],
   },
