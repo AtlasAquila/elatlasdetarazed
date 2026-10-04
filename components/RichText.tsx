@@ -5,11 +5,16 @@
  * - "### ": subtítulo menor
  * - "- " al principio de cada línea: lista
  * - **negrita** y *cursiva*
+ * - [texto](/ruta): enlace a otra página de esta web (solo rutas que empiezan por "/")
  */
 
+import Link from "next/link";
+
 function inline(text: string, keyPrefix: string) {
-  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g).filter(Boolean);
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|\[[^\]]+\]\(\/[^)\s]*\))/g).filter(Boolean);
   return parts.map((part, i) => {
+    const link = part.match(/^\[([^\]]+)\]\((\/[^)\s]*)\)$/);
+    if (link) return <Link key={`${keyPrefix}-${i}`} href={link[2]}>{link[1]}</Link>;
     if (part.startsWith("**") && part.endsWith("**")) return <strong key={`${keyPrefix}-${i}`}>{part.slice(2, -2)}</strong>;
     if (part.startsWith("*") && part.endsWith("*") && part.length > 2) return <em key={`${keyPrefix}-${i}`}>{part.slice(1, -1)}</em>;
     return <span key={`${keyPrefix}-${i}`}>{part}</span>;
