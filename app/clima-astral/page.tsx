@@ -19,9 +19,12 @@ export default async function ClimaAstralPage() {
       <div className="container reading">
         <h1 style={{ color: "var(--oro)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Clima astral</h1>
 
-        <div style={{ marginTop: 40 }}>
-          <LiveSkyWheel />
-        </div>
+        <details className="rueda-desplegable">
+          <summary>La rueda del cielo, en directo</summary>
+          <div className="rueda-desplegable-cuerpo">
+            <LiveSkyWheel />
+          </div>
+        </details>
 
         <CicloLunar ciclo={CICLO_ACTUAL} />
 
