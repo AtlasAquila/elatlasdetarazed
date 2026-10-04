@@ -8,7 +8,7 @@ export default function AvisoLegalPage() {
     <LegalPage title="Aviso legal">
       <h2>Titular</h2>
       <p>
-        En cumplimiento de la Ley 34/2002, de servicios de la sociedad de la información (LSSI-CE), se informa de que este sitio web, elatlasdetarazed.com, es titularidad de [NOMBRE Y APELLIDOS O RAZÓN SOCIAL], con NIF [NIF], domicilio en [DIRECCIÓN] y correo de contacto [CORREO].
+        En cumplimiento de la Ley 34/2002, de servicios de la sociedad de la información (LSSI-CE), se informa de que este sitio web, elatlasdetarazed.com, es titularidad de Ferran Terol Romero, con NIF 79274302H, domicilio en C/ Anselm Clavé, 12, 08130 Santa Perpètua de Mogoda (Barcelona) y correo de contacto elatlasdetarazed@gmail.com.
       </p>
       <h2>Objeto</h2>
       <p>

@@ -7,7 +7,7 @@ export default function PrivacidadPage() {
   return (
     <LegalPage title="Política de privacidad">
       <h2>Responsable</h2>
-      <p>[NOMBRE Y APELLIDOS O RAZÓN SOCIAL], NIF [NIF], [DIRECCIÓN], [CORREO].</p>
+      <p>Ferran Terol Romero, NIF 79274302H, C/ Anselm Clavé, 12, 08130 Santa Perpètua de Mogoda (Barcelona), elatlasdetarazed@gmail.com.</p>
       <h2>Qué datos tratamos</h2>
       <ul>
         <li>Datos de la cuenta: correo electrónico, nombre (opcional) y contraseña cifrada.</li>
@@ -22,11 +22,19 @@ export default function PrivacidadPage() {
       <h2>Base legal</h2>
       <p>La ejecución del servicio que solicitas al crear tu cuenta y tu consentimiento para la lista de espera, que puedes retirar en cualquier momento.</p>
       <h2>Dónde se guardan</h2>
-      <p>En servidores de Supabase ubicados en la Unión Europea (París). La web se sirve a través de Vercel. Las interpretaciones se generan con la API de Anthropic. [COMPLETAR CON LAS GARANTÍAS DE CADA PROVEEDOR ANTES DEL LANZAMIENTO.]</p>
+      <p>Tus datos se guardan en servidores de Supabase ubicados en la Unión Europea (París). Para prestar el servicio trabajamos con estos encargados del tratamiento, que solo usan los datos para lo que les pedimos:</p>
+      <ul>
+        <li><strong>Supabase</strong>: base de datos y cuentas de usuario (UE).</li>
+        <li><strong>Vercel</strong>: alojamiento de la web.</li>
+        <li><strong>Anthropic</strong>: genera las interpretaciones y las respuestas del asistente a partir de los datos de tus cartas. No usa esos datos para entrenar sus modelos.</li>
+        <li><strong>Stripe</strong>: gestiona los pagos de Premium. Nosotros no vemos ni guardamos los datos de tu tarjeta.</li>
+        <li><strong>Resend</strong>: envía los correos de la cuenta (confirmación y recuperar contraseña).</li>
+      </ul>
+      <p>Algunos de estos proveedores están en Estados Unidos. Las transferencias se amparan en el Marco de Privacidad de Datos UE-EE. UU. o en las cláusulas contractuales tipo aprobadas por la Comisión Europea.</p>
       <h2>Cuánto tiempo</h2>
       <p>Mientras mantengas tu cuenta. Puedes borrarla, con todos sus datos, desde «Mi cuenta».</p>
       <h2>Tus derechos</h2>
-      <p>Puedes acceder, rectificar, suprimir, oponerte, limitar el tratamiento y solicitar la portabilidad de tus datos escribiendo a [CORREO]. También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>
+      <p>Puedes acceder, rectificar, suprimir, oponerte, limitar el tratamiento y solicitar la portabilidad de tus datos escribiendo a elatlasdetarazed@gmail.com. También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>
     </LegalPage>
   );
 }
