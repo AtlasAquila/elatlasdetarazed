@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getSession } from "@/lib/supabase/server";
 import { getTexts } from "@/lib/texts";
 import { AquilaMark } from "./Art";
+import { SiteMenu } from "./SiteMenu";
 
 const LINKS = [
   { href: "/introduccion", label: "Introducción" },
@@ -16,6 +17,12 @@ const LINKS = [
 
 export async function SiteHeader() {
   const session = await getSession();
+  const account = session
+    ? [...(session.isAdmin ? [{ href: "/admin", label: "Panel" }] : []), { href: "/cuenta", label: "Mi cuenta" }]
+    : [
+        { href: "/entrar", label: "Entrar" },
+        { href: "/registro", label: "Crear cuenta" },
+      ];
   return (
     <header className="site-header">
       <div className="container">
@@ -23,13 +30,6 @@ export async function SiteHeader() {
           <AquilaMark />
           El atlas de Tarazed
         </Link>
-        <nav className="nav" aria-label="Principal">
-          {LINKS.map((l) => (
-            <Link key={l.href} href={l.href}>
-              {l.label}
-            </Link>
-          ))}
-        </nav>
         <div className="nav-account">
           {session ? (
             <>
@@ -53,6 +53,7 @@ export async function SiteHeader() {
             </>
           )}
         </div>
+        <SiteMenu links={LINKS} account={account} />
       </div>
     </header>
   );

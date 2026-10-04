@@ -143,25 +143,59 @@ img, svg { max-width: 100%; }
   white-space: nowrap;
 }
 .brand:hover { color: var(--ink); }
-.nav {
-  display: flex;
-  gap: var(--space-6);
-  flex: 1;
-  flex-wrap: wrap;
-  font-size: 16px;
-}
-.nav a {
-  color: var(--ink-muted);
-  text-decoration: none;
-  padding: 10px 0;
-}
-.nav a:hover { color: var(--ink); }
-.nav-account { display: flex; gap: var(--space-4); align-items: center; }
+.nav-account { display: flex; gap: var(--space-4); align-items: center; margin-left: auto; }
 
-@media (max-width: 860px) {
-  .site-header { position: static; }
-  .site-header .container { padding-top: var(--space-4); padding-bottom: var(--space-4); gap: var(--space-4); }
-  .nav { order: 3; flex-basis: 100%; gap: var(--space-4) var(--space-6); }
+/* Menú de apartados: botón de tres líneas arriba a la derecha. */
+.site-menu { position: relative; }
+.menu-toggle {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+}
+.menu-toggle span { display: block; height: 1.5px; background: var(--oro); border-radius: 2px; transition: transform 0.2s ease, opacity 0.2s ease; }
+.menu-toggle:hover, .menu-toggle.abierto { border-color: var(--estrella-oro); }
+.menu-toggle.abierto span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+.menu-toggle.abierto span:nth-child(2) { opacity: 0; }
+.menu-toggle.abierto span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+.menu-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 12px);
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), 0 0 24px var(--oro-soft);
+}
+.menu-panel[hidden] { display: none; }
+.menu-panel a {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 19px;
+}
+.menu-panel a:hover, .menu-panel a:focus-visible { background: var(--oro-soft); color: var(--estrella); }
+.menu-panel a[aria-current="page"] { color: var(--oro); }
+.menu-cuenta { display: none; margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
+
+@media (max-width: 560px) {
+  .brand { font-size: 22px; }
+  .nav-account { display: none; }
+  .site-menu { margin-left: auto; }
+  .menu-cuenta { display: flex; flex-direction: column; }
+  .menu-panel { position: fixed; left: 16px; right: 16px; top: 72px; min-width: 0; }
 }
 
 /* ── Botones y formularios ──────────────── */
