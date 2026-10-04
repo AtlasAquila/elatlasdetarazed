@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CicloLunar } from "@/components/CicloLunar";
 import { LiveSkyWheel } from "@/components/LiveSkyWheel";
+import { CICLO_ACTUAL } from "@/lib/clima/ciclo-actual";
 import { getPublishedPosts, postDateLabel } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -20,6 +22,8 @@ export default async function ClimaAstralPage() {
         <div style={{ marginTop: 40 }}>
           <LiveSkyWheel />
         </div>
+
+        <CicloLunar ciclo={CICLO_ACTUAL} />
 
         <div className="post-list" style={{ marginTop: 40 }}>
           {posts.map((p) => (
