@@ -26,7 +26,12 @@ export default async function ClimaAstralPage() {
           </div>
         </details>
 
-        <CicloLunar ciclo={CICLO_ACTUAL} />
+        <details className="rueda-desplegable ciclo-desplegable">
+          <summary>Ciclo lunar</summary>
+          <div className="rueda-desplegable-cuerpo">
+            <CicloLunar ciclo={CICLO_ACTUAL} />
+          </div>
+        </details>
 
         <div className="post-list" style={{ marginTop: 40 }}>
           {posts.map((p) => (
