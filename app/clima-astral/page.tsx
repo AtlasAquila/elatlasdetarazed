@@ -37,6 +37,7 @@ export default async function ClimaAstralPage() {
           <summary>Clima de la semana</summary>
           <div className="rueda-desplegable-cuerpo">
             <div className="post-list">
+              {posts.length === 0 && <p className="muted">Todavía no hay entradas. Vuelve pronto.</p>}
               {posts.map((p) => (
                 <Link key={p.id} href={`/clima-astral/${p.slug}`} className="post-item">
                   <span className="date">{postDateLabel(p)}</span>
