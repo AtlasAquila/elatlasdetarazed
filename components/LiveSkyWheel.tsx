@@ -195,10 +195,7 @@ export function LiveSkyWheel() {
           : {}),
       }}
     >
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
-        <p className="kicker" style={{ marginBottom: 20 }}>
-          La rueda del cielo, en directo
-        </p>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "flex-end", gap: 12, marginBottom: 20 }}>
         <button
           type="button"
           className="btn btn-ghost btn-small"
