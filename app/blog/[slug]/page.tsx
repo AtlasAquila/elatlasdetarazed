@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RichText } from "@/components/RichText";
-import { BLOG_CATEGORIES, getPostBySlug, postDateLabel } from "@/lib/posts";
+import { getPostBySlug, postDateLabel } from "@/lib/posts";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -27,8 +27,7 @@ export default async function BlogPostPage({ params }: Props) {
           ← Blog
         </Link>
         <p className="kicker" style={{ marginTop: 32 }}>
-          {(post.category ? BLOG_CATEGORIES[post.category] : null) ?? "Blog"}
-          {postDateLabel(post) ? ` · ${postDateLabel(post)}` : ""}
+          {postDateLabel(post)}
         </p>
         <h1>{post.title}</h1>
         {post.excerpt && <p className="lead">{post.excerpt}</p>}
