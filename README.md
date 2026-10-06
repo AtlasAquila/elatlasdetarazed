@@ -79,6 +79,12 @@ Validación (`npx tsx scripts/validate-engine.ts reference.json`) frente a 8 car
 | Quirón (frente a NASA) | 20″ |
 | Lilith media / verdadera | ~7′ / ~8′ (diferencia de modelo lunar) |
 
+## Motor de tránsitos (`lib/clima`)
+
+`computeClimate(chart, from)` coloca el cielo de una ventana de días sobre una carta natal: ingresos de los planetas en las casas (las de la propia carta, Placidus) y en los signos, aspectos exactos a la carta natal, estaciones y lunaciones con sus eclipses, todo al minuto y con un peso para ordenar lo que más importa. No interpreta nada. La ventana es de 30 días desde `from`, ampliada hasta 10 más si justo después cae un evento importante (lunación, estación, ingreso de un planeta lento o un aspecto fuerte a un punto clave) y los que le sigan a menos de 2 días. Sin hora de nacimiento no hay casas ni ángulos: solo aspectos.
+
+Revisión: `npx tsx scripts/validate-transits.ts [AAAA-MM-DDTHH:MMZ] [--json] [--sin-hora]` imprime el resultado para la carta de ejemplo. Frente a Swiss Ephemeris (solo como referencia externa), en 5 ventanas de un mes más una carta sin hora, los eventos coincidieron todos, sin ninguno de más ni de menos. Las horas coinciden con una mediana de 1 minuto; en los planetas casi parados (estaciones y aspectos de planetas lentos) pueden diferir hasta unas 3 horas.
+
 ## Licencias
 
 El motor de cálculo no usa Swiss Ephemeris (AGPL). Swiss Ephemeris solo se ha usado fuera del proyecto, en un entorno de pruebas, para generar valores de referencia.
