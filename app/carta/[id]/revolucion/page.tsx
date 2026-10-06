@@ -2,15 +2,26 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { SolarReturnForm } from "@/components/SolarReturnForm";
+import { StreamedReading } from "@/components/StreamedReading";
+import { aiConfigured } from "@/lib/ai/anthropic";
 import { getMyChart } from "@/lib/charts";
-import { getSolarReturnStatus, listSolarReturns, solarReturnSummary } from "@/lib/solar-returns";
+import { PRICE_LABEL, confirmCheckout, findUsablePurchase, reconcilePending } from "@/lib/purchases";
+import { listSolarReturns, solarReturnSummary } from "@/lib/solar-returns";
 import { getSession } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Revolución solar" };
 
-type Props = { params: Promise<{ id: string }> };
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ pago?: string; session_id?: string; error?: string; mensaje?: string }>;
+};
 
-export default async function SolarReturnListPage({ params }: Props) {
+const ERRORS: Record<string, string> = {
+  consentimiento: "Marca la casilla de aceptación para poder comprar la lectura.",
+  pagos: "No hemos podido abrir el pago. Inténtalo de nuevo en unos minutos; no se ha hecho ningún cargo.",
+};
+
+export default async function SolarReturnListPage({ params, searchParams }: Props) {
   const session = await getSession();
   const { id } = await params;
   if (!session) redirect(`/entrar?siguiente=/carta/${id}/revolucion`);
@@ -18,9 +29,14 @@ export default async function SolarReturnListPage({ params }: Props) {
   const natalRow = await getMyChart(id);
   if (!natalRow) notFound();
 
-  const [status, returns] = await Promise.all([getSolarReturnStatus(), listSolarReturns(id)]);
-  const isPremium = status?.plan === "premium";
+  const sp = await searchParams;
+  // Vuelta del pago: se confirma con Stripe sin esperar al aviso. Si no, se repasan pagos pendientes.
+  if (sp.session_id) await confirmCheckout(sp.session_id, session.userId);
+  else await reconcilePending(session.userId);
+
+  const [returns, usable] = await Promise.all([listSolarReturns(id), findUsablePurchase("revolucion", { chart_id: id })]);
   const thisYear = new Date().getUTCFullYear();
+  const error = sp.error === "datos" ? sp.mensaje?.slice(0, 200) : sp.error ? ERRORS[sp.error] : null;
 
   return (
     <section className="hero">
@@ -34,16 +50,31 @@ export default async function SolarReturnListPage({ params }: Props) {
         <h1>La carta de tu próximo año</h1>
         <p className="lead">
           La revolución solar es la carta calculada para el instante exacto en que el Sol vuelve a su grado natal, cada año, en el lugar donde te encuentres ese día. Señala los temas que dominarán los doce meses que empiezan en tu
-          cumpleaños.
+          cumpleaños. Cada compra incluye el cálculo y una lectura extensa que la relaciona con tu carta natal.
         </p>
 
-        {!isPremium ? (
+        {sp.pago === "cancelado" && <p className="notice">Has salido del pago sin completarlo. No se ha hecho ningún cargo.</p>}
+        {error && (
+          <p className="notice notice-error" role="alert">
+            {error}
+          </p>
+        )}
+
+        {usable ? (
           <div className="panel" style={{ marginTop: 24 }}>
-            <h3>Función Premium</h3>
-            <p className="muted">La revolución solar está disponible con Premium: hasta 2 cálculos al mes.</p>
-            <Link href="/planes" className="btn btn-primary" style={{ marginTop: 12 }}>
-              Ver planes
-            </Link>
+            <StreamedReading
+              endpoint="/api/revolucion-solar"
+              body={{ chartId: id, purchaseId: usable.id }}
+              initial={null}
+              title={`Tu revolución solar ${usable.params.year} está pagada`}
+              description={`Se calcula para ${usable.params.place_name} y se escribe su lectura. Tarda entre dos y tres minutos; puedes ir leyendo mientras tanto.`}
+              button="Generar mi revolución solar"
+              waiting="Alshain está leyendo la carta de tu año. Es una lectura larga y tardará entre dos y tres minutos en completarse."
+              enabled={aiConfigured()}
+              autoStart={sp.pago === "ok"}
+              refreshOnDone
+              note="Lectura orientativa, generada con inteligencia artificial a partir de los cálculos de tu carta."
+            />
           </div>
         ) : natalRow.time_unknown ? (
           <div className="panel" style={{ marginTop: 24 }}>
@@ -54,19 +85,9 @@ export default async function SolarReturnListPage({ params }: Props) {
           </div>
         ) : (
           <div className="panel" style={{ marginTop: 24 }}>
-            <h3>Nueva revolución solar</h3>
-            {status && status.remaining <= 0 ? (
-              <p className="notice">Has usado tus {status.limit} revoluciones solares de este mes. Se renuevan el día 1.</p>
-            ) : (
-              <>
-                <SolarReturnForm chartId={id} defaultYear={thisYear} defaultHouseSystem={natalRow.house_system} />
-                {status && (
-                  <p className="small muted" style={{ marginTop: 16 }}>
-                    Te quedan {status.remaining} de {status.limit} este mes.
-                  </p>
-                )}
-              </>
-            )}
+            <h3>Nueva revolución solar · {PRICE_LABEL}</h3>
+            <p className="muted small">Un solo pago por cada revolución: no es una suscripción. Usa las casas Placidus.</p>
+            {aiConfigured() ? <SolarReturnForm chartId={id} defaultYear={thisYear} free={session.isAdmin} /> : <p className="muted small">Disponible muy pronto.</p>}
           </div>
         )}
 

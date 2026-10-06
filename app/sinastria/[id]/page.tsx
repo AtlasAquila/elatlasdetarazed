@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { deleteSynastry } from "@/app/actions/synastry";
 import { PrintButton } from "@/components/PrintButton";
+import { RichText } from "@/components/RichText";
 import { SynastryWheel } from "@/components/SynastryWheel";
 import { birthSummary } from "@/lib/charts";
 import { ASPECT_LABELS, BODY_LABELS, HOUSE_SYSTEM_LABELS, ROMAN, formatOrb, g } from "@/lib/engine/labels";
@@ -145,6 +146,22 @@ export default async function SynastryPage({ params }: Props) {
                 </div>
               </div>
             </details>
+          )}
+        </div>
+
+        <div className="reading-block" style={{ marginTop: 56 }}>
+          <p className="kicker">Lectura de la sinastría</p>
+          {row.reading ? (
+            <>
+              <RichText text={row.reading} />
+              <p className="small muted" style={{ marginTop: 24, marginBottom: 0 }}>
+                Lectura orientativa, generada con inteligencia artificial a partir de los cálculos de las dos cartas.
+              </p>
+            </>
+          ) : (
+            <p className="notice">
+              La lectura de esta sinastría todavía no se ha generado. Tu compra sigue disponible: vuelve a <Link href="/sinastria">la lista de sinastrías</Link> para generarla sin pagar otra vez.
+            </p>
           )}
         </div>
 

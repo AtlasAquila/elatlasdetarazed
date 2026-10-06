@@ -255,10 +255,10 @@ export default async function ChartPage({ params, searchParams }: Props) {
               <p className="kicker" style={{ marginBottom: 4 }}>
                 Revolución solar
               </p>
-              <p style={{ margin: 0 }}>La carta del año que empieza en tu cumpleaños, calculada para donde estés ese día. Premium, hasta 2 al mes.</p>
+              <p style={{ margin: 0 }}>La carta del año que empieza en tu cumpleaños, calculada para donde estés ese día, con su lectura extensa. 5 €.</p>
             </div>
             <Link href={`/carta/${row.id}/revolucion`} className="btn btn-primary">
-              Calcular revolución solar
+              Ver revolución solar
             </Link>
           </div>
         </div>

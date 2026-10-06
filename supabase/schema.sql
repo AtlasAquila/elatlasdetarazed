@@ -720,3 +720,21 @@ drop policy if exists "Cada usuario borra sus climas personales" on public.month
 create policy "Cada usuario borra sus climas personales" on public.monthly_climates
   for delete using ((select auth.uid()) = user_id);
 -- Sin política de inserción: solo el servidor guarda la lectura tras una compra pagada.
+
+-- ════════════════════════════════════════════════════════════
+-- Revolución solar y sinastría de pago (migración recursos_de_pago)
+-- ════════════════════════════════════════════════════════════
+-- Dejan de ser exclusivas de Premium con cupo mensual: cada una se compra por lectura (tabla
+-- purchases) y trae su lectura extensa. Las crea el servidor tras una compra pagada; el usuario
+-- solo las ve y las borra. Las tablas y funciones de cupo (solar_return_usage, synastry_usage,
+-- *_status, consume_*) quedan sin uso.
+alter table public.solar_returns
+  add column if not exists purchase_id uuid unique references public.purchases (id),
+  add column if not exists reading text,
+  add column if not exists reading_model text;
+alter table public.synastries
+  add column if not exists purchase_id uuid unique references public.purchases (id),
+  add column if not exists reading text,
+  add column if not exists reading_model text;
+drop policy if exists "Solo Premium crea revoluciones solares de sus cartas" on public.solar_returns;
+drop policy if exists "Solo Premium crea sinastrías de sus cartas" on public.synastries;

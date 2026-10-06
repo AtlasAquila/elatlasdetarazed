@@ -102,6 +102,14 @@ Lectura extensa (unas 5.000 palabras) del cielo de los próximos 30 días sobre 
 - `/api/clima` toma el candado de una compra pagada, genera la lectura con streaming y, solo si se completa, la guarda en `monthly_climates` y da la compra por usada. Si la IA falla, la compra no se gasta.
 - Casas: las de la propia carta (Placidus). Sin hora de nacimiento, solo aspectos.
 
+## Revolución solar y sinastría (de pago por lectura)
+
+Ya no van incluidas en Premium ni tienen cupo mensual: cada una se compra por separado (5 €, ver «Compras de lecturas») y trae su lectura extensa de unas 5.000 palabras, que antes no tenían (solo mostraban el cálculo). Siempre con casas Placidus.
+
+- Se compra desde `/carta/[id]/revolucion` (año y lugar del cumpleaños) y `/sinastria` (las dos cartas y el tipo de vínculo). Al volver del pago, `/api/revolucion-solar` y `/api/sinastria` crean el cálculo y escriben la lectura con streaming; si la IA falla, el cálculo queda guardado, la compra no se gasta y se reintenta sin pagar otra vez.
+- Las tablas `solar_returns` y `synastries` guardan la lectura (`reading`) y la compra (`purchase_id`, única). La política que exigía Premium para insertar se elimina: solo el servidor las crea.
+- Las funciones y tablas de cupo (`solar_return_status`, `synastry_status`, `consume_*`, `*_usage`) ya no se usan.
+
 ## Licencias
 
 El motor de cálculo no usa Swiss Ephemeris (AGPL). Swiss Ephemeris solo se ha usado fuera del proyecto, en un entorno de pruebas, para generar valores de referencia.
