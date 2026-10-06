@@ -59,7 +59,7 @@ export default async function IntroduccionPage() {
               <span className="apartado-icon" aria-hidden="true">
                 <svg width="30" height="30" viewBox="0 0 30 30"><g fill="none" stroke="var(--oro)" strokeWidth={1.2}><path d="M4 7c3-2.4 7-2.4 10.5 0v16c-3.5-2.4-7.5-2.4-10.5 0z" /><path d="M26 7c-3-2.4-7-2.4-10.5 0v16c3.5-2.4 7.5-2.4 10.5 0z" /></g></svg>
               </span>
-              <span className="apartado-title">Recursos astrológicos</span>
+              <span className="apartado-title apartado-title-grande">Recursos astrológicos</span>
             </Link>
             <Link href="/numerologia" className="apartado">
               <span className="apartado-icon" aria-hidden="true">

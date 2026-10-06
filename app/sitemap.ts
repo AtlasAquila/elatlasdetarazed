@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { siteUrl } from "@/lib/supabase/config";
 import { getPublishedPosts } from "@/lib/posts";
+import { RESOURCES } from "@/lib/resources";
 
 export const revalidate = 3600;
 
@@ -14,6 +15,7 @@ const PAGES = [
   "/numerologia",
   "/sinastria",
   "/recursos",
+  ...RESOURCES.map((r) => `/recursos/${r.slug}`),
   "/suenos",
   "/blog",
   "/planes",
