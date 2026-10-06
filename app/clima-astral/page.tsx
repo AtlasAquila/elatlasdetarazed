@@ -19,20 +19,6 @@ export default async function ClimaAstralPage() {
       <div className="container reading">
         <h1 style={{ color: "var(--oro)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Clima astral</h1>
 
-        <details className="rueda-desplegable">
-          <summary>La rueda del cielo, en directo</summary>
-          <div className="rueda-desplegable-cuerpo">
-            <LiveSkyWheel />
-          </div>
-        </details>
-
-        <details className="rueda-desplegable ciclo-desplegable">
-          <summary>Ciclo lunar</summary>
-          <div className="rueda-desplegable-cuerpo">
-            <CicloLunar ciclo={CICLO_ACTUAL} />
-          </div>
-        </details>
-
         <details className="rueda-desplegable semana-desplegable">
           <summary>Clima de la semana</summary>
           <div className="rueda-desplegable-cuerpo">
@@ -46,6 +32,20 @@ export default async function ClimaAstralPage() {
                 </Link>
               ))}
             </div>
+          </div>
+        </details>
+
+        <details className="rueda-desplegable">
+          <summary>Ciclo lunar</summary>
+          <div className="rueda-desplegable-cuerpo">
+            <CicloLunar ciclo={CICLO_ACTUAL} />
+          </div>
+        </details>
+
+        <details className="rueda-desplegable">
+          <summary>La rueda del cielo, en directo</summary>
+          <div className="rueda-desplegable-cuerpo">
+            <LiveSkyWheel />
           </div>
         </details>
       </div>
