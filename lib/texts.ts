@@ -82,7 +82,7 @@ export const TEXT_GROUPS: TextGroup[] = [
     title: "Más recursos astrológicos",
     fields: [
       { key: "recursos.title", label: "Título", kind: "line", default: "Más técnicas para profundizar" },
-      { key: "recursos.lead", label: "Texto de presentación", kind: "paragraph", default: "Más allá de la carta natal, la astrología ofrece otras técnicas para acompañar momentos y relaciones concretas. Iremos incorporando estas a El atlas de Tarazed." },
+      { key: "recursos.lead", label: "Texto de presentación", kind: "paragraph", default: "Más allá de la carta natal, la astrología ofrece otras técnicas para acompañar momentos y relaciones concretas. Cada una se lee por separado, con una lectura extensa escrita a partir de los cálculos exactos de tus cartas." },
     ],
   },
   {
@@ -119,6 +119,12 @@ export const TEXT_GROUPS: TextGroup[] = [
           "Numerología: lecturas completas, compatibilidad entre personas y cruce con la carta astral",
           "Cancelación en un clic, cuando quieras",
         ].join("\n"),
+      },
+      {
+        key: "planes.recursos",
+        label: "Recursos de pago: texto bajo los planes",
+        kind: "paragraph",
+        default: "Los recursos astrológicos (clima astral personalizado, revolución solar y sinastría) no van incluidos en ningún plan: cada lectura se compra por separado, por 5 €, con un pago único y sin suscripción. Los puede comprar cualquier cuenta registrada.",
       },
     ],
   },

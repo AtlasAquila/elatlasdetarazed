@@ -14,6 +14,16 @@ export default function AvisoLegalPage() {
       <p>
         El atlas de Tarazed ofrece contenidos divulgativos sobre astrología, el cálculo de cartas natales e interpretaciones personalizadas. Los contenidos tienen carácter orientativo y de entretenimiento y no sustituyen el consejo médico, psicológico, legal ni financiero de un profesional.
       </p>
+      <h2>Compra de lecturas</h2>
+      <p>
+        Los recursos astrológicos (clima astral personalizado, revolución solar y sinastría) no van incluidos en Premium: cada lectura se compra por separado, por 5 euros con el IVA incluido, mediante un pago único con tarjeta a través de Stripe. Cada pago da derecho a una sola lectura y no es una suscripción.
+      </p>
+      <p>
+        La lectura es un contenido digital que se genera y se entrega en el momento de la compra. Al comprar, aceptas expresamente que la entrega empiece de inmediato y reconoces que, una vez entregada la lectura, pierdes el derecho de desistimiento que la normativa de consumidores reconoce en los contratos a distancia (artículo 103 del texto refundido de la Ley General para la Defensa de los Consumidores y Usuarios).
+      </p>
+      <p>
+        Si has pagado y la lectura no llega a generarse, tu compra sigue disponible para que la generes de nuevo sin pagar otra vez. Si no pudiera entregarse, te devolveremos el importe. Para cualquier incidencia, escribe a elatlasdetarazed@gmail.com.
+      </p>
       <h2>Propiedad intelectual</h2>
       <p>Los textos, diseños y logotipos de este sitio pertenecen a su titular o se usan con permiso. Las ilustraciones históricas proceden de obras de dominio público.</p>
       <h2>Responsabilidad</h2>

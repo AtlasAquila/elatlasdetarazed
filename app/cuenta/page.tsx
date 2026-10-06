@@ -4,12 +4,21 @@ import { redirect } from "next/navigation";
 import { signOut } from "@/app/actions/auth";
 import { openPortal } from "@/app/actions/billing";
 import { DeleteAccountForm, ProfileForm } from "@/components/AuthForms";
+import { PRODUCTS } from "@/lib/purchase-info";
+import { listMyPurchases, returnPath, type PurchaseStatus } from "@/lib/purchases";
 import { billingReady, stripe, syncCustomer } from "@/lib/stripe";
 import { createClient, getSession } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Mi cuenta" };
 
 type Props = { searchParams: Promise<{ pago?: string; session_id?: string; error?: string }> };
+
+const PURCHASE_LABELS: Record<PurchaseStatus, string> = {
+  pending: "pago sin confirmar",
+  paid: "pagada, pendiente de generar",
+  used: "entregada",
+  refunded: "reembolsada",
+};
 
 const fecha = (iso: string) => new Date(iso).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Madrid" });
 
@@ -38,6 +47,8 @@ export default async function CuentaPage({ searchParams }: Props) {
     ? await supabase.from("profiles").select("subscription_status, subscription_interval, current_period_end, cancel_at_period_end, stripe_customer_id").eq("id", session.userId).maybeSingle()
     : { data: null };
   const isPremium = session.plan === "premium";
+  // Las compras que no llegaron a pagarse (pantalla de pago abandonada) no se muestran.
+  const purchases = (await listMyPurchases(10)).filter((p) => p.status !== "pending");
 
   return (
     <section className="hero">
@@ -112,6 +123,24 @@ export default async function CuentaPage({ searchParams }: Props) {
             </>
           )}
           {session.isAdmin && <p className="small muted" style={{ marginTop: 12, marginBottom: 0 }}>Como administrador tienes acceso completo sin suscripción.</p>}
+        </div>
+
+        <div className="panel" style={{ marginTop: 24 }}>
+          <h3>Tus lecturas compradas</h3>
+          {purchases.length === 0 ? (
+            <p className="muted" style={{ marginBottom: 0 }}>
+              Aún no has comprado ninguna. El clima astral personalizado, la revolución solar y la sinastría se compran por separado en{" "}
+              <Link href="/recursos">Más recursos astrológicos</Link>.
+            </p>
+          ) : (
+            <ul style={{ paddingLeft: 20, marginBottom: 0 }}>
+              {purchases.map((p) => (
+                <li key={p.id} style={{ marginBottom: 8 }}>
+                  <Link href={returnPath(p.product, p.params)}>{PRODUCTS[p.product].name}</Link> · {fecha(p.created_at)} · <span className="muted">{PURCHASE_LABELS[p.status]}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className="panel" style={{ marginTop: 24 }}>
