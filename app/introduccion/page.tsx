@@ -60,7 +60,6 @@ export default async function IntroduccionPage() {
                 <svg width="30" height="30" viewBox="0 0 30 30"><g fill="none" stroke="var(--oro)" strokeWidth={1.2}><path d="M4 7c3-2.4 7-2.4 10.5 0v16c-3.5-2.4-7.5-2.4-10.5 0z" /><path d="M26 7c-3-2.4-7-2.4-10.5 0v16c3.5-2.4 7.5-2.4 10.5 0z" /></g></svg>
               </span>
               <span className="apartado-title">Recursos astrológicos</span>
-              <span className="apartado-sub">Más técnicas por llegar</span>
             </Link>
             <Link href="/numerologia" className="apartado">
               <span className="apartado-icon" aria-hidden="true">
@@ -68,6 +67,13 @@ export default async function IntroduccionPage() {
               </span>
               <span className="apartado-title">Numerología</span>
               <span className="apartado-sub">Los números de tu camino</span>
+            </Link>
+            <Link href="/blog" className="apartado">
+              <span className="apartado-icon" aria-hidden="true">
+                <svg width="30" height="30" viewBox="0 0 30 30"><g fill="none" stroke="var(--oro)" strokeWidth={1.2}><rect x="5" y="3.5" width="20" height="23" rx="2" /><line x1="9.5" y1="10" x2="20.5" y2="10" /><line x1="9.5" y1="15" x2="20.5" y2="15" /><line x1="9.5" y1="20" x2="16" y2="20" /></g></svg>
+              </span>
+              <span className="apartado-title">Blog</span>
+              <span className="apartado-sub">Estudios y lecturas</span>
             </Link>
           </div>
         </div>
