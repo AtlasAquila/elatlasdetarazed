@@ -84,7 +84,7 @@ export default async function SynastryListPage({ searchParams }: Props) {
               waiting="Alshain está leyendo cómo dialogan las dos cartas. Es una lectura larga y tardará entre dos y tres minutos en completarse."
               enabled={aiConfigured()}
               autoStart={sp.pago === "ok"}
-              refreshOnDone
+              doneLink={{ header: "x-lectura-id", base: "/sinastria/", label: "Ver mi sinastría con su rueda y sus tablas" }}
               note="Lectura orientativa, generada con inteligencia artificial a partir de los cálculos de las dos cartas."
             />
           </div>
