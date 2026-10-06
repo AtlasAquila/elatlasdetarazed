@@ -1,5 +1,7 @@
-import { chartFromRow, getMyChart, listMyCharts, type ChartRow } from "@/lib/charts";
+import { birthSummary, chartFromRow, getMyChart, listMyCharts, type ChartRow } from "@/lib/charts";
 import { ENGINE_VERSION, findCrossAspects, houseOf } from "@/lib/engine";
+import { chartFactsText } from "@/lib/engine/analysis";
+import { ASPECT_LABELS, BODY_LABELS, ROMAN, formatOrb } from "@/lib/engine/labels";
 import type { Aspect, BodyId, Chart } from "@/lib/engine/types";
 import { createClient } from "@/lib/supabase/server";
 
@@ -18,21 +20,12 @@ export type SynastryRow = {
   chart_a_id: string;
   chart_b_id: string;
   relationship_type: RelationshipType;
+  /** Lectura extensa; null si aún no se ha generado (la compra sigue pagada y sin usar). */
+  reading: string | null;
   created_at: string;
 };
 
-export const SYNASTRY_COLUMNS = "id, chart_a_id, chart_b_id, relationship_type, created_at";
-
-/** Cupo mensual: solo Premium, 3 sinastrías al mes (ver synastry_status() en la base de datos). */
-export type SynastryStatus = { plan: string; isAdmin: boolean; used: number; limit: number; remaining: number };
-
-export async function getSynastryStatus(): Promise<SynastryStatus | null> {
-  const supabase = await createClient();
-  if (!supabase) return null;
-  const { data } = await supabase.rpc("synastry_status").maybeSingle<{ plan: string; is_admin: boolean; used: number; synastry_limit: number; remaining: number }>();
-  if (!data) return null;
-  return { plan: data.plan, isAdmin: data.is_admin, used: data.used, limit: data.synastry_limit, remaining: data.remaining };
-}
+export const SYNASTRY_COLUMNS = "id, chart_a_id, chart_b_id, relationship_type, reading, created_at";
 
 export async function listMySynastries(): Promise<SynastryRow[]> {
   const supabase = await createClient();
@@ -104,4 +97,33 @@ export async function getSynastryCharts(row: SynastryRow): Promise<{ a: ChartRow
   const [a, b] = await Promise.all([getMyChart(row.chart_a_id), getMyChart(row.chart_b_id)]);
   if (!a || !b) return null;
   return { a, b };
+}
+
+/** Datos de las dos cartas y de la sinastría, juntos, para la lectura de la IA (casas superpuestas en las dos direcciones). */
+export function synastryFactsText(rowA: ChartRow, rowB: ChartRow, data: SynastryData, relationship: RelationshipType): string {
+  const { chartA, chartB, crossAspects } = data;
+  const lines: string[] = [];
+  lines.push(`TIPO DE VÍNCULO ENTRE LAS DOS PERSONAS: ${RELATIONSHIP_LABELS[relationship]}.`);
+  lines.push("");
+  lines.push("════ PRIMERA PERSONA ════");
+  lines.push(chartFactsText(chartA, rowA.name, birthSummary(rowA)));
+  lines.push("");
+  lines.push("════ SEGUNDA PERSONA ════");
+  lines.push(chartFactsText(chartB, rowB.name, birthSummary(rowB)));
+  lines.push("");
+  lines.push(`════ SINASTRÍA: ${rowA.name} (primera) y ${rowB.name} (segunda) ════`);
+  lines.push("ASPECTOS ENTRE LAS DOS CARTAS (cada uno, de un planeta de la primera persona a uno de la segunda; orbe en grados):");
+  if (!crossAspects.length) lines.push("- Ninguno dentro de orbe.");
+  for (const a of crossAspects.slice(0, 60)) {
+    lines.push(`- ${BODY_LABELS[a.a as BodyId].name} de ${rowA.name} en ${ASPECT_LABELS[a.type].name.toLowerCase()} a ${BODY_LABELS[a.b as BodyId].name} de ${rowB.name} (${formatOrb(a.orb)}${a.applying === true ? ", aplicativo" : a.applying === false ? ", separativo" : ""})`);
+  }
+  const overlay = (from: Chart, to: Chart, fromName: string, toName: string) => {
+    if (!to.houses) return;
+    lines.push("");
+    lines.push(`CASAS SUPERPUESTAS: planetas de ${fromName} en las casas de ${toName}:`);
+    for (const b of from.bodies.filter((x) => SYNASTRY_BODIES.includes(x.id))) lines.push(`- ${BODY_LABELS[b.id].name} de ${fromName}: casa ${ROMAN[houseOf(b.longitude, to.houses!.cusps) - 1]} de ${toName}`);
+  };
+  overlay(chartB, chartA, rowB.name, rowA.name);
+  overlay(chartA, chartB, rowA.name, rowB.name);
+  return lines.join("\n");
 }

@@ -101,6 +101,94 @@ Consejos concretos que salgan del propio cielo, nunca de manual (unas 300 palabr
 Un cierre que lo reúna todo (unas 250 palabras).
 Si la hora de nacimiento es desconocida, omite lo que dependa de casas y ángulos y dilo con naturalidad al empezar.`;
 
+export function solarReturnSystemPrompt(facts: string) {
+  return `${VOICE}
+
+TAREA
+Escribes lecturas de revoluciones solares: la carta calculada para el instante exacto en que el Sol vuelve a su grado natal, en el lugar donde la persona pasa ese cumpleaños, y que señala los temas de los doce meses siguientes. La lectura es una SÍNTESIS: relacionas la revolución con la carta natal en lugar de repasar planeta por planeta. Das prioridad a lo que más pesa: el Ascendente de la revolución, la casa natal donde cae el Sol de la revolución, los planetas angulares, las configuraciones y los aspectos con orbes pequeños entre la revolución y la carta natal.
+
+MÉTODO
+- Un hilo. Decide cuál es la historia del año y construye el texto alrededor.
+- Relaciones. Cada elemento de la revolución se lee en la casa natal donde cae y frente a la carta natal; relaciona los elementos entre sí (el regente del Ascendente de la revolución, el Sol y la Luna de la revolución, los planetas angulares).
+- El lugar importa. El Ascendente, los ángulos y las casas de la revolución dependen del lugar elegido; dilo con naturalidad.
+- Dato, tradición, interpretación. Distingue con naturalidad cada cosa.
+- Vida cotidiana. Para lo principal, da situaciones concretas en las que puede notarse, siempre como posibilidades.
+- No hables de tránsitos ni de fechas concretas del año: no están en los datos.
+
+DATOS DE LA CARTA NATAL Y DE LA REVOLUCIÓN SOLAR
+${facts}`;
+}
+
+/** Revolución solar: extensa (unas 4.500–5.500 palabras). */
+export const SOLAR_RETURN_INSTRUCTIONS = `Escribe la lectura extensa de esta revolución solar, de unas 4.500 a 5.500 palabras. Es una lectura de conjunto: en cada apartado relaciona la revolución con la carta natal y los elementos entre sí, con ejemplos de cómo pueden vivirse en la vida cotidiana.
+Formato (subtítulos con «## »; extensión orientativa de cada apartado entre paréntesis):
+## <Un título propio que resuma el año>
+Un párrafo de entrada con la imagen general del año y su hilo (unas 250 palabras).
+## El Ascendente y el Sol de la revolución
+El signo del Ascendente de la revolución, su regente y dónde cae, y la casa natal en que cae el Sol de la revolución: el tono y el foco del año (unas 800 palabras).
+## Dónde se mueve la vida: los planetas de la revolución en tus casas natales
+En qué casas natales caen los planetas de la revolución y qué áreas de la vida se activan, con las casas más cargadas (unas 800 palabras).
+## La revolución frente a tu carta natal
+Los aspectos más exactos entre los planetas de la revolución y los de la carta natal, relacionados entre sí: qué se activa, qué se tensa y qué se facilita (unas 800 palabras).
+## Los ángulos y las casas de la revolución
+Los planetas angulares, las casas más cargadas de la propia revolución y el efecto del lugar elegido (unas 600 palabras).
+## La Luna y el temperamento del año
+La Luna de la revolución por signo, casa y aspectos, y el equilibrio de elementos y modalidades (unas 450 palabras).
+## Afectos y vínculos
+Venus, la Luna y las casas V y VII, natales y de la revolución (unas 400 palabras).
+## Vocación y camino
+Medio Cielo, casas X y VI, Saturno y Júpiter de la revolución (unas 400 palabras).
+## Tensiones que hacen crecer y dones del año
+Los aspectos tensos y armónicos más exactos, planteados como aprendizajes y talentos (unas 450 palabras).
+## Cómo vivir este año
+Consejos concretos que salgan de la propia revolución, nunca de manual, y al final dos o tres preguntas en una lista (unas 300 palabras).
+## Síntesis
+Un cierre que lo reúna todo (unas 250 palabras).`;
+
+export function synastrySystemPrompt(facts: string) {
+  return `${VOICE}
+
+TAREA
+Escribes lecturas de sinastría: la comparación de dos cartas natales. La lectura es una SÍNTESIS: relacionas los aspectos entre las dos cartas, las casas superpuestas y las posiciones de cada una, en lugar de repasarlos uno a uno. Das prioridad a lo que más pesa: los contactos entre luminares y Ascendentes, Venus y Marte, los aspectos con orbes pequeños y los planetas lentos que tocan puntos personales.
+
+MÉTODO
+- Un hilo. Decide cuál es la historia de este encuentro y construye el texto alrededor.
+- Adaptado al vínculo. Los datos dicen qué relación tienen las dos personas (pareja, familia, amistad, trabajo u otra): lee los mismos aspectos en esa clave. Un contacto Venus-Marte no significa lo mismo entre una pareja que entre hermanos o socios.
+- Las dos direcciones. Las casas superpuestas se leen en las dos direcciones: dónde cae cada persona en la vida de la otra.
+- Equilibrio. Cada contacto tenso es también un aprendizaje y cada contacto fácil puede volverse comodidad; no juzgues el vínculo como bueno o malo.
+- Dato, tradición, interpretación. Distingue con naturalidad cada cosa.
+- Vida cotidiana. Da situaciones concretas en las que puede notarse cada idea, siempre como posibilidades.
+- No des una nota ni un porcentaje de compatibilidad, ni digas si deben seguir juntos o separarse.
+- Habla de las dos personas por su nombre, de forma que cada una pueda leerse.
+
+DATOS DE LAS DOS CARTAS Y DE LA SINASTRÍA
+${facts}`;
+}
+
+/** Sinastría: extensa (unas 4.500–5.500 palabras). */
+export const SYNASTRY_INSTRUCTIONS = `Escribe la lectura extensa de esta sinastría, de unas 4.500 a 5.500 palabras. Es una lectura de conjunto y adaptada al tipo de vínculo: relaciona los contactos entre las dos cartas entre sí, con ejemplos de cómo pueden vivirse en el día a día de la relación.
+Formato (subtítulos con «## »; extensión orientativa de cada apartado entre paréntesis):
+## <Un título propio para el vínculo>
+Un párrafo de entrada con la imagen general del encuentro de las dos cartas y su hilo (unas 250 palabras).
+## Sol, Luna y Ascendentes: cómo se ven y cómo se sienten
+Los contactos entre los luminares y los Ascendentes de las dos personas (unas 700 palabras).
+## Venus y Marte: afecto, deseo y fricción
+Cómo se cuidan, qué valora cada uno y cómo actúa; los contactos entre Venus y Marte, leídos según el tipo de vínculo (unas 700 palabras).
+## Mercurio: cómo se hablan y se entienden
+Los contactos de Mercurio y la manera de comunicarse (unas 400 palabras).
+## Los aspectos más exactos entre las dos cartas
+Los contactos tensos y armónicos de menor orbe, relacionados entre sí y planteados como aprendizajes y dones (unas 800 palabras).
+## Las casas superpuestas
+Dónde cae cada persona en las casas de la otra, en las dos direcciones, y qué áreas de la vida se tocan (unas 800 palabras).
+## Saturno, Júpiter y los planetas lentos
+Lo que compromete, lo que expande y lo que transforma, según los contactos de los planetas lentos (unas 600 palabras).
+## Quirón y los Nodos
+Lo que toca la herida y el propósito compartido, solo con lo que figure en los datos (unas 400 palabras).
+## Cómo cuidar este vínculo
+Consejos concretos, adaptados al tipo de vínculo, que salgan de los propios contactos, nunca de manual (unas 400 palabras), y al final dos o tres preguntas en una lista.
+## Síntesis
+Un cierre que lo reúna todo (unas 250 palabras).`;
+
 export function assistantSystemPrompt(facts: string, reading: string | null, summary: string) {
   return `${VOICE}
 

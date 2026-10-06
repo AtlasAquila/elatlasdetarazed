@@ -1,8 +1,10 @@
-import { computeSolarReturn, ENGINE_VERSION } from "@/lib/engine";
+import { computeSolarReturn, ENGINE_VERSION, findCrossAspects, houseOf } from "@/lib/engine";
+import { chartFactsText } from "@/lib/engine/analysis";
+import { ASPECT_LABELS, POINT_LABELS, ROMAN, formatOrb } from "@/lib/engine/labels";
 import { zoneOffsetMinutes } from "@/lib/engine/time";
-import type { Chart, HouseSystem } from "@/lib/engine/types";
+import type { BodyId, Chart, HouseSystem } from "@/lib/engine/types";
 import { createClient } from "@/lib/supabase/server";
-import { chartFromRow, type ChartRow } from "@/lib/charts";
+import { birthSummary, chartFromRow, type ChartRow } from "@/lib/charts";
 
 export type SolarReturnRow = {
   id: string;
@@ -14,21 +16,12 @@ export type SolarReturnRow = {
   time_zone: string;
   house_system: HouseSystem;
   return_utc: string;
+  /** Lectura extensa; null si aún no se ha generado (la compra sigue pagada y sin usar). */
+  reading: string | null;
   created_at: string;
 };
 
-export const SOLAR_RETURN_COLUMNS = "id, chart_id, year, place_name, latitude, longitude, time_zone, house_system, return_utc, created_at";
-
-/** Cupo mensual: solo Premium, 2 revoluciones al mes (ver solar_return_status() en la base de datos). */
-export type SolarReturnStatus = { plan: string; isAdmin: boolean; used: number; limit: number; remaining: number };
-
-export async function getSolarReturnStatus(): Promise<SolarReturnStatus | null> {
-  const supabase = await createClient();
-  if (!supabase) return null;
-  const { data } = await supabase.rpc("solar_return_status").maybeSingle<{ plan: string; is_admin: boolean; used: number; sr_limit: number; remaining: number }>();
-  if (!data) return null;
-  return { plan: data.plan, isAdmin: data.is_admin, used: data.used, limit: data.sr_limit, remaining: data.remaining };
-}
+export const SOLAR_RETURN_COLUMNS = "id, chart_id, year, place_name, latitude, longitude, time_zone, house_system, return_utc, reading, created_at";
 
 export async function listSolarReturns(chartId: string): Promise<SolarReturnRow[]> {
   const supabase = await createClient();
@@ -82,4 +75,43 @@ const dateFmt = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long"
 export function solarReturnSummary(row: SolarReturnRow) {
   const date = dateFmt.format(new Date(row.return_utc));
   return `${date} UTC · ${row.place_name}`;
+}
+
+const SR_BODIES: BodyId[] = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"];
+
+/** Datos de la carta natal y de la revolución solar, juntos, para la lectura de la IA. */
+export function solarReturnFactsText(natalRow: ChartRow, row: SolarReturnRow): string {
+  const natal = chartFromRow(natalRow);
+  const sr = solarReturnFromRow(row, natalRow);
+  const local = solarReturnLocalParts(row);
+  const lines: string[] = [];
+  lines.push(chartFactsText(natal, natalRow.name, birthSummary(natalRow)));
+  lines.push("");
+  lines.push("════ REVOLUCIÓN SOLAR ════");
+  lines.push(`Año: ${row.year}. Instante exacto en que el Sol vuelve a su grado natal: ${local.date} ${local.time} (hora local de ${row.place_name}) · ${new Date(row.return_utc).toISOString().slice(0, 16)} UTC.`);
+  lines.push(`Lugar de la revolución: ${row.place_name}. El lugar condiciona el Ascendente, los ángulos y las casas de la revolución.`);
+  lines.push("");
+  lines.push(chartFactsText(sr, `Revolución solar ${row.year}`, `${local.date} · ${local.time} · ${row.place_name}`).replace("CARTA NATAL DE:", "CARTA DE LA REVOLUCIÓN SOLAR:").replace("Nacimiento:", "Instante y lugar:"));
+
+  if (natal.houses) {
+    lines.push("");
+    lines.push("PLANETAS DE LA REVOLUCIÓN EN LAS CASAS DE LA CARTA NATAL:");
+    for (const b of sr.bodies.filter((x) => SR_BODIES.includes(x.id))) lines.push(`- ${POINT_LABELS[b.id].name} de la revolución: casa natal ${ROMAN[houseOf(b.longitude, natal.houses.cusps) - 1]}`);
+    if (sr.angles) {
+      lines.push(`- Ascendente de la revolución: casa natal ${ROMAN[houseOf(sr.angles.asc, natal.houses.cusps) - 1]}`);
+      lines.push(`- Medio Cielo de la revolución: casa natal ${ROMAN[houseOf(sr.angles.mc, natal.houses.cusps) - 1]}`);
+    }
+  }
+
+  const points = (chart: Chart) => {
+    const list = chart.bodies.filter((b) => SR_BODIES.includes(b.id)).map((b) => ({ id: b.id as string, lon: b.longitude, speed: b.speed }));
+    if (chart.angles) list.push({ id: "asc", lon: chart.angles.asc, speed: 0 }, { id: "mc", lon: chart.angles.mc, speed: 0 });
+    return list;
+  };
+  lines.push("");
+  lines.push("ASPECTOS ENTRE LA REVOLUCIÓN Y LA CARTA NATAL (orbe en grados):");
+  const cross = findCrossAspects(points(sr), points(natal)).slice(0, 45);
+  if (!cross.length) lines.push("- Ninguno dentro de orbe.");
+  for (const a of cross) lines.push(`- ${POINT_LABELS[a.a].name} de la revolución en ${ASPECT_LABELS[a.type].name.toLowerCase()} a tu ${POINT_LABELS[a.b].name} natal (${formatOrb(a.orb)})`);
+  return lines.join("\n");
 }

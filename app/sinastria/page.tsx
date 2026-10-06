@@ -1,14 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { SynastryForm } from "@/components/SynastryForm";
+import { StreamedReading } from "@/components/StreamedReading";
+import { aiConfigured } from "@/lib/ai/anthropic";
 import { birthSummary, listMyCharts } from "@/lib/charts";
-import { getSynastryStatus, listMySynastries, RELATIONSHIP_LABELS } from "@/lib/synastry";
+import { PRICE_LABEL, confirmCheckout, findUsablePurchase, reconcilePending } from "@/lib/purchases";
+import { listMySynastries, RELATIONSHIP_LABELS, type RelationshipType } from "@/lib/synastry";
 import { getSession } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Sinastría" };
 
-export default async function SynastryListPage() {
+type Props = { searchParams: Promise<{ pago?: string; session_id?: string; error?: string; mensaje?: string }> };
+
+const ERRORS: Record<string, string> = {
+  consentimiento: "Marca la casilla de aceptación para poder comprar la lectura.",
+  pagos: "No hemos podido abrir el pago. Inténtalo de nuevo en unos minutos; no se ha hecho ningún cargo.",
+};
+
+export default async function SynastryListPage({ searchParams }: Props) {
   const session = await getSession();
 
   if (!session) {
@@ -19,7 +28,7 @@ export default async function SynastryListPage() {
             <p className="kicker">Sinastría</p>
             <h1>Cómo dialogan dos cartas</h1>
             <p className="lead">
-              La sinastría compara dos cartas natales: los aspectos entre los planetas de una persona y los de otra, y en qué casas caen. Función Premium, hasta 3 cálculos al mes.
+              La sinastría compara dos cartas natales: los aspectos entre los planetas de una persona y los de otra, y en qué casas caen. Cada compra ({PRICE_LABEL}) incluye el cálculo y una lectura extensa del vínculo.
             </p>
             <div className="actions" style={{ marginTop: 32 }}>
               <Link href="/registro?siguiente=/sinastria" className="btn btn-primary">
@@ -35,25 +44,49 @@ export default async function SynastryListPage() {
     );
   }
 
-  const [charts, status, synastries] = await Promise.all([listMyCharts(), getSynastryStatus(), listMySynastries()]);
-  const isPremium = status?.plan === "premium";
+  const sp = await searchParams;
+  // Vuelta del pago: se confirma con Stripe sin esperar al aviso. Si no, se repasan pagos pendientes.
+  if (sp.session_id) await confirmCheckout(sp.session_id, session.userId);
+  else await reconcilePending(session.userId);
+
+  const [charts, synastries, usable] = await Promise.all([listMyCharts(), listMySynastries(), findUsablePurchase("sinastria", {})]);
   const chartById = new Map(charts.map((c) => [c.id, c]));
   const options = charts.map((c) => ({ id: c.id, label: `${c.name} · ${birthSummary(c)}` }));
+  const error = sp.error === "datos" ? sp.mensaje?.slice(0, 200) : sp.error ? ERRORS[sp.error] : null;
+  const usableA = usable ? chartById.get(String(usable.params.chart_a_id)) : null;
+  const usableB = usable ? chartById.get(String(usable.params.chart_b_id)) : null;
 
   return (
     <section className="hero">
       <div className="container reading">
         <p className="kicker">Sinastría</p>
         <h1>Cómo dialogan dos cartas</h1>
-        <p className="lead">La comparación entre dos cartas natales: cómo se relacionan los planetas de una persona con los de otra, en la pareja, la familia o el trabajo.</p>
+        <p className="lead">
+          La comparación entre dos cartas natales: cómo se relacionan los planetas de una persona con los de otra, en la pareja, la familia o el trabajo. Cada compra incluye el cálculo y una lectura extensa del vínculo.
+        </p>
 
-        {!isPremium ? (
+        {sp.pago === "cancelado" && <p className="notice">Has salido del pago sin completarlo. No se ha hecho ningún cargo.</p>}
+        {error && (
+          <p className="notice notice-error" role="alert">
+            {error}
+          </p>
+        )}
+
+        {usable ? (
           <div className="panel" style={{ marginTop: 24 }}>
-            <h3>Función Premium</h3>
-            <p className="muted">La sinastría está disponible con Premium: hasta 3 cálculos al mes.</p>
-            <Link href="/planes" className="btn btn-primary" style={{ marginTop: 12 }}>
-              Ver planes
-            </Link>
+            <StreamedReading
+              endpoint="/api/sinastria"
+              body={{ purchaseId: usable.id }}
+              initial={null}
+              title={`Tu sinastría ${usableA && usableB ? `de ${usableA.name} y ${usableB.name} ` : ""}está pagada`}
+              description={`Vínculo: ${RELATIONSHIP_LABELS[String(usable.params.relationship_type) as RelationshipType] ?? "otro"}. Se calcula y se escribe su lectura. Tarda entre dos y tres minutos; puedes ir leyendo mientras tanto.`}
+              button="Generar mi sinastría"
+              waiting="Alshain está leyendo cómo dialogan las dos cartas. Es una lectura larga y tardará entre dos y tres minutos en completarse."
+              enabled={aiConfigured()}
+              autoStart={sp.pago === "ok"}
+              doneLink={{ header: "x-lectura-id", base: "/sinastria/", label: "Ver mi sinastría con su rueda y sus tablas" }}
+              note="Lectura orientativa, generada con inteligencia artificial a partir de los cálculos de las dos cartas."
+            />
           </div>
         ) : charts.length < 2 ? (
           <div className="panel" style={{ marginTop: 24 }}>
@@ -68,19 +101,9 @@ export default async function SynastryListPage() {
           </div>
         ) : (
           <div className="panel" style={{ marginTop: 24 }}>
-            <h3>Nueva sinastría</h3>
-            {status && status.remaining <= 0 ? (
-              <p className="notice">Has usado tus {status.limit} sinastrías de este mes. Se renuevan el día 1.</p>
-            ) : (
-              <>
-                <SynastryForm charts={options} />
-                {status && (
-                  <p className="small muted" style={{ marginTop: 16 }}>
-                    Te quedan {status.remaining} de {status.limit} este mes.
-                  </p>
-                )}
-              </>
-            )}
+            <h3>Nueva sinastría · {PRICE_LABEL}</h3>
+            <p className="muted small">Un solo pago por cada sinastría: no es una suscripción. Las dos cartas necesitan hora de nacimiento.</p>
+            {aiConfigured() ? <SynastryForm charts={options} free={session.isAdmin} /> : <p className="muted small">Disponible muy pronto.</p>}
           </div>
         )}
 

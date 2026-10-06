@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { deleteSolarReturn } from "@/app/actions/solar-returns";
 import { ChartWheel } from "@/components/ChartWheel";
 import { PrintButton } from "@/components/PrintButton";
+import { RichText } from "@/components/RichText";
 import { AspectGrid, AspectLegend, ChartFacts, ElementGrid, HousesGrid, PositionsTable } from "@/components/ChartSheet";
 import { getMyChart } from "@/lib/charts";
 import { ASPECT_LABELS, HOUSE_SYSTEM_LABELS, POINT_LABELS, formatOrb, g } from "@/lib/engine/labels";
@@ -151,6 +152,23 @@ export default async function SolarReturnPage({ params }: Props) {
               </details>
             </div>
           </details>
+        </div>
+
+        <div className="reading-block" style={{ marginTop: 56 }}>
+          <p className="kicker">Lectura de tu revolución solar</p>
+          {row.reading ? (
+            <>
+              <RichText text={row.reading} />
+              <p className="small muted" style={{ marginTop: 24, marginBottom: 0 }}>
+                Lectura orientativa, generada con inteligencia artificial a partir de los cálculos de tu carta y de la revolución.
+              </p>
+            </>
+          ) : (
+            <p className="notice">
+              La lectura de esta revolución solar todavía no se ha generado. Tu compra sigue disponible: vuelve a{" "}
+              <Link href={`/carta/${id}/revolucion`}>la lista de revoluciones solares</Link> para generarla sin pagar otra vez.
+            </p>
+          )}
         </div>
 
         <details className="panel" style={{ marginTop: 56 }}>

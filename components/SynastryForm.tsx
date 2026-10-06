@@ -1,15 +1,16 @@
 "use client";
 
-import { useActionState } from "react";
-import { createSynastry, type SynastryFormState } from "@/app/actions/synastry";
+import Link from "next/link";
+import { startPurchase } from "@/app/actions/purchases";
+import { CONSENT_TEXT, PRICE_LABEL } from "@/lib/purchase-info";
 
 type ChartOption = { id: string; label: string };
 
-export function SynastryForm({ charts }: { charts: ChartOption[] }) {
-  const [state, action, pending] = useActionState<SynastryFormState, FormData>(createSynastry, {});
-
+/** Elige las dos cartas y el vínculo y lleva a comprar la sinastría (5 €, una lectura). Los administradores no pagan. */
+export function SynastryForm({ charts, free = false }: { charts: ChartOption[]; free?: boolean }) {
   return (
-    <form action={action} className="form">
+    <form action={startPurchase} className="form">
+      <input type="hidden" name="product" value="sinastria" />
       <div className="grid-2" style={{ gap: 20 }}>
         <div className="field">
           <label htmlFor="chart_a_id">Primera carta</label>
@@ -52,14 +53,16 @@ export function SynastryForm({ charts }: { charts: ChartOption[] }) {
         </p>
       </div>
       <p className="small muted">Las casas superpuestas se calculan en un sentido: dónde caen los planetas de la segunda carta en las casas de la primera.</p>
-      {state.error && (
-        <p className="notice notice-error" role="alert">
-          {state.error}
-        </p>
-      )}
-      <button type="submit" className="btn btn-primary" disabled={pending} style={{ alignSelf: "flex-start" }}>
-        {pending ? "Calculando…" : "Calcular sinastría"}
+      <label className="check">
+        <input type="checkbox" name="consent" required />
+        <span>
+          {CONSENT_TEXT} Más en el <Link href="/aviso-legal">aviso legal</Link>.
+        </span>
+      </label>
+      <button type="submit" className="btn btn-primary" style={{ alignSelf: "flex-start" }}>
+        {free ? "Generar sinastría" : `Comprar sinastría · ${PRICE_LABEL}`}
       </button>
+      {free && <p className="small muted">Como administrador no pagas: la lectura se genera sin cobro.</p>}
     </form>
   );
 }

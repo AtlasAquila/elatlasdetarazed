@@ -1,7 +1,9 @@
 "use client";
 
-import { useActionState, useEffect, useId, useRef, useState } from "react";
-import { createSolarReturn, type SolarReturnFormState } from "@/app/actions/solar-returns";
+import Link from "next/link";
+import { useEffect, useId, useRef, useState } from "react";
+import { startPurchase } from "@/app/actions/purchases";
+import { CONSENT_TEXT, PRICE_LABEL } from "@/lib/purchase-info";
 
 type PlaceOption = { label: string; latitude: number; longitude: number; timeZone: string };
 
@@ -88,34 +90,27 @@ function PlacePicker() {
   );
 }
 
-export function SolarReturnForm({ chartId, defaultYear, defaultHouseSystem }: { chartId: string; defaultYear: number; defaultHouseSystem: string }) {
-  const [state, action, pending] = useActionState<SolarReturnFormState, FormData>(createSolarReturn, {});
-
+/** Pide el año y el lugar y lleva a comprar la revolución solar (5 €, una lectura). Los administradores no pagan. */
+export function SolarReturnForm({ chartId, defaultYear, free = false }: { chartId: string; defaultYear: number; free?: boolean }) {
   return (
-    <form action={action} className="form">
+    <form action={startPurchase} className="form">
+      <input type="hidden" name="product" value="revolucion" />
       <input type="hidden" name="chart_id" value={chartId} />
       <div className="field">
         <label htmlFor="sr-year">Año del cumpleaños</label>
         <input id="sr-year" name="year" type="number" className="input" required min={1900} max={2200} defaultValue={defaultYear} />
       </div>
       <PlacePicker />
-      <div className="field">
-        <label htmlFor="sr-house-system">Sistema de casas</label>
-        <select id="sr-house-system" name="house_system" className="input" defaultValue={defaultHouseSystem}>
-          <option value="placidus">Placidus (el más usado)</option>
-          <option value="koch">Koch</option>
-          <option value="equal">Casas iguales</option>
-          <option value="whole">Signos enteros</option>
-        </select>
-      </div>
-      {state.error && (
-        <p className="notice notice-error" role="alert">
-          {state.error}
-        </p>
-      )}
-      <button type="submit" className="btn btn-primary" disabled={pending} style={{ alignSelf: "flex-start" }}>
-        {pending ? "Calculando…" : "Calcular revolución solar"}
+      <label className="check">
+        <input type="checkbox" name="consent" required />
+        <span>
+          {CONSENT_TEXT} Más en el <Link href="/aviso-legal">aviso legal</Link>.
+        </span>
+      </label>
+      <button type="submit" className="btn btn-primary" style={{ alignSelf: "flex-start" }}>
+        {free ? "Generar revolución solar" : `Comprar revolución solar · ${PRICE_LABEL}`}
       </button>
+      {free && <p className="small muted">Como administrador no pagas: la lectura se genera sin cobro.</p>}
     </form>
   );
 }

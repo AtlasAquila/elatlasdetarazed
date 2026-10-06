@@ -12,21 +12,9 @@ import { getMyChart } from "@/lib/charts";
 import { isValidTimeZone } from "@/lib/engine/time";
 import { billingReady, stripe } from "@/lib/stripe";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { CONSENT_TEXT, PRICE_CENTS, PRICE_LABEL, PRODUCTS, PRODUCT_LIST, type Product } from "@/lib/purchase-info";
 
-export type Product = "clima" | "revolucion" | "sinastria";
-export const PRODUCT_LIST: Product[] = ["clima", "revolucion", "sinastria"];
-
-export const PRODUCTS: Record<Product, { name: string; description: string }> = {
-  clima: { name: "Clima astral personalizado", description: "Lectura extensa de tu cielo de los próximos 30 días sobre tu carta natal." },
-  revolucion: { name: "Revolución solar", description: "Lectura extensa de la carta de tu próximo año." },
-  sinastria: { name: "Sinastría", description: "Lectura extensa de cómo dialogan dos cartas." },
-};
-
-export const PRICE_CENTS = 500;
-export const PRICE_LABEL = "5 €";
-
-export const CONSENT_TEXT =
-  "Acepto que la lectura se prepara y se entrega en el momento de la compra y que, una vez entregada, pierdo el derecho de desistimiento.";
+export { CONSENT_TEXT, PRICE_CENTS, PRICE_LABEL, PRODUCTS, PRODUCT_LIST, type Product };
 
 export type PurchaseStatus = "pending" | "paid" | "used" | "refunded";
 export type PurchaseParams = Record<string, string | number>;
