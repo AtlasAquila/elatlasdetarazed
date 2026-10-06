@@ -11,9 +11,10 @@ export const metadata: Metadata = {
 export default async function IntroduccionPage() {
   const { t } = await getTexts();
   const blocks = t("intro.hero.lead").split(/\n\n+/);
-  // Un primer bloque corto es un subtítulo; si es un párrafo largo, es la entradilla.
+  // Un primer bloque corto es un subtítulo; el resto de bloques son párrafos del mismo tamaño.
   const hasSubtitle = blocks.length > 1 && blocks[0].length <= 90;
   const [first, ...rest] = blocks;
+  const paragraphs = hasSubtitle ? rest : blocks;
   return (
     <>
       <section className="hero hero-intro">
@@ -27,8 +28,8 @@ export default async function IntroduccionPage() {
           <div>
             <p className="kicker">El potencial de la astrología</p>
             <h1>{t("intro.hero.title")}</h1>
-            {hasSubtitle ? <p className="hero-intro-subtitle">{first}</p> : <p className="hero-intro-lead">{first}</p>}
-            {rest.map((p, i) => (
+            {hasSubtitle && <p className="hero-intro-subtitle">{first}</p>}
+            {paragraphs.map((p, i) => (
               <p key={i} className="hero-intro-body">
                 {p}
               </p>
