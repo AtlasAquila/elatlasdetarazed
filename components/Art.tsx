@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 /** Dibujos del sistema de diseño: la constelación de Aquila (con Tarazed destacada) y la rueda zodiacal. */
 
 type AquilaProps = { size?: number; labels?: boolean; title?: string };
@@ -35,20 +37,9 @@ export function AquilaConstellation({ size = 320, labels = false, title = "Const
   );
 }
 
-export function AquilaMark({ size = 28 }: { size?: number }) {
-  return (
-    <svg viewBox="0 0 40 40" width={size} height={size} aria-hidden="true">
-      <circle cx={20} cy={20} r={19} fill="var(--surface-raised)" stroke="var(--oro)" strokeWidth={1} />
-      <g fill="none" stroke="var(--estrella)" strokeWidth={0.8}>
-        <polyline points="17,10 21,15 25,20" />
-        <polyline points="21,15 16,21 9,12" />
-        <polyline points="16,21 13,29" />
-        <polyline points="16,21 21,29 27,27" />
-      </g>
-      <circle cx={17} cy={10} r={2.2} fill="var(--oro)" />
-      <circle cx={21} cy={15} r={1.5} fill="var(--oro)" />
-    </svg>
-  );
+/** Logotipo: el águila dorada con la estrella (public/logo.png). */
+export function AquilaMark({ size = 40 }: { size?: number }) {
+  return <Image src="/logo.png" width={size} height={size} alt="" aria-hidden="true" priority />;
 }
 
 const SIGNS = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];
