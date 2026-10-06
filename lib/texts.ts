@@ -55,7 +55,7 @@ export const TEXT_GROUPS: TextGroup[] = [
     id: "introduccion",
     title: "Introducción",
     fields: [
-      { key: "intro.hero.title", label: "Título", kind: "line", default: "El cielo como guía del alma" },
+      { key: "intro.hero.title", label: "Título", kind: "line", default: "El cielo como guía" },
       { key: "intro.hero.lead", label: "Texto de presentación", kind: "paragraph", default: "La carta es un mapa, no un destino\n\nLa astrología nos ofrece un lenguaje para comprender tendencias, potenciales y ciclos, pero una carta natal no puede entenderse a través de elementos aislados. Un planeta, un signo o una casa adquieren su verdadero significado cuando se interpretan en relación con el conjunto de la carta y con el momento vital de cada persona.\n\nDel mismo modo, la astrología no determina tu destino. Tu experiencia nace del encuentro entre tu carta, tu entorno, tu infancia, tu cultura, tus decisiones y aquello que, desde una perspectiva espiritual, podemos entender como tu misión de alma. Por eso, ciertos aspectos pueden cobrar especial importancia en unas etapas de la vida y permanecer en segundo plano en otras.\n\nMás que una herramienta para adivinar el futuro, la astrología puede ser un mapa para conocerte mejor, comprender tus ciclos y recorrer con mayor consciencia tu propio camino." },
     ],
   },

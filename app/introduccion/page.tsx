@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { ZodiacWheel } from "@/components/Art";
 import { getTexts } from "@/lib/texts";
 
 export const metadata: Metadata = {
@@ -14,8 +14,14 @@ export default async function IntroduccionPage() {
   const [leadHeading, ...leadParagraphs] = leadParts;
   return (
     <>
-      <section className="hero">
+      <section className="hero hero-intro">
         <div className="container">
+          <div className="hero-intro-aside">
+            <Image src="/rueda-zodiacal.png" width={300} height={300} alt="" aria-hidden="true" priority className="hero-intro-art" />
+            <Link href="/carta" className="btn btn-primary">
+              Explora tu carta →
+            </Link>
+          </div>
           <div>
             <p className="kicker">El potencial de la astrología</p>
             <h1>{t("intro.hero.title")}</h1>
@@ -23,25 +29,17 @@ export default async function IntroduccionPage() {
               {leadHeading}
             </p>
             {leadParagraphs.map((p, i) => (
-              <p key={i} className="muted" style={{ fontSize: 17, lineHeight: 1.6, whiteSpace: "pre-line" }}>
+              <p key={i} className="muted" style={{ fontSize: 16, lineHeight: 1.55, whiteSpace: "pre-line" }}>
                 {p}
               </p>
             ))}
-            <div className="actions" style={{ marginTop: 8 }}>
-              <Link href="/carta" className="btn btn-primary">
-                Explora tu carta →
-              </Link>
-            </div>
-          </div>
-          <div className="hero-art">
-            <ZodiacWheel size={380} />
           </div>
         </div>
       </section>
 
       <section className="section" style={{ borderTop: 0, paddingTop: 0 }}>
         <div className="container">
-          <div className="apartados-strip">
+          <div className="apartados-strip apartados-compact">
             <Link href="/clima-astral" className="apartado">
               <span className="apartado-icon" aria-hidden="true">
                 <svg width="30" height="30" viewBox="0 0 30 30"><path d="M18 5a10 10 0 1 0 7 17 11.5 11.5 0 0 1-7-17z" fill="none" stroke="var(--oro)" strokeWidth={1.2} /></svg>
