@@ -680,7 +680,6 @@ td .sym { color: var(--oro); font-size: 22px; font-variant-emoji: text; }
 
 /* ── Clima astral: ciclo lunar de Luna llena a Luna llena ─────────────────────────── */
 .ciclo { margin-top: 4px; }
-.ciclo-desplegable { margin-top: 16px; }
 .ciclo-titulo { text-align: center; color: var(--oro); font-size: clamp(28px, 6vw, 40px); line-height: 1.15; margin: 0 0 6px; }
 .ciclo-periodo { text-align: center; color: var(--estrella); font-style: italic; margin: 0; }
 .ciclo-utc { text-align: center; color: var(--ink-muted); font-size: 14px; margin: 4px 0 0; }
@@ -726,7 +725,7 @@ td .sym { color: var(--oro); font-size: 22px; font-variant-emoji: text; }
 .rueda-desplegable > summary::after { content: "⌄"; color: var(--estrella); font-size: 22px; line-height: 1; transition: transform 0.25s ease; }
 .rueda-desplegable[open] > summary::after { transform: rotate(180deg); }
 .rueda-desplegable > summary:hover, .rueda-desplegable > summary:focus-visible { color: var(--estrella); }
-.semana-desplegable { margin-top: 16px; }
+.rueda-desplegable + .rueda-desplegable { margin-top: 16px; }
 .semana-desplegable .post-item:first-child { border-top: 0; padding-top: 4px; }
 .rueda-desplegable-cuerpo { padding: 0 22px 22px; }
 @media (max-width: 560px) {
