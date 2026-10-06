@@ -508,8 +508,25 @@ export function computeSolarReturn(input: SolarReturnInput): Chart {
   };
 }
 
+/**
+ * Longitud eclíptica (°) de un cuerpo en un instante, sin casas ni aspectos. NaN si no se puede
+ * calcular (Quirón fuera de 1900-2100). La usa el motor de tránsitos (`lib/clima`); no cambia
+ * ningún cálculo de las cartas.
+ */
+export function bodyLongitude(id: BodyId, date: Date): number {
+  const time = A.MakeTime(date);
+  const planet = PLANETS.find(([pid]) => pid === id);
+  if (planet) return eclipticLongitude(planet[1], time);
+  if (id === "chiron") return time.tt >= CHIRON_MIN && time.tt <= CHIRON_MAX ? chironLon(time) : NaN;
+  if (id === "meanNode") return meanNodeLon(time);
+  if (id === "trueNode") return trueNodeLon(time);
+  if (id === "meanLilith") return meanLilithLon(time);
+  if (id === "trueLilith") return trueLilithLon(time);
+  return NaN;
+}
+
 // Solo para pruebas.
-export const __test = { computeHouses, chironLon, meanNodeLon, trueNodeLon, meanLilithLon, trueLilithLon, eclipticLongitude, PLANETS };
+export const __test ={ computeHouses, chironLon, meanNodeLon, trueNodeLon, meanLilithLon, trueLilithLon, eclipticLongitude, PLANETS };
 
 /** Tiempo sidéreo local (horas) para un instante UTC y una longitud geográfica (este positivo). */
 export function localSiderealTime(utcIso: string, longitude: number) {
