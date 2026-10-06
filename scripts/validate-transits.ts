@@ -2,16 +2,19 @@
  * Calcula el clima personal (tránsitos sobre una carta natal) y lo imprime, para revisarlo o
  * compararlo con otra efeméride.
  *
- * Uso: npx tsx scripts/validate-transits.ts [AAAA-MM-DDTHH:MMZ] [--json] [--sin-hora]
+ * Uso: npx tsx scripts/validate-transits.ts [AAAA-MM-DDTHH:MMZ] [--json] [--facts] [--sin-hora]
  *  - Sin fecha: empieza ahora. La carta de ejemplo es Madrid, 15-03-1990 09:30 (con --sin-hora, sin hora).
  *  - --json: imprime los eventos como JSON (para el comparador con Swiss Ephemeris).
+ *  - --facts: imprime el texto de datos que recibe la IA para escribir el clima personal.
  */
 import { computeChart } from "../lib/engine";
 import { ASPECT_LABELS, POINT_LABELS, ROMAN, SIGN_NAMES, formatPosition } from "../lib/engine/labels";
+import { climateFactsText } from "../lib/clima/facts";
 import { computeClimate, topEvents, type TransitEvent } from "../lib/clima/transitos";
 
 const args = process.argv.slice(2);
 const json = args.includes("--json");
+const facts = args.includes("--facts");
 const noTime = args.includes("--sin-hora");
 const startArg = args.find((a) => !a.startsWith("--"));
 const from = startArg ? new Date(startArg) : new Date();
@@ -51,7 +54,9 @@ function describe(e: TransitEvent): string {
   }
 }
 
-if (json) {
+if (facts) {
+  console.log(climateFactsText(chart, "Carta de ejemplo", "15 de marzo de 1990 · 09:30 · Madrid", data));
+} else if (json) {
   console.log(JSON.stringify({ startMs: data.startMs, endMs: data.endMs, requestedEndMs: data.requestedEndMs, events: data.events }, null, 1));
 } else {
   console.log(`Ventana: ${iso(data.startMs)} → ${iso(data.endMs)} (base ${iso(data.requestedEndMs)}${data.extensionEvents.length ? `, ampliada por ${data.extensionEvents.length} evento(s)` : ", sin ampliar"}) · calculado en ${elapsed} ms`);

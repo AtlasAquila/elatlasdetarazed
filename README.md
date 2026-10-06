@@ -94,6 +94,14 @@ Los recursos astrológicos (clima personal, revolución solar, sinastría) no va
 - La compra se da por pagada cuando vuelve el usuario, cuando llega el aviso de Stripe (`checkout.session.completed`, `checkout.session.async_payment_succeeded`) o al abrir la página del recurso. Debe haber esos eventos activados en el endpoint del webhook, además de `charge.refunded` para los reembolsos.
 - La generación toma un candado de 10 minutos (`claimPurchase`), así que no se genera dos veces desde dos pestañas. Si la IA falla, la compra no se gasta y se puede reintentar sin pagar otra vez.
 
+## Clima astral personalizado (`/carta/[id]/clima`)
+
+Lectura extensa (unas 5.000 palabras) del cielo de los próximos 30 días sobre una carta natal, que se compra por separado (5 €, ver «Compras de lecturas»). El periodo empieza al generarla y se amplía hasta 10 días si justo después cae un evento importante (`lib/clima/transitos.ts`). Una carta no puede comprar otro clima mientras el anterior siga vigente.
+
+- `lib/clima/facts.ts` convierte el resultado del motor en el texto de datos que recibe la IA; `climateSystemPrompt` y `CLIMATE_INSTRUCTIONS` (en `lib/ai/prompts.ts`) trasladan el método de interpretación de la marca: un hilo, jerarquía, relaciones, situaciones concretas. `npx tsx scripts/validate-transits.ts --facts` imprime esos datos.
+- `/api/clima` toma el candado de una compra pagada, genera la lectura con streaming y, solo si se completa, la guarda en `monthly_climates` y da la compra por usada. Si la IA falla, la compra no se gasta.
+- Casas: las de la propia carta (Placidus). Sin hora de nacimiento, solo aspectos.
+
 ## Licencias
 
 El motor de cálculo no usa Swiss Ephemeris (AGPL). Swiss Ephemeris solo se ha usado fuera del proyecto, en un entorno de pruebas, para generar valores de referencia.
