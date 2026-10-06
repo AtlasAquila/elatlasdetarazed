@@ -242,6 +242,17 @@ export default async function ChartPage({ params, searchParams }: Props) {
           <div className="card" style={{ padding: 28, marginTop: 24, display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
             <div>
               <p className="kicker" style={{ marginBottom: 4 }}>
+                Clima astral personalizado
+              </p>
+              <p style={{ margin: 0 }}>Los tránsitos de los próximos 30 días colocados sobre esta carta: casas que se activan, planetas lentos y lunaciones. Lectura extensa, 5 €.</p>
+            </div>
+            <Link href={`/carta/${row.id}/clima`} className="btn btn-primary">
+              Ver mi clima astral
+            </Link>
+          </div>
+          <div className="card" style={{ padding: 28, marginTop: 24, display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <p className="kicker" style={{ marginBottom: 4 }}>
                 Revolución solar
               </p>
               <p style={{ margin: 0 }}>La carta del año que empieza en tu cumpleaños, calculada para donde estés ese día. Premium, hasta 2 al mes.</p>

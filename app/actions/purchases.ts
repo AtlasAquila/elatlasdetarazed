@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { activeClimate } from "@/lib/clima/personal";
 import {
   CONSENT_TEXT,
   PRICE_CENTS,
@@ -46,6 +47,9 @@ export async function startPurchase(formData: FormData) {
   const path = returnPath(product, params);
 
   if (formData.get("consent") !== "on") redirect(`${path}?error=consentimiento`);
+
+  // Una carta no compra otro clima mientras el anterior siga vigente: se va a leerlo.
+  if (product === "clima" && (await activeClimate(String(params.chart_id)))) redirect(path);
 
   // Ya pagada y sin usar: se va a la página del recurso a generarla.
   if (await findUsablePurchase(product, usableMatch(product, params))) redirect(`${path}?pago=ok`);

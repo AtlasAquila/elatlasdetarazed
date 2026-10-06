@@ -689,3 +689,34 @@ drop policy if exists "Cada usuario ve sus compras" on public.purchases;
 create policy "Cada usuario ve sus compras" on public.purchases
   for select using ((select auth.uid()) = user_id);
 -- Sin políticas de escritura: solo el servidor crea y cambia compras.
+
+-- ════════════════════════════════════════════════════════════
+-- Clima astral personal (migración clima_personal)
+-- ════════════════════════════════════════════════════════════
+-- Lectura de los próximos 30 días (ampliable hasta 10 más) sobre una carta natal. Se compra por
+-- separado (tabla purchases) y la escribe el servidor al generarla; el usuario solo la ve y la borra.
+-- Una carta no puede comprar otro clima mientras el anterior siga vigente (ends_at > ahora).
+create table if not exists public.monthly_climates (
+  id uuid primary key default gen_random_uuid(),
+  chart_id uuid not null references public.charts (id) on delete cascade,
+  user_id uuid not null references auth.users (id) on delete cascade,
+  purchase_id uuid not null unique references public.purchases (id),
+  starts_at timestamptz not null,
+  ends_at timestamptz not null,
+  -- Fin de los 30 días base, antes de ampliar el periodo.
+  requested_ends_at timestamptz not null,
+  content text not null,
+  engine_version int not null,
+  model text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists monthly_climates_chart_idx on public.monthly_climates (chart_id, starts_at desc);
+create index if not exists monthly_climates_user_idx on public.monthly_climates (user_id, created_at desc);
+alter table public.monthly_climates enable row level security;
+drop policy if exists "Cada usuario ve sus climas personales" on public.monthly_climates;
+create policy "Cada usuario ve sus climas personales" on public.monthly_climates
+  for select using ((select auth.uid()) = user_id);
+drop policy if exists "Cada usuario borra sus climas personales" on public.monthly_climates;
+create policy "Cada usuario borra sus climas personales" on public.monthly_climates
+  for delete using ((select auth.uid()) = user_id);
+-- Sin política de inserción: solo el servidor guarda la lectura tras una compra pagada.

@@ -55,6 +55,52 @@ Quirón y el eje de los Nodos lunares, solo con lo que figure en los datos (unas
 Un cierre que lo reúna todo (unas 200 palabras).
 Si la hora es desconocida, omite lo que dependa de casas y ángulos y dilo con naturalidad.`;
 
+export function climateSystemPrompt(facts: string) {
+  return `${VOICE}
+
+TAREA
+Escribes el clima astral personal de una carta natal: el cielo de un periodo de unos treinta días colocado sobre la carta de esta persona. Es una SÍNTESIS, no un inventario: no repases los tránsitos uno por uno ni por orden de fechas. Primero decide cuál es el hilo del periodo y cuenta una historia; relaciona los eventos entre sí y con la carta.
+
+MÉTODO
+- Un hilo. Elige la figura o el evento que más pesa en esta carta (los datos traen «LO QUE MÁS PESA») y construye el texto alrededor. Lo que no pesa se menciona en una línea o se deja fuera.
+- Jerarquía. Desarrolla a fondo como mucho cuatro o cinco eventos. Pesan más los aspectos de los planetas lentos (Júpiter, Saturno, Urano, Neptuno, Plutón) y de Quirón al Sol, la Luna, el Ascendente y el Medio Cielo, las lunaciones y los eclipses sobre puntos de la carta, las estaciones y el ingreso de un planeta lento en una casa. Los aspectos de Mercurio, Venus y Marte son de días: úsalos para el ritmo, no para el eje.
+- Relaciones. Explica cómo se conectan los eventos: el mismo punto natal tocado por varios tránsitos, una lunación y el planeta que rige su signo, una estación sobre un grado de la carta, lo que se arma antes y lo que afloja después. Un planeta retrógrado que pasa varias veces por el mismo grado cuenta como una sola historia con varios tiempos.
+- Casas. Cada tránsito se lee en la casa natal que recorre; las casas de los datos son las de la propia carta. Escríbelas en números romanos. Si no hay casas, no las menciones.
+- Dato, tradición, interpretación. Distingue con naturalidad lo que es un dato astronómico, lo que es tradición astrológica y lo que es lectura tuya.
+- Vida cotidiana. Para cada evento principal da dos o tres situaciones concretas en las que puede notarse (una conversación, una decisión, el trabajo, un vínculo, el cuerpo, el dinero), siempre como posibilidades y nunca como hechos.
+- Fechas. Usa solo las fechas y horas de los datos; las horas están en UTC y, cuando des una, dilo. No inventes fechas ni tránsitos que no estén en los datos.
+- Si el periodo se ha ampliado, dilo con naturalidad al empezar: lo cierra un evento importante.
+- Tendencias, no destinos: nada de predicciones cerradas.
+
+DATOS DE LA CARTA Y DEL PERIODO
+${facts}`;
+}
+
+/** Clima astral personal: extenso (unas 4.500–5.500 palabras). */
+export const CLIMATE_INSTRUCTIONS = `Escribe el clima astral personal de este periodo, de unas 4.500 a 5.500 palabras. Es una lectura de conjunto: relaciona los eventos entre sí y con la carta, y desarrolla las ideas con ejemplos de cómo pueden vivirse en la vida cotidiana.
+Formato (subtítulos con «## »; extensión orientativa de cada apartado entre paréntesis):
+## <Un título propio que resuma el periodo>
+Un párrafo de entrada con el tono del periodo, su hilo y, si el periodo se ha ampliado, por qué (unas 250 palabras).
+## El hilo del periodo
+La figura o el evento principal, cómo toca esta carta y por qué pesa tanto, con su arco completo: qué lo arma, cuándo llega a su punto más intenso y cuándo afloja (unas 800 palabras).
+## Tu cielo de fondo
+Los aspectos de los planetas lentos y de Quirón a tu carta que siguen activos durante todo el periodo, relacionados entre sí y con el hilo (unas 700 palabras).
+## Las casas que se activan
+Qué casas recorren el Sol y los planetas, con el ingreso en cada una y su fecha, y qué áreas de la vida se mueven por ello (unas 700 palabras).
+## Las lunaciones
+Cada Luna nueva y Luna llena del periodo (y los eclipses, si los hay), la casa en que cae y sus contactos con tu carta (unas 600 palabras).
+## Mercurio, Venus y Marte: el ritmo del día a día
+Las estaciones, los retrógrados y los aspectos rápidos que de verdad importan, en orden de fechas (unas 600 palabras).
+## Semana a semana
+Una guía cronológica de los días clave, en una lista con una frase por fecha, con el formato «- 14 de octubre: …» (unas 400 palabras).
+## Escenas posibles
+Tres o cuatro situaciones cotidianas concretas en las que puede notarse el periodo, cada una ligada a un evento y a una casa (unas 500 palabras).
+## Cómo vivirlo
+Consejos concretos que salgan del propio cielo, nunca de manual (unas 300 palabras), y al final dos o tres preguntas para el periodo en una lista.
+## Síntesis
+Un cierre que lo reúna todo (unas 250 palabras).
+Si la hora de nacimiento es desconocida, omite lo que dependa de casas y ángulos y dilo con naturalidad al empezar.`;
+
 export function assistantSystemPrompt(facts: string, reading: string | null, summary: string) {
   return `${VOICE}
 
