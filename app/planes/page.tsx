@@ -110,6 +110,13 @@ export default async function PlanesPage({ searchParams }: Props) {
             </div>
           </div>
         </div>
+        <div className="container reading" style={{ marginTop: 40 }}>
+          <p className="kicker">Recursos astrológicos</p>
+          <p className="muted">{t("planes.recursos")}</p>
+          <Link href="/recursos" className="btn btn-ghost btn-small">
+            Ver los recursos
+          </Link>
+        </div>
       </section>
     </>
   );

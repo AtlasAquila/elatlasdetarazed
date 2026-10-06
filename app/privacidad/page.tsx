@@ -27,7 +27,7 @@ export default function PrivacidadPage() {
         <li><strong>Supabase</strong>: base de datos y cuentas de usuario (UE).</li>
         <li><strong>Vercel</strong>: alojamiento de la web.</li>
         <li><strong>Anthropic</strong>: genera las interpretaciones y las respuestas del asistente a partir de los datos de tus cartas. No usa esos datos para entrenar sus modelos.</li>
-        <li><strong>Stripe</strong>: gestiona los pagos de Premium. Nosotros no vemos ni guardamos los datos de tu tarjeta.</li>
+        <li><strong>Stripe</strong>: gestiona los pagos de Premium y de las lecturas. Nosotros no vemos ni guardamos los datos de tu tarjeta.</li>
         <li><strong>Resend</strong>: envía los correos de la cuenta (confirmación y recuperar contraseña).</li>
       </ul>
       <p>Algunos de estos proveedores están en Estados Unidos. Las transferencias se amparan en el Marco de Privacidad de Datos UE-EE. UU. o en las cláusulas contractuales tipo aprobadas por la Comisión Europea.</p>
