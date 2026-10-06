@@ -652,3 +652,40 @@ revoke execute on function public.synastry_status() from public, anon;
 revoke execute on function public.consume_synastry() from public, anon;
 grant execute on function public.synastry_status() to authenticated;
 grant execute on function public.consume_synastry() to authenticated;
+
+-- ════════════════════════════════════════════════════════════
+-- Compras de lecturas (migración compras_lecturas)
+-- ════════════════════════════════════════════════════════════
+-- Cada recurso astrológico (clima personal, revolución solar, sinastría) se compra por separado:
+-- 5 € por lectura, con un pago único de Stripe. Una compra da derecho a una sola lectura.
+-- pending → paid (Stripe confirma el cobro) → used (la lectura ya se ha guardado). Solo escribe el
+-- servidor, con la clave de servicio; el usuario solo puede ver sus compras.
+create table if not exists public.purchases (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users (id) on delete cascade,
+  product text not null check (product in ('clima', 'revolucion', 'sinastria')),
+  status text not null default 'pending' check (status in ('pending', 'paid', 'used', 'refunded')),
+  -- Qué se compra: la carta (o las dos cartas) y, en la revolución solar, el año y el lugar.
+  params jsonb not null default '{}'::jsonb,
+  -- Precio de lista y lo que se ha cobrado de verdad (un código promocional puede rebajarlo).
+  amount_cents int not null check (amount_cents >= 0),
+  paid_cents int check (paid_cents >= 0),
+  currency text not null default 'eur',
+  stripe_session_id text unique,
+  stripe_payment_intent text,
+  -- El comprador acepta que la lectura se entrega al momento y pierde el derecho de desistimiento.
+  consent_at timestamptz not null,
+  paid_at timestamptz,
+  used_at timestamptz,
+  refunded_at timestamptz,
+  -- Candado mientras se escribe la lectura (evita generarla dos veces desde dos pestañas).
+  generating_since timestamptz,
+  created_at timestamptz not null default now()
+);
+create index if not exists purchases_user_idx on public.purchases (user_id, created_at desc);
+create index if not exists purchases_payment_intent_idx on public.purchases (stripe_payment_intent);
+alter table public.purchases enable row level security;
+drop policy if exists "Cada usuario ve sus compras" on public.purchases;
+create policy "Cada usuario ve sus compras" on public.purchases
+  for select using ((select auth.uid()) = user_id);
+-- Sin políticas de escritura: solo el servidor crea y cambia compras.

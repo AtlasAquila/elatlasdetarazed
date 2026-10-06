@@ -85,6 +85,15 @@ Validación (`npx tsx scripts/validate-engine.ts reference.json`) frente a 8 car
 
 Revisión: `npx tsx scripts/validate-transits.ts [AAAA-MM-DDTHH:MMZ] [--json] [--sin-hora]` imprime el resultado para la carta de ejemplo. Frente a Swiss Ephemeris (solo como referencia externa), en 5 ventanas de un mes más una carta sin hora, los eventos coincidieron todos, sin ninguno de más ni de menos. Las horas coinciden con una mediana de 1 minuto; en los planetas casi parados (estaciones y aspectos de planetas lentos) pueden diferir hasta unas 3 horas.
 
+## Compras de lecturas (`lib/purchases.ts`)
+
+Los recursos astrológicos (clima personal, revolución solar, sinastría) no van incluidos en Premium: cada lectura se compra aparte, 5 € con un pago único de Stripe (Checkout en modo `payment`, el importe va en el código, no hace falta crear precios en Stripe). Cualquier cuenta registrada puede comprar.
+
+- Una compra da derecho a una sola lectura. Estados: `pending` → `paid` (Stripe confirma el cobro) → `used` (la lectura se ha guardado); `refunded` si se reembolsa. Tabla `purchases`, que solo escribe el servidor.
+- `startPurchase` (`app/actions/purchases.ts`) valida los datos, exige la casilla de desistimiento (contenido digital que se entrega al momento) y lleva a Stripe. Los administradores reciben la lectura sin cobro, para poder probar.
+- La compra se da por pagada cuando vuelve el usuario, cuando llega el aviso de Stripe (`checkout.session.completed`, `checkout.session.async_payment_succeeded`) o al abrir la página del recurso. Debe haber esos eventos activados en el endpoint del webhook, además de `charge.refunded` para los reembolsos.
+- La generación toma un candado de 10 minutos (`claimPurchase`), así que no se genera dos veces desde dos pestañas. Si la IA falla, la compra no se gasta y se puede reintentar sin pagar otra vez.
+
 ## Licencias
 
 El motor de cálculo no usa Swiss Ephemeris (AGPL). Swiss Ephemeris solo se ha usado fuera del proyecto, en un entorno de pruebas, para generar valores de referencia.
