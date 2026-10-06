@@ -326,9 +326,13 @@ img, svg { max-width: 100%; }
 }
 .hero-intro-art { width: 260px; height: 260px; }
 .hero-intro h1 { font-size: clamp(36px, 5vw, 56px); margin-bottom: 12px; }
+.hero-intro-lead { font-family: var(--font-display), Georgia, serif; font-size: 25px; font-weight: 500; line-height: 1.38; color: var(--ink); margin: 0 0 18px; text-wrap: pretty; }
+.hero-intro-subtitle { font-size: 22px; font-weight: 600; line-height: 1.4; color: var(--ink-muted); margin: 0 0 12px; }
+.hero-intro-body { font-size: 17px; line-height: 1.6; color: var(--ink-muted); margin: 0 0 14px; white-space: pre-line; }
 .hero-intro .container::after { content: ""; display: block; clear: both; }
 @media (max-width: 860px) {
   .hero.hero-intro { padding: 28px 0 20px; }
+  .hero-intro-lead { font-size: 20px; }
   .hero-intro-aside { width: 110px; margin: 0 0 8px 16px; }
   .hero-intro-art { width: 110px; height: 110px; }
   .hero-intro-aside .btn { display: none; }
