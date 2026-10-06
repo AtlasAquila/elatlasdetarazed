@@ -72,7 +72,7 @@ export default async function SolarReturnListPage({ params, searchParams }: Prop
               waiting="Alshain está leyendo la carta de tu año. Es una lectura larga y tardará entre dos y tres minutos en completarse."
               enabled={aiConfigured()}
               autoStart={sp.pago === "ok"}
-              refreshOnDone
+              doneLink={{ header: "x-lectura-id", base: `/carta/${id}/revolucion/`, label: "Ver mi revolución solar con su rueda y sus tablas" }}
               note="Lectura orientativa, generada con inteligencia artificial a partir de los cálculos de tu carta."
             />
           </div>

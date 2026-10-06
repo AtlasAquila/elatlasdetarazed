@@ -84,6 +84,7 @@ export async function POST(request: NextRequest) {
     system: synastrySystemPrompt(facts),
     instructions: SYNASTRY_INSTRUCTIONS,
     maxTokens: MAX_TOKENS,
+    headers: { "x-lectura-id": saved.id },
     save: async (text) => {
       const { error } = await admin.from("synastries").update({ reading: text, reading_model: MODELS.main }).eq("id", saved.id);
       if (error) throw new Error("no se pudo guardar");

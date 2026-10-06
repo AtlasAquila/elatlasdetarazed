@@ -8,6 +8,8 @@ type Options = {
   save: (text: string) => Promise<void>;
   /** Suelta la compra sin gastarla cuando algo falla: se puede reintentar sin pagar otra vez. */
   release: () => Promise<void>;
+  /** Cabeceras extra de la respuesta (p. ej. el id del cálculo guardado). */
+  headers?: Record<string, string>;
 };
 
 /**
@@ -15,7 +17,7 @@ type Options = {
  * tokens) o no se puede guardar, no se da por entregada: se suelta la compra y el cliente recibe
  * un aviso al final del texto (`[[ERROR]] …`).
  */
-export function streamPurchasedReading({ system, instructions, maxTokens, save, release }: Options): Response {
+export function streamPurchasedReading({ system, instructions, maxTokens, save, release, headers }: Options): Response {
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
@@ -38,5 +40,5 @@ export function streamPurchasedReading({ system, instructions, maxTokens, save, 
       }
     },
   });
-  return new Response(stream, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
+  return new Response(stream, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store", ...headers } });
 }

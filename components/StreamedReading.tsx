@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { RichText } from "./RichText";
@@ -20,12 +21,19 @@ type Props = {
   refreshLabel?: string;
   /** Recarga los datos de la página al terminar (símbolos extraídos, contadores). */
   refreshOnDone?: boolean;
+  /**
+   * Al terminar, enlaza al cálculo guardado: el id viene en una cabecera de la respuesta
+   * (`header`) y la dirección es `base` + id. Sirve cuando recargar la página haría desaparecer
+   * el texto que se acaba de leer.
+   */
+  doneLink?: { header: string; base: string; label: string };
 };
 
-export function StreamedReading({ endpoint, body, initial, title, description, button, waiting, note, enabled, autoStart, refreshLabel, refreshOnDone }: Props) {
+export function StreamedReading({ endpoint, body, initial, title, description, button, waiting, note, enabled, autoStart, refreshLabel, refreshOnDone, doneLink }: Props) {
   const [text, setText] = useState(initial ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [doneHref, setDoneHref] = useState<string | null>(null);
   const started = useRef(false);
   const router = useRouter();
 
@@ -33,6 +41,7 @@ export function StreamedReading({ endpoint, body, initial, title, description, b
     setLoading(true);
     setError(null);
     setText("");
+    setDoneHref(null);
     try {
       const res = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body ?? {}) });
       if (!res.ok || !res.body) {
@@ -55,6 +64,8 @@ export function StreamedReading({ endpoint, body, initial, title, description, b
         }
         setText(acc);
       }
+      const savedId = doneLink ? res.headers.get(doneLink.header) : null;
+      if (savedId && /^[0-9a-f-]{36}$/i.test(savedId)) setDoneHref(`${doneLink!.base}${savedId}`);
       if (refreshOnDone) router.refresh();
     } catch {
       setError("Se ha perdido la conexión. Inténtalo de nuevo.");
@@ -102,6 +113,13 @@ export function StreamedReading({ endpoint, body, initial, title, description, b
         <button type="button" className="btn btn-ghost btn-small" onClick={generate} style={{ marginTop: 16 }}>
           {refreshLabel}
         </button>
+      )}
+      {text && !loading && !error && doneHref && doneLink && (
+        <p style={{ marginTop: 24 }}>
+          <Link href={doneHref} className="btn btn-primary">
+            {doneLink.label}
+          </Link>
+        </p>
       )}
       {text && !loading && note && (
         <p className="small muted" style={{ marginTop: 24, marginBottom: 0 }}>

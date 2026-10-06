@@ -98,6 +98,7 @@ export async function POST(request: NextRequest) {
     system: solarReturnSystemPrompt(facts),
     instructions: SOLAR_RETURN_INSTRUCTIONS,
     maxTokens: MAX_TOKENS,
+    headers: { "x-lectura-id": solarReturn.id },
     save: async (text) => {
       const { error } = await admin.from("solar_returns").update({ reading: text, reading_model: MODELS.main }).eq("id", solarReturn.id);
       if (error) throw new Error("no se pudo guardar");
