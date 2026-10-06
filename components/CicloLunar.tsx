@@ -39,17 +39,18 @@ export function CicloLunar({ ciclo }: { ciclo: Ciclo }) {
       <ol className="ciclo-lista">
         {ciclo.eventos.map((e) => {
           const f = fechaUtc(e.utc);
+          const nueva = e.glifo === "●";
           return (
             <li key={e.utc + e.titulo} className={e.tipo ? `ciclo-ev ${e.tipo}` : "ciclo-ev"}>
               <time className="ciclo-fecha" dateTime={e.utc}>
                 <b>{f.dia}</b>
                 <span>{f.hora}</span>
               </time>
-              <span className="ciclo-punto glyph-font" aria-hidden="true">{e.glifo + "︎"}</span>
+              {/* La Luna nueva es un disco oscuro dibujado con CSS: el glifo «●» se veía como un eclipse, así que lleva el mismo ☾ que la llena. */}
+              <span className={nueva ? "ciclo-punto glyph-font nueva" : "ciclo-punto glyph-font"} aria-hidden="true">{(nueva ? "☾" : e.glifo) + "︎"}</span>
               <div>
                 <h3>
                   {e.titulo} {e.grado && <span className="ciclo-grado">{e.grado}</span>}
-                  {e.tipo === "clave" && <span className="ciclo-tag">clave</span>}
                 </h3>
                 <p>{e.texto}</p>
               </div>

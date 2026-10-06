@@ -699,7 +699,7 @@ td .sym { color: var(--oro); font-size: 22px; font-variant-emoji: text; }
 .ciclo-luna-fecha { text-transform: uppercase; }
 .ciclo-disco { width: 44px; height: 44px; border-radius: 50%; margin-bottom: 6px; }
 .ciclo-disco.llena { background: radial-gradient(circle at 40% 38%, #fff5dc, var(--estrella) 55%, var(--estrella-oro)); box-shadow: 0 0 26px rgba(240, 204, 147, 0.45); }
-.ciclo-disco.nueva { background: radial-gradient(circle at 60% 50%, var(--lapis) 55%, var(--estrella-oro) 56%, var(--estrella)); box-shadow: 0 0 16px var(--glow); }
+.ciclo-disco.nueva { background: radial-gradient(circle at 42% 40%, #1b3a5a, #071526 70%, #030c18); border: 1px solid var(--estrella-oro); box-shadow: inset 0 0 10px rgba(143, 168, 230, 0.28), 0 0 16px rgba(213, 166, 111, 0.28); }
 .ciclo-activos { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 22px 0 32px; }
 .ciclo-chip { border: 1px solid var(--estrella-oro); color: var(--estrella); border-radius: 999px; padding: 3px 14px; font-size: 15px; }
 .ciclo-lista { list-style: none; margin: 0; padding: 0; position: relative; }
@@ -710,11 +710,11 @@ td .sym { color: var(--oro); font-size: 22px; font-variant-emoji: text; }
 .ciclo-fecha span { color: var(--ink-muted); font-size: 13px; letter-spacing: 0.06em; }
 .ciclo-punto { position: relative; width: 34px; height: 34px; border-radius: 50%; background: var(--surface); border: 1px solid var(--estrella-oro); display: grid; place-items: center; color: var(--oro); font-size: 17px; }
 .ciclo-ev.clave .ciclo-punto { border-color: var(--oro); color: var(--estrella); box-shadow: 0 0 16px var(--glow); }
+.ciclo-ev.lunacion .ciclo-punto.nueva { background: radial-gradient(circle at 42% 40%, #1b3a5a, #071526 70%, #030c18); border-color: var(--estrella); color: var(--estrella); box-shadow: inset 0 0 8px rgba(143, 168, 230, 0.28), 0 0 14px rgba(213, 166, 111, 0.3); }
 .ciclo-ev.lunacion .ciclo-punto { background: radial-gradient(circle at 40% 38%, #fff5dc, var(--estrella) 60%, var(--estrella-oro)); border-color: var(--estrella); color: var(--surface); }
 .ciclo-ev h3 { margin: 2px 0; font-size: 22px; line-height: 1.2; color: var(--ink); }
 .ciclo-ev.clave h3, .ciclo-ev.lunacion h3 { color: var(--oro); }
 .ciclo-grado { color: var(--estrella-oro); font-size: 15px; font-style: italic; }
-.ciclo-tag { display: inline-block; margin-left: 6px; vertical-align: 3px; padding: 1px 7px; border-radius: 4px; background: var(--oro); color: var(--on-oro); font-family: var(--font-display), Georgia, serif; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
 .ciclo-ev p { margin: 2px 0 0; color: #cfc8b8; font-size: 17px; }
 @media (max-width: 560px) {
   .ciclo-lista::before { left: 70px; }
