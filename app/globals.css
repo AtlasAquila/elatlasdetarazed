@@ -568,6 +568,11 @@ td .sym { color: var(--oro); font-size: 22px; font-variant-emoji: text; }
 .fold > summary:hover h3 { color: var(--oro); }
 .fold-body { padding: 4px 24px 24px; }
 .fold-body .houses-grid { background: var(--surface); }
+.fold-body h2 { font-size: clamp(26px, 3.4vw, 32px); }
+.qa-list { display: flex; flex-direction: column; gap: var(--space-6); margin-bottom: var(--space-6); }
+.qa { padding-top: var(--space-4); border-top: 1px solid var(--line); }
+.qa:first-child { border-top: 0; padding-top: 0; }
+.qa-question { font-style: italic; font-size: 20px; color: var(--estrella); border-left: 2px solid var(--oro); padding-left: var(--space-4); margin: 0 0 var(--space-4); }
 @media (max-width: 600px) { .fold > summary { padding: 16px 18px; } .fold-body { padding: 4px 16px 18px; } }
 
 /* Lectura y asistente */

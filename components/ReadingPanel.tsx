@@ -54,9 +54,8 @@ export function ReadingPanel({ chartId, reading, enabled }: Props) {
   const lectura = useStreamedReading(chartId, reading);
 
   return (
-    <div className="plate">
+    <div>
       <div>
-        <p className="kicker">Lectura de tu carta</p>
         {!enabled && <p className="muted">Las lecturas se activarán muy pronto.</p>}
 
         {enabled && !lectura.text && !lectura.loading && (
