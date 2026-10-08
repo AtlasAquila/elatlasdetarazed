@@ -20,7 +20,7 @@ export default async function EntrarPage({ searchParams }: Props) {
         )}
         <SignInForm next={siguiente} />
         <p className="small muted" style={{ marginTop: 24, marginBottom: 0 }}>
-          ¿No tienes cuenta? <Link href="/registro">Créala gratis</Link>
+          ¿No tienes cuenta? <Link href={siguiente ? `/registro?siguiente=${encodeURIComponent(siguiente)}` : "/registro"}>Créala gratis</Link>
         </p>
       </div>
     </div>

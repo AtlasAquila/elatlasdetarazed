@@ -120,6 +120,9 @@ export const PUNTOS_PERSONALES: Record<string, { nombre: string; texto: string }
   asc: { nombre: "Ascendente", texto: "Se toca el modo en que te presentas y cómo te reciben. Este contacto depende mucho de la hora de nacimiento: si no la tienes segura, tómalo como una pista, no como un dato." },
 };
 
+/** El eje Marte–Plutón: oposición exacta el 3/10 a 3°06′ de Leo/Acuario; en la Luna Nueva, Marte a 7°13′ de Leo y Plutón a 3°05′ de Acuario. Solo se usa para Alshain. */
+export const EJE_MARTE_PLUTON: PuntoCielo = { id: "marte-pluton", nombre: "el eje Marte–Plutón", fecha: "oposición exacta el 3 de octubre", longitud: 300 + 3 + 5 / 60, grado: "3°05′ de Acuario / Leo" };
+
 export const ASPECTOS = {
   conjuncion: "en conjunción con",
   cuadratura: "en cuadratura con",

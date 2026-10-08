@@ -4,12 +4,13 @@ import { useActionState, useState } from "react";
 import { createChart, type ChartFormState } from "@/app/actions/charts";
 import { PlacePicker } from "@/components/PlacePicker";
 
-export function ChartForm({ suggestSelf }: { suggestSelf: boolean }) {
+export function ChartForm({ suggestSelf, origen }: { suggestSelf: boolean; origen?: string }) {
   const [state, action, pending] = useActionState<ChartFormState, FormData>(createChart, {});
   const [unknown, setUnknown] = useState(false);
 
   return (
     <form action={action} className="form">
+      {origen && <input type="hidden" name="origen" value={origen} />}
       <div className="field">
         <label htmlFor="name">Nombre de la carta</label>
         <input id="name" name="name" className="input" required maxLength={80} placeholder="Tu nombre, o el de quien sea la carta" />

@@ -4,6 +4,10 @@
  * La guía personal está en lib/venus-guia.ts y sus textos en lib/venus-guia-textos.ts.
  */
 
+/** Identificador del evento que Alshain puede interpretar y pregunta que se le sugiere desde la guía. */
+export const EVENTO_VENUS = "venus-retrogrado";
+export const VENUS_PREGUNTA = "¿Cómo afecta la Luna Nueva con Venus retrógrado en Escorpio a mi carta?";
+
 /** Longitud eclíptica de la Luna Nueva del 10/10/2026: 17°22' Libra. */
 export const NEW_MOON_LONGITUDE = 180 + 17 + 22 / 60;
 

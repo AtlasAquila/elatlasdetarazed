@@ -4,6 +4,8 @@ import { SUMMARY_PROMPT, assistantSystemPrompt } from "@/lib/ai/prompts";
 import { CHART_COLUMNS, birthSummary, chartFromRow, type ChartRow } from "@/lib/charts";
 import { chartFactsText } from "@/lib/engine/analysis";
 import { createClient } from "@/lib/supabase/server";
+import { venusEventFactsText } from "@/lib/venus-evento";
+import { EVENTO_VENUS, VENUS_PREGUNTA } from "@/lib/venus-retrogrado";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -13,7 +15,7 @@ const SUMMARIZE_AFTER = 30;
 const KEEP_RECENT = 12;
 
 export async function POST(request: NextRequest) {
-  const { chartId, message } = (await request.json().catch(() => ({}))) as { chartId?: string; message?: string };
+  const { chartId, message, evento } = (await request.json().catch(() => ({}))) as { chartId?: string; message?: string; evento?: string };
   const question = String(message ?? "").trim().slice(0, 2000);
   if (!chartId || !question) return NextResponse.json({ error: "Escribe tu pregunta." }, { status: 400 });
 
@@ -56,7 +58,10 @@ export async function POST(request: NextRequest) {
 
   const chart = chartFromRow(chartRow);
   const facts = chartFactsText(chart, chartRow.name, birthSummary(chartRow));
-  const system = assistantSystemPrompt(facts, reading, conv.summary);
+  // El evento de la campaña Venus retrógrado se activa al llegar desde la guía y se mantiene
+  // mientras la conversación conserve la pregunta sugerida.
+  const conEvento = evento === EVENTO_VENUS || (history ?? []).some((m) => m.role === "user" && m.content === VENUS_PREGUNTA);
+  const system = assistantSystemPrompt(facts, reading, conv.summary, conEvento ? venusEventFactsText(chart) : null);
   const messages: AiMessage[] = [...(history ?? []).map((m) => ({ role: m.role as "user" | "assistant", content: m.content })), { role: "user", content: question }];
 
   const encoder = new TextEncoder();

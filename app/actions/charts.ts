@@ -28,6 +28,7 @@ export async function createChart(_prev: ChartFormState, formData: FormData): Pr
   const timeZone = String(formData.get("time_zone") ?? "");
   const houseSystem = String(formData.get("house_system") ?? "placidus");
   const isSelf = formData.get("is_self") === "on";
+  const origen = String(formData.get("origen") ?? "");
 
   if (!name) return { error: "Ponle un nombre a la carta." };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Escribe la fecha de nacimiento." };
@@ -69,7 +70,8 @@ export async function createChart(_prev: ChartFormState, formData: FormData): Pr
   if (error || !data) return { error: "No se ha podido guardar la carta. Inténtalo de nuevo." };
 
   revalidatePath("/carta");
-  redirect(`/carta/${data.id}`);
+  // Quien llega desde la guía de Venus retrógrado pasa directo a Alshain, con la pregunta sugerida.
+  redirect(origen === "venus" ? `/carta/${data.id}/asistente?pregunta=venus` : `/carta/${data.id}`);
 }
 
 export async function deleteChart(formData: FormData) {
