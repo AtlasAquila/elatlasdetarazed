@@ -14,7 +14,7 @@ const display = Cormorant_Garamond({
 
 const serif = EB_Garamond({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",
