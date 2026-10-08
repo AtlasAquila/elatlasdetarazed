@@ -4,38 +4,15 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { requestVenusGuide, type VenusGuideState } from "@/app/actions/venus-guia";
 import { PlacePicker } from "@/components/PlacePicker";
-import { guideSummary, VENUS_CALENDAR } from "@/lib/venus-retrogrado";
+import { VenusGuideView } from "@/components/VenusGuideView";
 
 export function VenusGuideForm() {
   const [state, action, pending] = useActionState<VenusGuideState, FormData>(requestVenusGuide, {});
 
   if (state.guide) {
-    const s = guideSummary(state.guide);
-    return (
-      <div className="venus-guide" role="status">
-        <p className="kicker">Tu guía, {state.guide.nombre}</p>
-        <h3>Ascendente {s.ascendente} · la Luna Nueva cae en tu casa {s.casa}</h3>
-        <p>
-          La Luna Nueva del 10 de octubre, a 17°22' de Libra, toca en tu carta {s.tema}.
-          {state.guide.aproximada && " En la latitud de tu lugar de nacimiento las casas Placidus no se pueden calcular con exactitud, así que la casa es aproximada."}
-        </p>
-        <p className="venus-guide-question">{s.pregunta}</p>
-        <h4>Calendario de Venus retrógrado</h4>
-        <ul className="venus-calendar">
-          {VENUS_CALENDAR.map((c) => (
-            <li key={c.fecha}>
-              <strong>{c.fecha}.</strong> {c.texto}
-            </li>
-          ))}
-        </ul>
-        <p className="small muted">
-          {state.email === "enviado" && "Te la hemos enviado también por correo. "}
-          {state.email === "anterior" && "Ese correo ya había pedido la guía, así que no te la reenviamos. "}
-          {state.email === "no" && "No hemos podido enviártela por correo; guarda esta página. "}
-          Es una guía general: habla de tendencias, no de destinos.
-        </p>
-      </div>
-    );
+    const aviso =
+      state.email === "enviado" ? "Te la hemos enviado también por correo." : state.email === "anterior" ? "Ese correo ya había pedido la guía, así que no te la reenviamos." : "No hemos podido enviártela por correo; guarda esta página.";
+    return <VenusGuideView guide={state.guide} aviso={aviso} />;
   }
 
   return (
