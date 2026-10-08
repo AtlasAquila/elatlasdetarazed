@@ -103,7 +103,6 @@ export const TEXT_GROUPS: TextGroup[] = [
           "Lectura extensa y combinada de cada carta",
           "3 preguntas al asistente astrológico",
           "Numerología: hasta 10 personas con todos sus números explicados",
-          "Diario de sueños con interpretación, memoria y patrones",
         ].join("\n"),
       },
       { key: "planes.premium.price", label: "Premium: precio mensual", kind: "line", default: "9,99 €" },
