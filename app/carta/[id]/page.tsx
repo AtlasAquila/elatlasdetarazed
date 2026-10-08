@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { deleteChart } from "@/app/actions/charts";
+import { ChartQuestions, pairMessages, type QaMessage } from "@/components/ChartQuestions";
 import { ChartWheel } from "@/components/ChartWheel";
 import { PrintButton } from "@/components/PrintButton";
 import { ReadingPanel } from "@/components/ReadingPanel";
@@ -36,9 +37,16 @@ export default async function ChartPage({ params, searchParams }: Props) {
   // Lectura guardada (una por carta, extensa y para todas las cuentas).
   const supabase = await createClient();
   let reading: string | null = null;
+  let questions: { question: string; answer: string }[] = [];
   if (supabase) {
     const { data } = await supabase.from("readings").select("content").eq("chart_id", id).eq("kind", "extensa").maybeSingle();
     reading = data?.content ?? null;
+    // Preguntas hechas a Alshain sobre esta carta.
+    const { data: conv } = await supabase.from("conversations").select("id").eq("chart_id", id).maybeSingle();
+    if (conv) {
+      const { data: msgs } = await supabase.from("messages").select("role, content").eq("conversation_id", conv.id).order("created_at", { ascending: true });
+      questions = pairMessages((msgs ?? []) as QaMessage[]);
+    }
   }
 
   const visible = new Set<string>(PLANETS);
@@ -224,22 +232,28 @@ export default async function ChartPage({ params, searchParams }: Props) {
               </details>
             </div>
           </details>
+          <details className="fold">
+            <summary>
+              <h3>Lectura de tu carta</h3>
+              <span className="small muted">{reading ? "Escrita" : "Aún sin generar"}</span>
+            </summary>
+            <div className="fold-body">
+              <ReadingPanel chartId={row.id} reading={reading} enabled={aiConfigured()} />
+            </div>
+          </details>
+          <details className="fold">
+            <summary>
+              <h3>Preguntas a Alshain</h3>
+              <span className="small muted">{questions.length === 1 ? "1 pregunta" : `${questions.length} preguntas`}</span>
+            </summary>
+            <div className="fold-body">
+              <ChartQuestions chartId={row.id} pairs={questions} />
+            </div>
+          </details>
         </div>
 
         <div className="reading-block" style={{ marginTop: 56 }}>
-          <ReadingPanel chartId={row.id} reading={reading} enabled={aiConfigured()} />
-          <div className="card" style={{ padding: 28, marginTop: 24, display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
-            <div>
-              <p className="kicker" style={{ marginBottom: 4 }}>
-                Asistente astrológico
-              </p>
-              <p style={{ margin: 0 }}>Haz preguntas concretas sobre esta carta. Alshain recuerda lo que habláis.</p>
-            </div>
-            <Link href={`/carta/${row.id}/asistente`} className="btn btn-primary">
-              Pregunta a Alshain
-            </Link>
-          </div>
-          <div className="card" style={{ padding: 28, marginTop: 24, display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
+          <div className="card" style={{ padding: 28, display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
             <div>
               <p className="kicker" style={{ marginBottom: 4 }}>
                 Clima astral personalizado
