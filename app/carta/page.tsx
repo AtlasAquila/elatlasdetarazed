@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { ZodiacWheel } from "@/components/Art";
 import { birthSummary, chartFromRow, FREE_CHART_LIMIT, listMyCharts, PREMIUM_CHART_LIMIT } from "@/lib/charts";
 import { BODY_LABELS, SIGN_NAMES, g } from "@/lib/engine/labels";
 import { createClient, getSession } from "@/lib/supabase/server";
@@ -31,7 +31,7 @@ export default async function CartaPage() {
             </div>
           </div>
           <div className="hero-art">
-            <ZodiacWheel size={400} />
+            <Image src="/rueda-zodiacal.png" width={400} height={400} alt="" aria-hidden="true" priority style={{ height: "auto" }} />
           </div>
         </div>
       </section>
