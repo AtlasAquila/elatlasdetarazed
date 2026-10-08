@@ -17,7 +17,10 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 async function sendEmail(to: string, guide: Guide) {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM;
-  if (!key || !from) return false;
+  if (!key || !from) {
+    console.error("venus-guia: faltan RESEND_API_KEY o RESEND_FROM en este entorno");
+    return false;
+  }
   const { subject, html } = guideEmail(guide);
   try {
     const res = await fetch("https://api.resend.com/emails", {
@@ -25,8 +28,11 @@ async function sendEmail(to: string, guide: Guide) {
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({ from, to, subject, html }),
     });
+    // Se registra el motivo (sin la clave ni el destinatario) para poder diagnosticarlo en los logs de Vercel.
+    if (!res.ok) console.error(`venus-guia: Resend respondió ${res.status}: ${(await res.text()).slice(0, 300)}`);
     return res.ok;
-  } catch {
+  } catch (e) {
+    console.error("venus-guia: no se pudo contactar con Resend", e instanceof Error ? e.message : e);
     return false;
   }
 }
