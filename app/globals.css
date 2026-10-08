@@ -773,9 +773,14 @@ td .sym { color: var(--oro); font-size: 22px; font-variant-emoji: text; }
 .venus-box .lead { margin-top: 0; }
 .venus-guide h3 { font-size: 26px; }
 .venus-guide h4 { margin: var(--space-6) 0 var(--space-2); }
-.venus-guide-question { font-size: 21px; font-style: italic; border-left: 2px solid var(--oro); padding-left: var(--space-4); }
-.venus-calendar { padding-left: 1.2em; margin: 0 0 var(--space-4); }
-.venus-calendar li { margin-bottom: 8px; line-height: 1.5; }
+.venus-guide-section { margin-top: var(--space-10); padding-top: var(--space-6); border-top: 1px solid var(--line); }
+.venus-guide-section h4 { margin: 0 0 var(--space-4); font-family: var(--font-display), Georgia, serif; font-size: 28px; font-weight: 500; line-height: 1.15; color: var(--estrella); }
+.venus-guide .article-body { font-size: 19px; line-height: 1.65; }
+.venus-guide .article-body h3 { font-size: 21px; margin: 28px 0 10px; color: var(--oro); }
+.venus-guide .article-body ul { padding-left: 1.2em; margin: 0 0 var(--space-4); }
+.venus-guide .article-body li { margin-bottom: 8px; }
+.venus-guide-cta { margin-top: var(--space-10); padding: var(--space-6); border: 1px solid var(--oro); border-radius: var(--radius-sm); background: var(--oro-soft); }
+.venus-guide-cta .btn { margin-top: var(--space-2); }
 .venus-final { text-align: center; margin-left: auto; margin-right: auto; }
 @media (max-width: 600px) {
   .venus-box { padding: 24px 18px; }

@@ -1,20 +1,20 @@
 "use server";
 
-import { computeChart, houseOf } from "@/lib/engine";
+import { computeChart } from "@/lib/engine";
 import { isValidTimeZone } from "@/lib/engine/time";
 import { createClient } from "@/lib/supabase/server";
-import { guideEmail, NEW_MOON_LONGITUDE, type Guide } from "@/lib/venus-retrogrado";
+import { buildGuide, guideEmail, type GuideContent } from "@/lib/venus-guia";
 
 export type VenusGuideState = {
   error?: string;
-  guide?: Guide;
+  guide?: GuideContent;
   /** "enviado": el correo salió ahora. "anterior": ese correo ya había pedido la guía. "no": no se pudo enviar. */
   email?: "enviado" | "anterior" | "no";
 };
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-async function sendEmail(to: string, guide: Guide) {
+async function sendEmail(to: string, guide: GuideContent) {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM;
   if (!key || !from) {
@@ -74,12 +74,7 @@ export async function requestVenusGuide(_prev: VenusGuideState, formData: FormDa
   });
   if (!chart.angles || !chart.houses) return { error: "No se ha podido calcular el ascendente con esos datos. Revisa la hora y el lugar." };
 
-  const guide: Guide = {
-    nombre,
-    ascendente: Math.floor(chart.angles.asc / 30) % 12,
-    casa: houseOf(NEW_MOON_LONGITUDE, chart.houses.cusps),
-    aproximada: chart.houses.systemUsed !== "placidus",
-  };
+  const guide = buildGuide(chart, nombre);
 
   const supabase = await createClient();
   if (!supabase) return { error: "El formulario aún no está conectado. Inténtalo más tarde." };
