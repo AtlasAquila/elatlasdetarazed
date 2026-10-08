@@ -73,6 +73,15 @@ h3 { font-size: 26px; font-weight: 600; }
 
 p { margin: 0 0 var(--space-4); }
 
+/* La negrita usa el peso 600 real de EB Garamond; sin él el navegador
+   sintetizaba un 700 emborronado. */
+strong,
+b {
+  font-weight: 600;
+  color: #fbf6ea;
+  letter-spacing: 0.005em;
+}
+
 a { color: var(--oro); text-underline-offset: 3px; }
 a:hover { color: var(--estrella); }
 
