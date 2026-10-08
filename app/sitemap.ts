@@ -15,6 +15,7 @@ const PAGES = [
   "/numerologia",
   "/sinastria",
   "/recursos",
+  "/venus-retrogrado",
   ...RESOURCES.map((r) => `/recursos/${r.slug}`),
   "/suenos",
   "/blog",
