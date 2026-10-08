@@ -738,3 +738,30 @@ alter table public.synastries
   add column if not exists reading_model text;
 drop policy if exists "Solo Premium crea revoluciones solares de sus cartas" on public.solar_returns;
 drop policy if exists "Solo Premium crea sinastrías de sus cartas" on public.synastries;
+
+-- Campaña «Venus retrógrado» (octubre-noviembre de 2026): guía gratuita por ascendente.
+-- Guarda los datos de nacimiento para calcular el ascendente y la casa de la Luna Nueva.
+create table if not exists public.venus_guia (
+  id uuid primary key default gen_random_uuid(),
+  campana text not null default 'venus-retrogrado-2026',
+  nombre text not null check (char_length(nombre) between 1 and 80),
+  email text not null check (char_length(email) <= 254 and email like '%_@_%'),
+  birth_date date not null,
+  birth_time time not null,
+  place_name text not null check (char_length(place_name) <= 200),
+  latitude double precision not null check (latitude between -90 and 90),
+  longitude double precision not null check (longitude between -180 and 180),
+  time_zone text not null check (char_length(time_zone) <= 64),
+  ascendente smallint check (ascendente between 0 and 11),
+  casa_luna_nueva smallint check (casa_luna_nueva between 1 and 12),
+  consent boolean not null check (consent),
+  created_at timestamptz not null default now(),
+  unique (campana, email)
+);
+alter table public.venus_guia enable row level security;
+drop policy if exists "Cualquiera pide la guía de Venus" on public.venus_guia;
+create policy "Cualquiera pide la guía de Venus" on public.venus_guia
+  for insert to anon, authenticated with check (consent);
+drop policy if exists "Solo administradores ven las peticiones de Venus" on public.venus_guia;
+create policy "Solo administradores ven las peticiones de Venus" on public.venus_guia
+  for select using ((select private.is_admin()));

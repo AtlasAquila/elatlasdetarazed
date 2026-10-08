@@ -16,11 +16,12 @@ export default function PrivacidadPage() {
         <li>Los sueños que anotes en tu diario, con las emociones que marques, y sus interpretaciones. Pueden contener información muy personal: solo tú puedes verlos, solo se usan para interpretarlos dentro de tu diario y puedes borrarlos uno a uno o todos a la vez, con efecto inmediato.</li>
         <li>Conversaciones con el asistente astrológico, para que pueda recordar el contexto. El responsable de la web puede revisar las preguntas y respuestas para mejorar la calidad del asistente y detectar usos indebidos; no se usan para ningún otro fin.</li>
         <li>Correo de la lista de espera, si te apuntas.</li>
+        <li>Nombre, correo y datos de nacimiento (fecha, hora y lugar) que envíes para recibir la guía gratuita de la campaña «Venus retrógrado»; sirven para calcular tu ascendente y enviarte la guía.</li>
       </ul>
       <h2>Para qué</h2>
-      <p>Para prestarte el servicio (calcular e interpretar tus cartas, guardar tu historial) y, si te apuntas a la lista de espera, para avisarte del lanzamiento. No vendemos tus datos ni los usamos para publicidad.</p>
+      <p>Para prestarte el servicio (calcular e interpretar tus cartas, guardar tu historial), para enviarte la guía si la pides y, si te apuntas a la lista de espera, para avisarte del lanzamiento. No vendemos tus datos ni los usamos para publicidad.</p>
       <h2>Base legal</h2>
-      <p>La ejecución del servicio que solicitas al crear tu cuenta y tu consentimiento para la lista de espera, que puedes retirar en cualquier momento.</p>
+      <p>La ejecución del servicio que solicitas al crear tu cuenta y tu consentimiento para la lista de espera y para la guía gratuita, que puedes retirar en cualquier momento.</p>
       <h2>Dónde se guardan</h2>
       <p>Tus datos se guardan en servidores de Supabase ubicados en la Unión Europea (París). Para prestar el servicio trabajamos con estos encargados del tratamiento, que solo usan los datos para lo que les pedimos:</p>
       <ul>
@@ -28,7 +29,7 @@ export default function PrivacidadPage() {
         <li><strong>Vercel</strong>: alojamiento de la web.</li>
         <li><strong>Anthropic</strong>: genera las interpretaciones y las respuestas del asistente a partir de los datos de tus cartas. No usa esos datos para entrenar sus modelos.</li>
         <li><strong>Stripe</strong>: gestiona los pagos de Premium y de las lecturas. Nosotros no vemos ni guardamos los datos de tu tarjeta.</li>
-        <li><strong>Resend</strong>: envía los correos de la cuenta (confirmación y recuperar contraseña).</li>
+        <li><strong>Resend</strong>: envía los correos de la cuenta (confirmación y recuperar contraseña) y la guía gratuita.</li>
       </ul>
       <p>Algunos de estos proveedores están en Estados Unidos. Las transferencias se amparan en el Marco de Privacidad de Datos UE-EE. UU. o en las cláusulas contractuales tipo aprobadas por la Comisión Europea.</p>
       <h2>Cuánto tiempo</h2>
