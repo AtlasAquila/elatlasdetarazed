@@ -13,7 +13,6 @@ export type AdminUser = {
   questions: number;
   readings: number;
   numerology_people: number;
-  dreams: number;
   last_activity: string | null;
 };
 

@@ -17,7 +17,6 @@ const PAGES = [
   "/recursos",
   "/venus-retrogrado",
   ...RESOURCES.map((r) => `/recursos/${r.slug}`),
-  "/suenos",
   "/blog",
   "/planes",
   "/aviso-legal",

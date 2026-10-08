@@ -13,7 +13,6 @@ export default function PrivacidadPage() {
         <li>Datos de la cuenta: correo electrónico, nombre (opcional) y contraseña cifrada.</li>
         <li>Datos de nacimiento que introduzcas para calcular cartas: fecha, hora y lugar.</li>
         <li>Nombres completos y fechas de nacimiento que introduzcas para la numerología, tuyos o de otras personas. Si añades a terceros, te corresponde contar con su conocimiento; puedes borrar a cualquier persona en todo momento y se eliminan sus datos y lecturas.</li>
-        <li>Los sueños que anotes en tu diario, con las emociones que marques, y sus interpretaciones. Pueden contener información muy personal: solo tú puedes verlos, solo se usan para interpretarlos dentro de tu diario y puedes borrarlos uno a uno o todos a la vez, con efecto inmediato.</li>
         <li>Conversaciones con el asistente astrológico, para que pueda recordar el contexto. El responsable de la web puede revisar las preguntas y respuestas para mejorar la calidad del asistente y detectar usos indebidos; no se usan para ningún otro fin.</li>
         <li>Correo de la lista de espera, si te apuntas.</li>
         <li>Nombre, correo y datos de nacimiento (fecha, hora y lugar) que envíes para recibir la guía gratuita de la campaña «Venus retrógrado»; sirven para calcular tu ascendente y enviarte la guía.</li>

@@ -39,7 +39,6 @@ export default async function AdminUsuarioPage({ params }: Props) {
     ["Lecturas de carta", String(user.readings)],
     ["Preguntas a Alshain", String(user.questions)],
     ["Numerología", `${user.numerology_people} ${user.numerology_people === 1 ? "persona" : "personas"}`],
-    ["Sueños anotados", String(user.dreams)],
   ];
 
   return (
@@ -95,7 +94,7 @@ export default async function AdminUsuarioPage({ params }: Props) {
           ))
         )}
         <p className="small muted" style={{ marginTop: 40 }}>
-          Por privacidad, el panel no muestra los sueños anotados ni los nombres de la numerología: solo cuántos hay.
+          Por privacidad, el panel no muestra los nombres de la numerología: solo cuántos hay.
         </p>
       </div>
     </section>

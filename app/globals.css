@@ -653,20 +653,6 @@ td .sym { color: var(--oro); font-size: 22px; font-variant-emoji: text; }
 .calc-details summary:hover { color: var(--oro); }
 .calc-body { margin-top: 12px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-raised); }
 
-/* Diario de sueños */
-.chip { cursor: pointer; user-select: none; position: relative; }
-.chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.chip:has(input:checked) { border-color: var(--oro); background: var(--oro-soft); color: var(--ink); }
-.chip:has(input:focus-visible) { outline: 2px solid var(--oro); outline-offset: 2px; }
-.dream-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 40px; align-items: start; }
-.dream-aside { display: flex; flex-direction: column; gap: 24px; position: sticky; top: 24px; }
-.dream-aside .panel h3 { font-size: 24px; }
-.dream-layout .post-item:first-child { border-top: 0; padding-top: 0; }
-@media (max-width: 900px) { .dream-layout { grid-template-columns: minmax(0, 1fr); } .dream-aside { position: static; } }
-.dream-text { font-size: 19px; line-height: 1.7; border-left: 2px solid var(--oro); padding-left: 20px; }
-.dream-text p { margin: 0 0 12px; }
-.dream-text p:last-child { margin-bottom: 0; }
-
 /* Panel de administración */
 .admin-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; margin: 28px 0 48px; }
 .admin-stat { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; }
