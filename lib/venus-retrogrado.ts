@@ -73,7 +73,7 @@ export function guideEmail(g: Guide) {
 ${aviso}
 <h2 style="font-size:20px">Calendario de Venus retrógrado</h2>
 <ul>${calendario}</ul>
-<p>Es una guía general por tu ascendente: habla de tendencias, no de destinos. En tu carta natal completa vemos qué planeta personal te está tocando Venus, y una lectura profunda sobre cómo te afecta este tránsito.</p>
+<p>Es una guía general por tu ascendente: habla de tendencias, no de destinos. En tu carta natal completa vemos qué planeta personal te está tocando Venus y Marte, y una lectura profunda sobre cómo te afecta este tránsito.</p>
 <p>— El atlas de Tarazed</p>
 </div>`;
   return { subject: "Tu guía de la Luna Nueva con Venus retrógrado", html };

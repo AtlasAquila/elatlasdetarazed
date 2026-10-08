@@ -77,7 +77,7 @@ export default function VenusRetrogradoPage() {
       <section className="section">
         <div className="container reading venus-final">
           <h2>¿Quieres que lo miremos en tu carta?</h2>
-          <p className="lead">Esta guía es general por ascendente. En tu carta natal vemos el grado exacto y qué planeta personal te está tocando Venus y Marte.</p>
+          <p className="lead">Esta guía es general por ascendente. En tu carta natal completa vemos qué planeta personal te está tocando Venus y Marte, y una lectura profunda sobre cómo te afecta este tránsito.</p>
           <Link href="/carta" className="btn btn-primary">
             Conocer mi carta natal
           </Link>
