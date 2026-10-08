@@ -581,6 +581,9 @@ td .sym { color: var(--oro); font-size: 22px; font-variant-emoji: text; }
 }
 .chat-empty { margin: auto 0; }
 .chat-empty .toggles { margin-top: var(--space-4); }
+.chat-suggest { border: 1px solid var(--oro); background: var(--oro-soft); border-radius: var(--radius-sm); padding: var(--space-4); }
+.chat-suggest p { margin: 0 0 var(--space-2); }
+.chat-suggest .btn { text-align: left; white-space: normal; }
 .chat-msg { max-width: 88%; padding: 14px 18px; border-radius: var(--radius-md); line-height: 1.6; }
 .chat-msg > :first-child { margin-top: 0; }
 .chat-msg > :last-child { margin-bottom: 0; }

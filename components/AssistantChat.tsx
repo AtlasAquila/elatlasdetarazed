@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { EVENTO_VENUS, VENUS_PREGUNTA } from "@/lib/venus-retrogrado";
 import { RichText } from "./RichText";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -13,11 +14,13 @@ type Props = {
   remaining: number;
   isPremium: boolean;
   enabled: boolean;
+  /** Llega desde la guía de Venus retrógrado: se destaca la pregunta sugerida. */
+  suggestVenus?: boolean;
 };
 
 const SUGGESTIONS = ["¿Qué dice mi carta sobre mi forma de amar?", "¿Cuál es mi mayor talento según mi carta?", "¿Qué significa mi Luna para mi vida emocional?", "¿Hacia qué vocación apunta mi Medio Cielo?"];
 
-export function AssistantChat({ chartId, chartName, initial, remaining: initialRemaining, isPremium, enabled }: Props) {
+export function AssistantChat({ chartId, chartName, initial, remaining: initialRemaining, isPremium, enabled, suggestVenus = false }: Props) {
   const [messages, setMessages] = useState<Msg[]>(initial);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -29,7 +32,7 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages.length, busy]);
 
-  const send = async (text: string) => {
+  const send = async (text: string, evento?: string) => {
     const question = text.trim();
     if (!question || busy) return;
     setError(null);
@@ -37,7 +40,7 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
     setInput("");
     setMessages((m) => [...m, { role: "user", content: question }, { role: "assistant", content: "" }]);
     try {
-      const res = await fetch("/api/asistente", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chartId, message: question }) });
+      const res = await fetch("/api/asistente", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chartId, message: question, evento }) });
       if (!res.ok || !res.body) {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
         setError(data.error ?? "No se ha podido enviar la pregunta.");
@@ -72,6 +75,7 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
   };
 
   const outOfQuestions = remaining <= 0;
+  const showVenus = suggestVenus && enabled && !outOfQuestions && !messages.some((m) => m.content === VENUS_PREGUNTA);
 
   return (
     <div className="chat">
@@ -95,6 +99,15 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
         ))}
         <div ref={endRef} />
       </div>
+
+      {showVenus && (
+        <div className="chat-suggest">
+          <p className="small muted">Viene de la guía de Venus retrógrado. Una pregunta para empezar:</p>
+          <button type="button" className="btn btn-primary" onClick={() => send(VENUS_PREGUNTA, EVENTO_VENUS)} disabled={busy}>
+            {VENUS_PREGUNTA}
+          </button>
+        </div>
+      )}
 
       {error && (
         <p className="notice notice-error" role="alert">

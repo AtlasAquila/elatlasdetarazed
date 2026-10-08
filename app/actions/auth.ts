@@ -43,6 +43,7 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
   const name = String(formData.get("name") ?? "").trim().slice(0, 80);
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
+  const next = safeNext(formData.get("siguiente"));
   if (!EMAIL.test(email)) return { error: "Escribe un correo electrónico válido." };
   if (password.length < 8) return { error: "La contraseña debe tener al menos 8 caracteres." };
   if (formData.get("terms") !== "on") return { error: "Para crear la cuenta debes aceptar la política de privacidad." };
@@ -55,11 +56,11 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
     password,
     options: {
       data: { display_name: name },
-      emailRedirectTo: `${siteUrl}/auth/confirm?next=/cuenta`,
+      emailRedirectTo: `${siteUrl}/auth/confirm?next=${encodeURIComponent(next)}`,
     },
   });
   if (error) return { error: translate(error.message) };
-  if (data.session) redirect("/cuenta");
+  if (data.session) redirect(next);
   return { message: "Te hemos enviado un correo. Pulsa el enlace para confirmar tu cuenta y entrar." };
 }
 

@@ -8,12 +8,13 @@ import { createClient, getSession } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Asistente astrológico" };
 
-type Props = { params: Promise<{ id: string }> };
+type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ pregunta?: string }> };
 
-export default async function AsistentePage({ params }: Props) {
+export default async function AsistentePage({ params, searchParams }: Props) {
   const { id } = await params;
+  const { pregunta } = await searchParams;
   const session = await getSession();
-  if (!session) redirect(`/entrar?siguiente=/carta/${id}/asistente`);
+  if (!session) redirect(`/entrar?siguiente=${encodeURIComponent(`/carta/${id}/asistente${pregunta === "venus" ? "?pregunta=venus" : ""}`)}`);
   const row = await getMyChart(id);
   if (!row) notFound();
 
@@ -43,7 +44,7 @@ export default async function AsistentePage({ params }: Props) {
         </p>
         <h1>Pregunta a Alshain</h1>
         <p className="muted">{birthSummary(row)}</p>
-        <AssistantChat chartId={id} chartName={row.name} initial={messages} remaining={remaining} isPremium={isPremium} enabled={aiConfigured()} />
+        <AssistantChat chartId={id} chartName={row.name} initial={messages} remaining={remaining} isPremium={isPremium} enabled={aiConfigured()} suggestVenus={pregunta === "venus"} />
       </div>
     </section>
   );

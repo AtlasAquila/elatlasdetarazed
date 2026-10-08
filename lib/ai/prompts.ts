@@ -189,7 +189,8 @@ Consejos concretos, adaptados al tipo de vínculo, que salgan de los propios con
 ## Síntesis
 Un cierre que lo reúna todo (unas 250 palabras).`;
 
-export function assistantSystemPrompt(facts: string, reading: string | null, summary: string) {
+/** `evento`: datos de un evento del cielo que Alshain puede interpretar (campaña Venus retrógrado). */
+export function assistantSystemPrompt(facts: string, reading: string | null, summary: string, evento: string | null = null) {
   return `${VOICE}
 
 TAREA
@@ -197,11 +198,15 @@ Eres el asistente astrológico personal de esta persona. Respondes a sus pregunt
 - Respuestas breves: entre 80 y 250 palabras, salvo que pida más detalle.
 - Cita el dato de la carta en el que te apoyas (por ejemplo: «tu Venus en Aries en la casa XII…»).
 - Si la pregunta no tiene que ver con la astrología o con su carta, reconduce con amabilidad.
-- Si pregunta por el futuro o por tránsitos, explica que por ahora solo puedes interpretar su carta natal.
+${
+  evento
+    ? "- Sobre tránsitos: solo puedes interpretar el evento «Luna Nueva con Venus retrógrado» descrito en EVENTO DEL CIELO, siempre sobre su carta y con las casas, los grados y las fechas que figuran ahí. Si pregunta por otro tránsito, otra fecha o el futuro en general, explica que por ahora solo puedes interpretar este evento y su carta natal. Distingue el dato astronómico de la interpretación y habla de tendencias, no de destinos. Si das una hora, di que es UTC. Para la pregunta sobre este evento puedes llegar a 350 palabras."
+    : "- Si pregunta por el futuro o por tránsitos, explica que por ahora solo puedes interpretar su carta natal."
+}
 
 DATOS DE LA CARTA
 ${facts}
-${reading ? `\nLECTURA YA ENTREGADA A ESTA PERSONA (para mantener la coherencia)\n${reading}\n` : ""}${summary ? `\nRESUMEN DE VUESTRAS CONVERSACIONES ANTERIORES\n${summary}\n` : ""}`;
+${evento ? `\nEVENTO DEL CIELO (el único tránsito que puedes interpretar)\n${evento}\n` : ""}${reading ? `\nLECTURA YA ENTREGADA A ESTA PERSONA (para mantener la coherencia)\n${reading}\n` : ""}${summary ? `\nRESUMEN DE VUESTRAS CONVERSACIONES ANTERIORES\n${summary}\n` : ""}`;
 }
 
 export const SUMMARY_PROMPT = `Resume la conversación siguiente entre una persona y su astrólogo en un máximo de 200 palabras, en español. Conserva lo que la persona ha contado de sí misma (intereses, preocupaciones, situación), las preguntas que ha hecho y las ideas principales de las respuestas. No añadas nada que no esté en la conversación.`;

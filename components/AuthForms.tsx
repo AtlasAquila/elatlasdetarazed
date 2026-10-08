@@ -52,11 +52,12 @@ export function SignInForm({ next }: { next?: string }) {
   );
 }
 
-export function SignUpForm() {
+export function SignUpForm({ next }: { next?: string }) {
   const [state, action, pending] = useActionState<AuthState, FormData>(signUp, {});
   if (state.message) return <Feedback state={state} />;
   return (
     <form action={action} className="form">
+      <input type="hidden" name="siguiente" value={next ?? "/cuenta"} />
       <div className="field">
         <label htmlFor="name">Nombre (opcional)</label>
         <input id="name" name="name" type="text" autoComplete="given-name" className="input" maxLength={80} />

@@ -36,22 +36,24 @@ export type GuideContent = {
   cta: { texto: string; boton: string; ruta: string };
 };
 
-const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+export const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 const SIGN_LON = (lon: number) => Math.floor((((lon % 360) + 360) % 360) / 30);
 
 /** 12.5 → «12°30′» */
-function grados(deg: number) {
+export function grados(deg: number) {
   const t = Math.round(deg * 60);
   return `${Math.floor(t / 60)}°${String(t % 60).padStart(2, "0")}′`;
 }
 
-const posicion = (lon: number) => `${grados(((lon % 30) + 30) % 30)} de ${SIGN_NAMES[SIGN_LON(lon)]}`;
+export const posicion = (lon: number) => `${grados(((lon % 30) + 30) % 30)} de ${SIGN_NAMES[SIGN_LON(lon)]}`;
 
-type Contacto = { cuerpo: string; natal: number; punto: (typeof PUNTOS_CIELO)[number]; aspecto: keyof typeof ASPECTOS; orbe: number };
+export type Contacto = { cuerpo: string; natal: number; punto: (typeof PUNTOS_CIELO)[number]; aspecto: keyof typeof ASPECTOS; orbe: number };
 
 /** Para cada punto personal, el contacto más cercano (conjunción, cuadratura u oposición) con los puntos del cielo. */
-function contactos(chart: Chart): Contacto[] {
+export function contactos(chart: Chart): Contacto[] {
   const natales: { id: string; lon: number; orbe: number }[] = (["sun", "moon", "mercury", "venus", "mars"] as BodyId[]).flatMap((id) => {
+    // Sin hora de nacimiento la Luna puede variar hasta 7° en el día: no se compara.
+    if (id === "moon" && chart.input.timeUnknown) return [];
     const b = chart.bodies.find((x) => x.id === id);
     return b ? [{ id, lon: b.longitude, orbe: 3 }] : [];
   });
@@ -77,7 +79,7 @@ function contactos(chart: Chart): Contacto[] {
 }
 
 /** Casas que recorre Venus entre dos longitudes, en el orden en que las atraviesa (retrógrado: de mayor a menor longitud). */
-function casasDelRecorrido(desde: number, hasta: number, cusps: number[]) {
+export function casasDelRecorrido(desde: number, hasta: number, cusps: number[]) {
   const casas: number[] = [];
   const pasos = 64;
   for (let i = 0; i <= pasos; i++) {
@@ -186,7 +188,7 @@ export function buildGuide(chart: Chart, nombre: string): GuideContent {
     aproximada,
     secciones,
     cta: {
-      texto: `${TEXTO_CIERRE}${tuyos}\n\nCrea tu carta natal gratis y mírala completa.`,
+      texto: `${TEXTO_CIERRE}${tuyos}\n\nCrea tu carta natal gratis y mírala completa. Después podrás preguntarle a Alshain, el asistente de El atlas de Tarazed, cómo afecta la Luna Nueva con Venus retrógrado en Escorpio a tu carta.`,
       boton: "Crear mi carta natal",
       ruta: `/registro?siguiente=${encodeURIComponent("/carta/nueva?origen=venus")}`,
     },
