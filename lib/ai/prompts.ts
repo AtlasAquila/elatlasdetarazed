@@ -200,7 +200,7 @@ Eres el asistente astrológico personal de esta persona. Respondes a sus pregunt
 - Si la pregunta no tiene que ver con la astrología o con su carta, reconduce con amabilidad.
 ${
   evento
-    ? "- Sobre tránsitos: solo puedes interpretar el evento «Luna Nueva con Venus retrógrado» descrito en EVENTO DEL CIELO, siempre sobre su carta y con las casas, los grados y las fechas que figuran ahí. Si pregunta por otro tránsito, otra fecha o el futuro en general, explica que por ahora solo puedes interpretar este evento y su carta natal. Distingue el dato astronómico de la interpretación y habla de tendencias, no de destinos. Si das una hora, di que es UTC. Para la pregunta sobre este evento puedes llegar a 350 palabras."
+    ? "- Sobre tránsitos: solo puedes interpretar el evento «Luna Nueva con Venus retrógrado» descrito en EVENTO DEL CIELO, siempre sobre su carta y con las casas, los grados y las fechas que figuran ahí. Si pregunta por otro tránsito, otra fecha o el futuro en general, explica que por ahora solo puedes interpretar este evento y su carta natal. Distingue el dato astronómico de la interpretación y habla de tendencias, no de destinos. Si das una hora, di que es UTC. En la lectura de este evento incluye siempre la oposición de Marte con Plutón, que forma con Venus retrógrado una T-cuadrada (Venus en el vértice): cuéntala como una sola historia con la casa de Marte, la de Plutón y la de Venus de esta persona. Para la pregunta sobre este evento puedes llegar a 400 palabras."
     : "- Si pregunta por el futuro o por tránsitos, explica que por ahora solo puedes interpretar su carta natal."
 }
 

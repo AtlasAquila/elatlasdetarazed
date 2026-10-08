@@ -15,6 +15,7 @@ import {
   FASES,
   INTRO_CIELO,
   PUNTOS_CIELO,
+  type PuntoCielo,
   PUNTOS_PERSONALES,
   SIN_CONTACTOS,
   TEXTO_CIERRE,
@@ -50,7 +51,7 @@ export const posicion = (lon: number) => `${grados(((lon % 30) + 30) % 30)} de $
 export type Contacto = { cuerpo: string; natal: number; punto: (typeof PUNTOS_CIELO)[number]; aspecto: keyof typeof ASPECTOS; orbe: number };
 
 /** Para cada punto personal, el contacto más cercano (conjunción, cuadratura u oposición) con los puntos del cielo. */
-export function contactos(chart: Chart): Contacto[] {
+export function contactos(chart: Chart, puntos: PuntoCielo[] = PUNTOS_CIELO): Contacto[] {
   const natales: { id: string; lon: number; orbe: number }[] = (["sun", "moon", "mercury", "venus", "mars"] as BodyId[]).flatMap((id) => {
     // Sin hora de nacimiento la Luna puede variar hasta 7° en el día: no se compara.
     if (id === "moon" && chart.input.timeUnknown) return [];
@@ -62,7 +63,7 @@ export function contactos(chart: Chart): Contacto[] {
   const found: Contacto[] = [];
   for (const n of natales) {
     let best: Contacto | null = null;
-    for (const p of PUNTOS_CIELO) {
+    for (const p of puntos) {
       const d = Math.abs(angleDiff(n.lon, p.longitud));
       const options: [keyof typeof ASPECTOS, number][] = [
         ["conjuncion", d],
