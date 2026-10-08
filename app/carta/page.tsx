@@ -41,7 +41,8 @@ export default async function CartaPage() {
   const charts = await listMyCharts();
   const supabase = await createClient();
   const { data: profile } = supabase ? await supabase.from("profiles").select("plan").eq("id", session.userId).maybeSingle() : { data: null };
-  const limit = profile?.plan === "premium" ? PREMIUM_CHART_LIMIT : FREE_CHART_LIMIT;
+  const isPremium = profile?.plan === "premium";
+  const limit = isPremium ? PREMIUM_CHART_LIMIT : FREE_CHART_LIMIT;
   const canCreate = charts.length < limit;
 
   return (
@@ -56,7 +57,15 @@ export default async function CartaPage() {
               Nueva carta
             </Link>
           ) : (
-            <span className="notice">Has llegado al máximo de cartas de tu plan. Borra alguna para crear otra.</span>
+            <span className="notice">
+              {isPremium ? (
+                "Has llegado al máximo de cartas de tu plan. Borra alguna para crear otra."
+              ) : (
+                <>
+                  Has llegado al máximo de cartas de tu plan. Borra alguna o hazte <Link href="/planes">premium</Link> para añadir más.
+                </>
+              )}
+            </span>
           )}
           <span className="muted small">
             {charts.length} de {limit} cartas guardadas.
