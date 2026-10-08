@@ -4,7 +4,7 @@ import Link from "next/link";
 import { VenusGuideForm } from "@/components/VenusGuideForm";
 
 const TITLE = "Venus retrógrado: del 3 de octubre al 14 de noviembre";
-const DESCRIPTION = "No viene a darte paz. Viene a preguntarte si tu vínculo es reciprocidad o costumbre. Tu guía gratuita de la Luna Nueva en Libra según tu ascendente.";
+const DESCRIPTION = "Tu guía gratuita de la Luna Nueva en Libra según tu ascendente.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -30,12 +30,11 @@ export default function VenusRetrogradoPage() {
         <div className="container">
           <p className="kicker">Venus retrógrado · del 3 de octubre al 14 de noviembre</p>
           <h1>Venus retrógrado</h1>
-          <p className="hero-intro-subtitle">No viene a darte paz. Viene a preguntarte si tu vínculo es reciprocidad o costumbre.</p>
           <p className="hero-intro-body">
             Venus va marcha atrás desde el 3 de octubre. El 10, con la Luna Nueva en Libra, forma una cuadratura exacta con Marte en Leo. Con Venus retrógrado en Escorpio, no es momento de firmar nada a ciegas. Es momento de revisar.
           </p>
           <a href="#guia" className="btn btn-primary">
-            Quiero saber dónde me cae →
+            Quiero saber en qué casa me cae esta Luna Nueva →
           </a>
         </div>
       </section>
@@ -57,7 +56,7 @@ export default function VenusRetrogradoPage() {
           <p className="venus-result">
             <strong>Resultado: atracción + fricción.</strong> Por eso tus vínculos pueden sentirse raros.
           </p>
-          <p className="small muted">Datos del cielo calculados con efemérides (horas de Madrid). La interpretación habla de tendencias, no de destinos.</p>
+          <p className="small muted">La interpretación habla de tendencias, no de destinos.</p>
         </div>
       </section>
 
