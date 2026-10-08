@@ -51,6 +51,9 @@ export default async function AdminPage() {
           <Link href="/admin/usuarios" className="btn btn-ghost">
             Usuarios y preguntas
           </Link>
+          <Link href="/admin/venus" className="btn btn-ghost">
+            Guía de Venus
+          </Link>
           <Link href="/admin/textos" className="btn btn-ghost">
             Textos de la web
           </Link>
