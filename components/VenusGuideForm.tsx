@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { requestVenusGuide, type VenusGuideState } from "@/app/actions/venus-guia";
+import { BirthDateTimeFields } from "@/components/BirthDateTimeFields";
 import { PlacePicker } from "@/components/PlacePicker";
 import { VenusGuideView } from "@/components/VenusGuideView";
 
@@ -26,16 +27,7 @@ export function VenusGuideForm() {
         <label htmlFor="venus-nombre">Nombre</label>
         <input id="venus-nombre" name="nombre" className="input" required maxLength={80} autoComplete="given-name" />
       </div>
-      <div className="grid-2" style={{ gap: 20 }}>
-        <div className="field">
-          <label htmlFor="venus-date">Fecha de nacimiento</label>
-          <input id="venus-date" name="date" type="date" className="input" required min="1800-01-01" max="2200-12-31" autoComplete="bday" />
-        </div>
-        <div className="field">
-          <label htmlFor="venus-time">Hora de nacimiento</label>
-          <input id="venus-time" name="time" type="time" className="input" required />
-        </div>
-      </div>
+      <BirthDateTimeFields idPrefix="venus" />
       <PlacePicker />
       <div className="field">
         <label htmlFor="venus-email">Tu email</label>

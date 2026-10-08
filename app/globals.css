@@ -247,6 +247,7 @@ img, svg { max-width: 100%; }
   font-family: inherit;
   font-size: 17px;
 }
+.birth-selects select.input { padding: 10px 6px 10px 12px; }
 .textarea { min-height: 320px; line-height: 1.6; resize: vertical; }
 .input:focus,
 .textarea:focus { border-color: var(--oro); outline: none; }
