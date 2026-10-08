@@ -1,18 +1,23 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { savePost, type PostFormState } from "@/app/actions/posts";
 import { BLOG_CATEGORIES, type PostKind } from "@/lib/post-shared";
 import type { Post } from "@/lib/posts";
 
 export function PostEditor({ post, saved, kind = "clima" }: { post?: Post; saved?: boolean; kind?: PostKind }) {
   const [state, action, pending] = useActionState<PostFormState, FormData>(savePost, saved ? { message: "Guardado." } : {});
+  const intentRef = useRef<HTMLInputElement>(null);
+  const setIntent = (value: "publish" | "draft") => {
+    if (intentRef.current) intentRef.current.value = value;
+  };
   const effectiveKind = post?.kind ?? kind;
   const isBlog = effectiveKind === "blog";
   return (
     <form action={action} className="form">
       <input type="hidden" name="id" value={post?.id ?? ""} />
       <input type="hidden" name="kind" value={effectiveKind} />
+      <input type="hidden" name="intent" ref={intentRef} defaultValue={post?.published ? "publish" : "draft"} />
       <div className="field">
         <label htmlFor="title">Título</label>
         <input id="title" name="title" className="input" required defaultValue={post?.title} placeholder={isBlog ? "El mito de Perséfone" : "Luna llena en Aries"} />
@@ -65,10 +70,10 @@ export function PostEditor({ post, saved, kind = "clima" }: { post?: Post; saved
         </p>
       )}
       <div className="actions">
-        <button type="submit" name="intent" value="publish" className="btn btn-primary" disabled={pending}>
+        <button type="submit" onClick={() => setIntent("publish")} className="btn btn-primary" disabled={pending}>
           {post?.published ? "Guardar cambios" : "Publicar"}
         </button>
-        <button type="submit" name="intent" value="draft" className="btn btn-ghost" disabled={pending}>
+        <button type="submit" onClick={() => setIntent("draft")} className="btn btn-ghost" disabled={pending}>
           {post?.published ? "Pasar a borrador" : "Guardar borrador"}
         </button>
       </div>

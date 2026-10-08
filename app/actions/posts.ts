@@ -27,8 +27,7 @@ export async function savePost(_prev: PostFormState, formData: FormData): Promis
   const categoryInput = String(formData.get("category") ?? "").trim();
   const category: BlogCategory | null = kind === "blog" && categoryInput in BLOG_CATEGORIES ? (categoryInput as BlogCategory) : null;
   const slugInput = String(formData.get("slug") ?? "").trim();
-  const intent = String(formData.get("intent") ?? "draft");
-  const publish = intent === "publish";
+  const intent = String(formData.get("intent") ?? "");
 
   if (!title) return { error: "El título es obligatorio." };
   if (!body) return { error: "El texto está vacío." };
@@ -36,6 +35,14 @@ export async function savePost(_prev: PostFormState, formData: FormData): Promis
 
   const slug = slugify(slugInput || title);
   if (!slug) return { error: "La dirección web no es válida." };
+
+  // Si la intención no llega o no se reconoce, se conserva el estado actual: nunca se pasa a borrador en silencio.
+  let current: { published: boolean; published_at: string | null } | null = null;
+  if (id) {
+    const { data } = await supabase.from("posts").select("published, published_at").eq("id", id).maybeSingle();
+    current = data;
+  }
+  const publish = intent === "publish" ? true : intent === "draft" ? false : current?.published ?? false;
 
   const values = {
     title,
@@ -51,7 +58,6 @@ export async function savePost(_prev: PostFormState, formData: FormData): Promis
 
   let savedId = id;
   if (id) {
-    const { data: current } = await supabase.from("posts").select("published_at").eq("id", id).maybeSingle();
     const { error } = await supabase
       .from("posts")
       .update({ ...values, published_at: publish ? current?.published_at ?? new Date().toISOString() : current?.published_at ?? null })
