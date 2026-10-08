@@ -18,6 +18,7 @@ import {
   type PuntoCielo,
   PUNTOS_PERSONALES,
   SIN_CONTACTOS,
+  EJE_MARTE_PLUTON,
   TEXTO_CIERRE,
   VENUS_NATAL_RETROGRADO,
   VENUS_SIGNOS,
@@ -182,6 +183,10 @@ export function buildGuide(chart: Chart, nombre: string): GuideContent {
       ? ` En tu caso, un Sol en ${SIGN_NAMES[sol.sign]}, una Luna en ${SIGN_NAMES[luna.sign]} y un Marte en ${SIGN_NAMES[marte.sign]} responden a este tránsito de maneras muy distintas.`
       : "";
 
+  const casaMarte = houseOf(120 + 3 + 6 / 60, cusps);
+  const casaPluton = houseOf(EJE_MARTE_PLUTON.longitud, cusps);
+  const eje = ` Además verás dónde cae la oposición de Marte con Plutón, que en este ciclo forma con Venus una T-cuadrada: en tu carta, entre tus casas ${ROMAN[casaMarte - 1]} y ${ROMAN[casaPluton - 1]}.`;
+
   return {
     nombre,
     ascendente,
@@ -189,7 +194,7 @@ export function buildGuide(chart: Chart, nombre: string): GuideContent {
     aproximada,
     secciones,
     cta: {
-      texto: `${TEXTO_CIERRE}${tuyos}\n\nCrea tu carta natal gratis y mírala completa. Después podrás preguntarle a Alshain, el asistente de El atlas de Tarazed, cómo afecta la Luna Nueva con Venus retrógrado en Escorpio a tu carta.`,
+      texto: `${TEXTO_CIERRE}${tuyos}${eje}\n\nCrea tu carta natal gratis y mírala completa. Después podrás preguntarle a Alshain, el asistente de El atlas de Tarazed, cómo afecta la Luna Nueva con Venus retrógrado en Escorpio a tu carta.`,
       boton: "Crear mi carta natal",
       ruta: `/registro?siguiente=${encodeURIComponent("/carta/nueva?origen=venus")}`,
     },

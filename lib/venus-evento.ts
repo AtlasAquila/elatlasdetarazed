@@ -6,11 +6,10 @@
 
 import { houseOf } from "@/lib/engine";
 import type { Chart } from "@/lib/engine/types";
-import { ASPECTOS, PUNTOS_CIELO, type PuntoCielo } from "@/lib/venus-guia-textos";
+import { ASPECTOS, EJE_MARTE_PLUTON, PUNTOS_CIELO } from "@/lib/venus-guia-textos";
 import { casasDelRecorrido, contactos, grados, posicion, ROMAN } from "@/lib/venus-guia";
 
-/** El eje Marte–Plutón: oposición exacta el 3/10 a 3°06′ de Leo/Acuario; en la Luna Nueva, Marte a 7°13′ de Leo y Plutón a 3°05′ de Acuario. */
-const EJE_MARTE_PLUTON: PuntoCielo = { id: "marte-pluton", nombre: "el eje Marte–Plutón", fecha: "oposición exacta el 3 de octubre", longitud: 300 + 3 + 5 / 60, grado: "3°05′ de Acuario / Leo" };
+const MARTE_LEO = 120 + 3 + 6 / 60;
 
 const CIELO = `Cielo en la Luna Nueva del sáb 10/10/2026 15:50 UTC: Sol y Luna a 17°22′ de Libra · Venus a 7°25′ de Escorpio, retrógrado (en exilio) · Marte a 7°13′ de Leo · Mercurio a 12°19′ de Escorpio · Júpiter a 21°15′ de Leo · Saturno a 10°49′ de Aries, retrógrado · Urano a 5°20′ de Géminis, retrógrado · Neptuno a 2°36′ de Aries, retrógrado · Plutón a 3°05′ de Acuario, retrógrado · Quirón a 29°03′ de Aries, retrógrado.
 Configuración principal: T-cuadrada con vértice en Venus. Marte (Leo) está en OPOSICIÓN a Plutón (Acuario, retrógrado): oposición exacta el 03/10 a las 10:39 a 3°06′ de Leo/Acuario, aún con 4°09′ de orbe en la Luna Nueva; Plutón se detiene directo el 16/10 a las 02:40, a 3°04′ de Acuario. Venus (Escorpio, retrógrado) forma cuadratura con ambos: con Marte, exacta el 10/10 a las 21:31 (7°21′); con Plutón, exacta el 20/10 a las 06:56 (3°04′). Es decir, el impulso y la acción (Marte) frente al poder y el control (Plutón) descargan su tensión sobre Venus, el vínculo y el deseo. El Sol, en Libra, está en recepción mutua con Saturno en Aries.
@@ -40,7 +39,7 @@ export function venusEventFactsText(chart: Chart) {
     out.push(`- Venus se detiene retrógrado (${venusRetro.grado}) en su ${casa(venusRetro.longitud)}, y directo (${venusDirecto.grado}) en su ${casa(venusDirecto.longitud)}.`);
     out.push(`- Casas que recorre Venus retrógrado, en orden: ${casasDelRecorrido(venusRetro.longitud, venusDirecto.longitud, cusps).map((h) => ROMAN[h - 1]).join(", ")}.`);
     out.push(`- La conjunción inferior de Venus con el Sol (${conjuncion.grado}) cae en su ${casa(conjuncion.longitud)}.`);
-    out.push(`- La oposición Marte–Plutón cae en sus casas ${casa(120 + 3 + 6 / 60).replace("casa ", "")} (Marte, Leo) y ${casa(EJE_MARTE_PLUTON.longitud).replace("casa ", "")} (Plutón, Acuario).`);
+    out.push(`- La oposición Marte–Plutón cae en sus casas ${casa(MARTE_LEO).replace("casa ", "")} (Marte, Leo) y ${casa(EJE_MARTE_PLUTON.longitud).replace("casa ", "")} (Plutón, Acuario).`);
     if (chart.houses.systemUsed !== "placidus") out.push("- Las casas son aproximadas (Placidus no se puede calcular en esa latitud).");
   } else {
     out.push("- Esta persona no tiene hora de nacimiento: no hay casas ni ascendente. No hables de casas.");
