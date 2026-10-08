@@ -57,7 +57,6 @@ export default async function AdminUsuariosPage() {
                     <th title="Cartas">Cartas</th>
                     <th title="Preguntas a Alshain">Preg.</th>
                     <th title="Personas en numerología">Num.</th>
-                    <th title="Sueños anotados">Sueños</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -74,7 +73,6 @@ export default async function AdminUsuariosPage() {
                       <td className="num">{u.charts}</td>
                       <td className="num">{u.questions}</td>
                       <td className="num">{u.numerology_people}</td>
-                      <td className="num">{u.dreams}</td>
                     </tr>
                   ))}
                 </tbody>

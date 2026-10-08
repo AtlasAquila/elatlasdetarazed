@@ -15,11 +15,9 @@ type Props = {
   waiting: string;
   note?: string;
   enabled: boolean;
-  /** Empieza sola al cargar (por ejemplo, justo después de anotar un sueño). */
+  /** Empieza sola al cargar (por ejemplo, justo después de un pago). */
   autoStart?: boolean;
-  /** Muestra el texto guardado pero permite pedir uno nuevo (p. ej. patrones con sueños nuevos). */
-  refreshLabel?: string;
-  /** Recarga los datos de la página al terminar (símbolos extraídos, contadores). */
+  /** Recarga los datos de la página al terminar (contadores, lecturas guardadas). */
   refreshOnDone?: boolean;
   /**
    * Al terminar, enlaza al cálculo guardado: el id viene en una cabecera de la respuesta
@@ -29,7 +27,7 @@ type Props = {
   doneLink?: { header: string; base: string; label: string };
 };
 
-export function StreamedReading({ endpoint, body, initial, title, description, button, waiting, note, enabled, autoStart, refreshLabel, refreshOnDone, doneLink }: Props) {
+export function StreamedReading({ endpoint, body, initial, title, description, button, waiting, note, enabled, autoStart, refreshOnDone, doneLink }: Props) {
   const [text, setText] = useState(initial ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -108,11 +106,6 @@ export function StreamedReading({ endpoint, body, initial, title, description, b
         <p className="notice notice-error" role="alert">
           {error}
         </p>
-      )}
-      {text && !loading && refreshLabel && enabled && (
-        <button type="button" className="btn btn-ghost btn-small" onClick={generate} style={{ marginTop: 16 }}>
-          {refreshLabel}
-        </button>
       )}
       {text && !loading && !error && doneHref && doneLink && (
         <p style={{ marginTop: 24 }}>

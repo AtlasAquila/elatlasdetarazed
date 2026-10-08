@@ -9,7 +9,7 @@ Next.js 15 (App Router, server actions) + React 19 + TypeScript, sin librería d
 
 ## Mapa
 
-- `app/<ruta>/page.tsx`: páginas (clima-astral, blog, carta, sinastria, numerologia, suenos, admin, cuenta, legales...).
+- `app/<ruta>/page.tsx`: páginas (clima-astral, blog, carta, sinastria, numerologia, admin, cuenta, legales...).
 - `app/actions/*.ts`: server actions (posts, charts, auth, billing...). `app/api/*`: rutas de IA (lectura, asistente), lugares, Stripe.
 - `components/`: un componente por archivo (ChartWheel, CicloLunar, LiveSkyWheel, PostEditor, RichText, SiteMenu...).
 - `lib/engine/`: motor astronómico propio (`computeChart()`), validado contra Swiss Ephemeris. No lo toques sin volver a validar (`scripts/validate-engine.ts`).

@@ -765,3 +765,42 @@ create policy "Cualquiera pide la guía de Venus" on public.venus_guia
 drop policy if exists "Solo administradores ven las peticiones de Venus" on public.venus_guia;
 create policy "Solo administradores ven las peticiones de Venus" on public.venus_guia
   for select using ((select private.is_admin()));
+
+-- Se retira el diario de sueños (octubre de 2026). En producción no había ningún sueño ni análisis guardado.
+-- admin_users() deja de devolver el número de sueños; se recrea porque cambia su forma de salida.
+drop function if exists public.admin_users();
+create function public.admin_users()
+returns table (
+  id uuid, email text, display_name text, plan text, is_admin boolean,
+  created_at timestamptz, last_sign_in_at timestamptz, email_confirmed boolean,
+  charts int, questions int, readings int, numerology_people int,
+  last_activity timestamptz
+)
+language plpgsql stable security definer set search_path = ''
+as $$
+begin
+  if not private.is_admin() then
+    raise exception 'Solo administradores' using errcode = '42501';
+  end if;
+  return query
+  select u.id, u.email::text, p.display_name, coalesce(p.plan, 'gratuito'), coalesce(p.is_admin, false),
+         u.created_at, u.last_sign_in_at, u.email_confirmed_at is not null,
+         (select count(*)::int from public.charts c where c.user_id = u.id),
+         (select count(*)::int from public.messages m where m.user_id = u.id and m.role = 'user'),
+         (select count(*)::int from public.readings r where r.user_id = u.id),
+         (select count(*)::int from public.numerology_people n where n.user_id = u.id),
+         greatest(
+           u.last_sign_in_at,
+           (select max(m.created_at) from public.messages m where m.user_id = u.id),
+           (select max(c.created_at) from public.charts c where c.user_id = u.id),
+           (select max(n.created_at) from public.numerology_people n where n.user_id = u.id)
+         )
+  from auth.users u
+  left join public.profiles p on p.id = u.id
+  order by u.created_at desc;
+end;
+$$;
+revoke execute on function public.admin_users() from public, anon;
+grant execute on function public.admin_users() to authenticated;
+drop table if exists public.dream_patterns;
+drop table if exists public.dreams;
