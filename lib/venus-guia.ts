@@ -237,7 +237,7 @@ export function guideEmail(g: GuideContent) {
   const html = `<div style="font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.65;color:#1a1204;max-width:600px;margin:0 auto;padding:8px 4px">
 <p style="font-size:13px;letter-spacing:0.16em;text-transform:uppercase;color:#8a6a3b;margin:0 0 6px">El atlas de Tarazed</p>
 <h1 style="font-size:28px;line-height:1.2;margin:0 0 16px">Tu guía de la Luna Nueva con Venus retrógrado</h1>
-<p style="${P}">Hola, ${esc(g.nombre)}:</p>
+<p style="${P}">${g.nombre ? `Hola, ${esc(g.nombre)}:` : "Hola:"}</p>
 <p style="${P}">Esta guía lee el cielo del 10 de octubre y las semanas de Venus retrógrado sobre tu carta. Está hecha con tu fecha, tu hora y tu lugar de nacimiento. Tómate unos minutos: se lee en cinco.</p>
 ${secciones}
 <div style="margin:34px 0 8px;padding:22px;background:#f7efdd;border:1px solid #d9c9a8;border-radius:10px">

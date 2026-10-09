@@ -8,7 +8,7 @@ import { buildGuide, guideEmail, type GuideContent } from "@/lib/venus-guia";
 export type VenusGuideState = {
   error?: string;
   guide?: GuideContent;
-  /** "enviado": el correo salió ahora. "anterior": ese correo ya había pedido la guía. "no": no se pudo enviar. */
+  /** Solo si se pidió por correo. "enviado": el correo salió ahora. "anterior": ese correo ya había pedido la guía. "no": no se pudo enviar. */
   email?: "enviado" | "anterior" | "no";
 };
 
@@ -41,8 +41,10 @@ export async function requestVenusGuide(_prev: VenusGuideState, formData: FormDa
   // Campo trampa: las personas no lo ven; si llega relleno, se ignora sin avisar.
   if (String(formData.get("web") ?? "") !== "") return { error: "No hemos podido procesar el formulario." };
 
+  // Nombre y correo son opcionales; el correo solo cuenta si se marca la casilla de recibir la guía por correo.
   const nombre = String(formData.get("nombre") ?? "").trim().slice(0, 80);
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const quiereCorreo = formData.get("enviar_correo") === "on";
+  const email = quiereCorreo ? String(formData.get("email") ?? "").trim().toLowerCase() : "";
   const date = String(formData.get("date") ?? "");
   const time = String(formData.get("time") ?? "");
   const placeName = String(formData.get("place_name") ?? "").trim().slice(0, 200);
@@ -50,8 +52,7 @@ export async function requestVenusGuide(_prev: VenusGuideState, formData: FormDa
   const longitude = Number(formData.get("longitude"));
   const timeZone = String(formData.get("time_zone") ?? "");
 
-  if (!nombre) return { error: "Escribe tu nombre." };
-  if (!EMAIL.test(email) || email.length > 254) return { error: "Escribe un correo electrónico válido." };
+  if (quiereCorreo && (!EMAIL.test(email) || email.length > 254)) return { error: "Escribe un correo electrónico válido o desmarca la casilla del correo." };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Escribe tu fecha de nacimiento." };
   const year = Number(date.slice(0, 4));
   if (year < 1800 || year > 2200) return { error: "La fecha debe estar entre 1800 y 2200." };
@@ -59,7 +60,6 @@ export async function requestVenusGuide(_prev: VenusGuideState, formData: FormDa
   if (!placeName || !Number.isFinite(latitude) || !Number.isFinite(longitude) || Math.abs(latitude) > 90 || Math.abs(longitude) > 180 || !isValidTimeZone(timeZone)) {
     return { error: "Elige tu lugar de nacimiento de la lista." };
   }
-  if (formData.get("consent") !== "on") return { error: "Necesitamos tu permiso para guardar tus datos y enviarte la guía." };
 
   const chart = computeChart({
     year,
@@ -79,8 +79,8 @@ export async function requestVenusGuide(_prev: VenusGuideState, formData: FormDa
   const supabase = await createClient();
   if (!supabase) return { error: "El formulario aún no está conectado. Inténtalo más tarde." };
   const { error } = await supabase.from("venus_guia").insert({
-    nombre,
-    email,
+    nombre: nombre || null,
+    email: email || null,
     birth_date: date,
     birth_time: time,
     place_name: placeName,
@@ -89,11 +89,12 @@ export async function requestVenusGuide(_prev: VenusGuideState, formData: FormDa
     time_zone: timeZone,
     ascendente: guide.ascendente,
     casa_luna_nueva: guide.casa,
-    consent: true,
+    consent: quiereCorreo,
   });
   // 23505: ese correo ya pidió la guía. Se la mostramos, pero no se le vuelve a escribir (evita usar el formulario para saturar un buzón).
   if (error && error.code !== "23505") return { error: "No hemos podido guardar tus datos. Inténtalo de nuevo." };
   if (error) return { guide, email: "anterior" };
 
+  if (!quiereCorreo) return { guide };
   return { guide, email: (await sendEmail(email, guide)) ? "enviado" : "no" };
 }

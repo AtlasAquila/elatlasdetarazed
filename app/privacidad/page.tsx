@@ -15,7 +15,7 @@ export default function PrivacidadPage() {
         <li>Nombres completos y fechas de nacimiento que introduzcas para la numerología, tuyos o de otras personas. Si añades a terceros, te corresponde contar con su conocimiento; puedes borrar a cualquier persona en todo momento y se eliminan sus datos y lecturas.</li>
         <li>Conversaciones con el asistente astrológico, para que pueda recordar el contexto. El responsable de la web puede revisar las preguntas y respuestas para mejorar la calidad del asistente y detectar usos indebidos; no se usan para ningún otro fin.</li>
         <li>Correo de la lista de espera, si te apuntas.</li>
-        <li>Nombre, correo y datos de nacimiento (fecha, hora y lugar) que envíes para recibir la guía gratuita de la campaña «Venus retrógrado»; sirven para calcular tu ascendente y enviarte la guía.</li>
+        <li>Datos de nacimiento (fecha, hora y lugar) que envíes para recibir la guía gratuita de la campaña «Venus retrógrado»; sirven para calcular tu ascendente. Tu nombre y tu correo son opcionales: el correo solo se guarda si marcas la casilla de recibir también la guía por correo, y solo se usa para enviártela.</li>
       </ul>
       <h2>Para qué</h2>
       <p>Para prestarte el servicio (calcular e interpretar tus cartas, guardar tu historial), para enviarte la guía si la pides y, si te apuntas a la lista de espera, para avisarte del lanzamiento. No vendemos tus datos ni los usamos para publicidad.</p>

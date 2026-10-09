@@ -804,3 +804,13 @@ revoke execute on function public.admin_users() from public, anon;
 grant execute on function public.admin_users() to authenticated;
 drop table if exists public.dream_patterns;
 drop table if exists public.dreams;
+
+-- Guía de Venus sin registro obligatorio (octubre de 2026): nombre y correo pasan a ser opcionales.
+-- El correo solo se guarda si la persona marca la casilla de recibir la guía por correo; en ese caso consent = true.
+alter table public.venus_guia alter column nombre drop not null;
+alter table public.venus_guia alter column email drop not null;
+alter table public.venus_guia alter column consent set default false;
+alter table public.venus_guia drop constraint if exists venus_guia_consent_check;
+drop policy if exists "Cualquiera pide la guía de Venus" on public.venus_guia;
+create policy "Cualquiera pide la guía de Venus" on public.venus_guia
+  for insert to anon, authenticated with check (email is null or consent);
