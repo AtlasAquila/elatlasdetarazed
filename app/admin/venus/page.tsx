@@ -12,8 +12,8 @@ export const dynamic = "force-dynamic";
 type Peticion = {
   id: string;
   created_at: string;
-  nombre: string;
-  email: string;
+  nombre: string | null;
+  email: string | null;
   birth_date: string;
   birth_time: string;
   place_name: string;
@@ -69,9 +69,9 @@ export default async function AdminVenusPage() {
                 {peticiones.map((p) => (
                   <tr key={p.id}>
                     <td className="small" style={{ whiteSpace: "nowrap" }}>{fmtDateTime(p.created_at)}</td>
-                    <td>{p.nombre}</td>
+                    <td>{p.nombre ?? "—"}</td>
                     <td>
-                      <a href={`mailto:${p.email}`}>{p.email}</a>
+                      {p.email ? <a href={`mailto:${p.email}`}>{p.email}</a> : "—"}
                     </td>
                     <td className="small">
                       {fechaNacimiento(p.birth_date)} · {p.birth_time.slice(0, 5)}
@@ -86,7 +86,7 @@ export default async function AdminVenusPage() {
           </div>
         )}
         <p className="small muted" style={{ marginTop: 12 }}>
-          Son datos personales que dieron su permiso para recibir la guía: úsalos solo para eso y bórralos si te lo piden.
+          El nombre y el correo son opcionales. El correo solo está si la persona marcó recibir la guía por correo: úsalo solo para eso y bórralo si te lo piden.
         </p>
       </div>
     </section>

@@ -6,10 +6,10 @@ import type { GuideContent } from "@/lib/venus-guia";
 export function VenusGuideView({ guide, aviso }: { guide: GuideContent; aviso?: string }) {
   return (
     <div className="venus-guide" role="status">
-      <p className="kicker">Tu guía, {guide.nombre}</p>
+      <p className="kicker">{guide.nombre ? `Tu guía, ${guide.nombre}` : "Tu guía"}</p>
       <h3>Tu guía de la Luna Nueva con Venus retrógrado</h3>
       <p className="small muted">
-        {aviso} Se lee en unos cinco minutos.
+        {aviso ? `${aviso} ` : ""}Se lee en unos cinco minutos.
       </p>
       {guide.secciones.map((s) => (
         <section key={s.titulo} className="venus-guide-section">
