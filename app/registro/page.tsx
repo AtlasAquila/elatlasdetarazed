@@ -14,7 +14,7 @@ export default async function RegistroPage({ searchParams }: Props) {
       <div className="auth-wrap panel">
         <p className="kicker">Gratis</p>
         <h1 style={{ fontSize: 44 }}>Crea tu cuenta</h1>
-        <p className="muted">Guarda tus cartas natales y recibe el aviso del lanzamiento.</p>
+        <p className="muted">Guarda tus cartas natales y obtén gratis una lectura completa de ellas.</p>
         <SignUpForm next={next} />
         <p className="small muted" style={{ marginTop: 24, marginBottom: 0 }}>
           ¿Ya tienes cuenta? <Link href={next ? `/entrar?siguiente=${encodeURIComponent(next)}` : "/entrar"}>Entra</Link>
