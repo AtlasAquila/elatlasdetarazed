@@ -16,6 +16,7 @@ const PAGES = [
   "/sinastria",
   "/recursos",
   "/venus-retrogrado",
+  "/pluton-acuario",
   ...RESOURCES.map((r) => `/recursos/${r.slug}`),
   "/blog",
   "/planes",
