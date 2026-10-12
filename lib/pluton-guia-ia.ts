@@ -10,7 +10,7 @@
 import { AiError, MODELS, aiConfigured, complete } from "@/lib/ai/anthropic";
 import { VOICE } from "@/lib/ai/prompts";
 import { ROMAN } from "@/lib/engine/labels";
-import { materialCasas, materialPuntos, nombreNatal, plutonFactsText, posicion, type PlutonBase, type RedaccionIA } from "@/lib/pluton-guia";
+import { contactoMasExacto, distanciaAEstacion, grados, materialCasas, materialPuntos, nombreNatal, plutonFactsText, posicion, type PlutonBase, type RedaccionIA } from "@/lib/pluton-guia";
 import { PUNTOS_PLUTON } from "@/lib/pluton-guia-textos";
 
 const MESES = "enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre";
@@ -25,6 +25,12 @@ type Reglas = {
   debeContener?: string[];
   /** Puntos natales: si el texto da su posición o su casa, deben ser estas. */
   puntos?: { nombre: string; pos: string; casa: string }[];
+  /**
+   * Distancias a la estación («0°07′», «3°28′»): cada una pertenece a un contacto. `todas` son las de los datos;
+   * `propiasGlobal` las que se pueden citar fuera de los párrafos de contacto; `porParrafo` las de cada contacto,
+   * por el comienzo de su párrafo. Una distancia ajena no puede aparecer en el párrafo de otro contacto.
+   */
+  distancias?: { todas: string[]; propiasGlobal: string[]; porParrafo?: { inicio: string; propias: string[] }[] };
 };
 
 const escapar = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -71,6 +77,21 @@ export function validarTexto(texto: string, permitido: string, reglas: Reglas): 
     }
     for (const m of t.matchAll(new RegExp(String.raw`${nombre}[^.]{0,40}?\(casa ([IVX]+)\)`, "g"))) {
       if (m[1] !== p.casa) return `pone ${p.nombre} en la casa ${m[1]}, y está en la ${p.casa}`;
+    }
+  }
+
+  // Distancias a la estación: cada una, solo en el párrafo de su contacto.
+  if (reglas.distancias) {
+    const posiciones = new Set([...permitido.matchAll(/(\d{1,2}°\d{2}′)(?= de [A-ZÁ-Ú])/g)].map((m) => m[1]));
+    const ajenas = new Set(reglas.distancias.todas.filter((d) => !posiciones.has(d)));
+    const parrafos = reglas.distancias.porParrafo ? t.split(/\n{2,}/) : [t];
+    for (const par of parrafos) {
+      const propias = reglas.distancias.porParrafo
+        ? (reglas.distancias.porParrafo.find((x) => par.trim().startsWith(x.inicio))?.propias ?? reglas.distancias.propiasGlobal)
+        : reglas.distancias.propiasGlobal;
+      for (const m of par.matchAll(/\d{1,2}°\d{2}′/g)) {
+        if (ajenas.has(m[0]) && !propias.includes(m[0])) return `atribuye la distancia ${m[0]}, que corresponde a otro contacto, a un texto donde no va`;
+      }
     }
   }
 
@@ -167,12 +188,25 @@ export async function redactarConIA(base: PlutonBase): Promise<ResultadoIA> {
   const permitido = `${plutonFactsText(base)}\n${materialCasas(base)}`;
   const nombres = base.contactos.slice(0, 4).map((c) => nombreNatal(c.cuerpo));
   const puntos = base.naturales.map((p) => ({ nombre: PUNTOS_PLUTON[p.id].nombre, pos: posicion(p.lon), casa: ROMAN[p.casa - 1] }));
+  // Distancia de cada contacto a la estación: «cruce» → al punto de la estación; «cerca» → a su grado exacto.
+  const propiasDe = (c: (typeof base.contactos)[number]) => {
+    if (c.tipo === "cerca") return [grados(c.distancia)];
+    const d = distanciaAEstacion(c);
+    return d < 0.001 ? [] : [grados(d)];
+  };
+  const exacto = contactoMasExacto(base.contactos);
+  const distancias = {
+    todas: base.contactos.flatMap(propiasDe),
+    propiasGlobal: exacto ? propiasDe(exacto) : [],
+    porParrafo: base.contactos.map((c) => ({ inicio: `**${nombreNatal(c.cuerpo)}`, propias: propiasDe(c) })),
+  };
+  const distanciasGlobales = { todas: distancias.todas, propiasGlobal: distancias.propiasGlobal };
 
   const [hilo, marea, contactos] = await Promise.all([
-    pedir(sistema, INSTRUCCION_HILO, 700, permitido, { min: 60, max: 170, puntos }, errores, "hilo"),
-    pedir(sistema, INSTRUCCION_MAREA, 1100, permitido, { min: 130, max: 340, puntos }, errores, "marea"),
+    pedir(sistema, INSTRUCCION_HILO, 700, permitido, { min: 60, max: 170, puntos, distancias: distanciasGlobales }, errores, "hilo"),
+    pedir(sistema, INSTRUCCION_MAREA, 1100, permitido, { min: 130, max: 340, puntos, distancias: distanciasGlobales }, errores, "marea"),
     base.contactos.length
-      ? pedir(sistema, instruccionContactos(base), 2200, permitido, { min: 60 * nombres.length, max: 170 * nombres.length, debeContener: nombres, puntos }, errores, "contactos")
+      ? pedir(sistema, instruccionContactos(base), 2200, permitido, { min: 60 * nombres.length, max: 170 * nombres.length, debeContener: nombres, puntos, distancias }, errores, "contactos")
       : Promise.resolve(undefined),
   ]);
   return { redaccion: { hilo, marea, contactos }, errores };

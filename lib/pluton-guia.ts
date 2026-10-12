@@ -402,17 +402,11 @@ function seccionFases(base: PlutonBase): GuideSection {
   };
 }
 
-function seccionFechas(base: PlutonBase): GuideSection {
+function seccionFechas(): GuideSection {
   const generales = CALENDARIO.map((f) => `- **${f.fecha}.** ${f.texto}`);
-  const personales = base.contactos
-    .flatMap((c) => c.cruces.map((x) => ({ x, c })))
-    .sort((a, b) => a.x.fecha.getTime() - b.x.fecha.getTime())
-    .map(({ x, c }) => `- **Hacia el ${fechaLarga(x.fecha)}.** Plutón pasa por tu ${nombreNatal(c.cuerpo)} (${posicion(c.natal)}${c.aspecto === "conjuncion" ? "" : `, ${ASPECTOS_PLUTON[c.aspecto].nombre}`}), ${sentidoTexto(x)}.`);
   return {
     titulo: "Fechas clave",
-    texto:
-      `Horas de Madrid.\n\n${generales.join("\n")}` +
-      (personales.length ? `\n\n### Los pasos de Plutón por tu carta\n\nFechas aproximadas, con un día de margen.\n\n${personales.join("\n")}` : ""),
+    texto: `Horas de Madrid. Las fechas «hacia el…» de los pasos de Plutón por tu carta, en las secciones anteriores, son aproximadas, con un día de margen.\n\n${generales.join("\n")}`,
   };
 }
 
@@ -426,7 +420,7 @@ export function componerGuia(base: PlutonBase, ia: RedaccionIA = {}): PlutonGuid
   secciones.push({ titulo: "Dónde se mueve la marea en tu carta", texto: ia.marea ?? seccionMareaDeterminista(base) });
   secciones.push({ titulo: "Lo que toca tu carta", texto: ia.contactos ?? seccionContactosDeterminista(base) });
   secciones.push(seccionFases(base));
-  secciones.push(seccionFechas(base));
+  secciones.push(seccionFechas());
   return {
     nombre: base.nombre,
     ascendente: base.ascendente,
