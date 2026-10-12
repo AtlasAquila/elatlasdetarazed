@@ -814,3 +814,32 @@ alter table public.venus_guia drop constraint if exists venus_guia_consent_check
 drop policy if exists "Cualquiera pide la guía de Venus" on public.venus_guia;
 create policy "Cualquiera pide la guía de Venus" on public.venus_guia
   for insert to anon, authenticated with check (email is null or consent);
+
+-- Campaña «Plutón directo en Acuario» (octubre de 2026): guía gratuita por carta natal.
+-- Guarda los datos de nacimiento para calcular la casa de la estación y los contactos. Nombre y correo son opcionales:
+-- el correo solo se guarda si la persona marca la casilla de recibir la guía por correo (consent = true).
+create table if not exists public.pluton_guia (
+  id uuid primary key default gen_random_uuid(),
+  campana text not null default 'pluton-acuario-2026',
+  nombre text check (nombre is null or char_length(nombre) between 1 and 80),
+  email text check (email is null or (char_length(email) <= 254 and email like '%_@_%')),
+  birth_date date not null,
+  birth_time time not null,
+  place_name text not null check (char_length(place_name) <= 200),
+  latitude double precision not null check (latitude between -90 and 90),
+  longitude double precision not null check (longitude between -180 and 180),
+  time_zone text not null check (char_length(time_zone) <= 64),
+  ascendente smallint check (ascendente between 0 and 11),
+  casa_estacion smallint check (casa_estacion between 1 and 12),
+  secciones_ia smallint check (secciones_ia between 0 and 3),
+  consent boolean not null default false,
+  created_at timestamptz not null default now(),
+  unique (campana, email)
+);
+alter table public.pluton_guia enable row level security;
+drop policy if exists "Cualquiera pide la guía de Plutón" on public.pluton_guia;
+create policy "Cualquiera pide la guía de Plutón" on public.pluton_guia
+  for insert to anon, authenticated with check (email is null or consent);
+drop policy if exists "Solo administradores ven las peticiones de Plutón" on public.pluton_guia;
+create policy "Solo administradores ven las peticiones de Plutón" on public.pluton_guia
+  for select using ((select private.is_admin()));
