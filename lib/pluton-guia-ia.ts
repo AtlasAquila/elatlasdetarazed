@@ -9,8 +9,9 @@
 
 import { AiError, MODELS, aiConfigured, complete } from "@/lib/ai/anthropic";
 import { VOICE } from "@/lib/ai/prompts";
-import { ROMAN } from "@/lib/engine/labels";
+import { ROMAN, SIGN_NAMES } from "@/lib/engine/labels";
 import { contactoMasExacto, distanciaAEstacion, grados, materialCasas, materialPuntos, nombreNatal, plutonFactsText, posicion, type PlutonBase, type RedaccionIA } from "@/lib/pluton-guia";
+import { distanciaAlRecorrido } from "@/lib/pluton-evento";
 import { PUNTOS_PLUTON } from "@/lib/pluton-guia-textos";
 
 const MESES = "enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre";
@@ -31,7 +32,37 @@ type Reglas = {
    * por el comienzo de su párrafo. Una distancia ajena no puede aparecer en el párrafo de otro contacto.
    */
   distancias?: { todas: string[]; propiasGlobal: string[]; porParrafo?: { inicio: string; propias: string[] }[] };
+  /** Puntos natales (sin «natal», p. ej. «Venus») que están dentro del recorrido de la marea (3°04′ a 7°11′ de Acuario). */
+  recorrido?: { dentro: string[] };
 };
+
+const NOMBRES_CONOCIDOS = [...SIGN_NAMES, "Mercurio", "Venus", "Marte", "Júpiter", "Saturno", "Urano", "Neptuno", "Plutón", "Quirón", "Ascendente"];
+/** Palabras corrientes que se parecen a un nombre propio y no lo son. */
+const NO_ES_ERROR = new Set(["Libre", "Parte", "Martes"]);
+const sinTildes = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+function distanciaEdicion(a: string, b: string) {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  }
+  return d[a.length][b.length];
+}
+
+/** Un signo, planeta o punto escrito casi bien («Acuano», «Cancer», «Pluton»): devuelve el aviso, o null. */
+function nombreMalEscrito(texto: string): string | null {
+  for (const m of texto.matchAll(/\b[A-ZÁÉÍÓÚÑ][a-záéíóúñü]{4,}\b/g)) {
+    const w = m[0];
+    if (NOMBRES_CONOCIDOS.includes(w) || NO_ES_ERROR.has(w)) continue;
+    for (const k of NOMBRES_CONOCIDOS) {
+      const a = sinTildes(w);
+      const b = sinTildes(k);
+      if (a.slice(0, 3) === b.slice(0, 3) && distanciaEdicion(a, b) <= (b.length >= 7 ? 2 : 1)) return `escribe «${w}» donde debería decir «${k}»`;
+    }
+  }
+  return null;
+}
 
 const escapar = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -77,6 +108,26 @@ export function validarTexto(texto: string, permitido: string, reglas: Reglas): 
     }
     for (const m of t.matchAll(new RegExp(String.raw`${nombre}[^.]{0,40}?\(casa ([IVX]+)\)`, "g"))) {
       if (m[1] !== p.casa) return `pone ${p.nombre} en la casa ${m[1]}, y está en la ${p.casa}`;
+    }
+  }
+
+  // Nombres de signos y planetas bien escritos.
+  const mal = nombreMalEscrito(t);
+  if (mal) return mal;
+
+  // «Dentro del recorrido» / «fuera del recorrido»: solo los puntos que de verdad lo están o no.
+  if (reglas.recorrido) {
+    const cuerpos = ["Sol", "Luna", "Mercurio", "Venus", "Marte", "Júpiter", "Saturno", "Urano", "Neptuno", "Quirón"];
+    for (const frase of t.split(/(?<=[.?!])\s+/)) {
+      const citados = cuerpos.filter((n) => new RegExp(String.raw`\b${n}\b`).test(frase));
+      if (/dentro del (recorrido|tramo)/i.test(frase)) {
+        const intruso = citados.find((n) => !reglas.recorrido!.dentro.includes(n));
+        if (intruso) return `dice que ${intruso} está dentro del recorrido de la marea, y no lo está`;
+      }
+      if (/fuera del (recorrido|tramo)/i.test(frase)) {
+        const intruso = citados.find((n) => reglas.recorrido!.dentro.includes(n));
+        if (intruso) return `dice que ${intruso} está fuera del recorrido de la marea, y está dentro`;
+      }
     }
   }
 
@@ -142,7 +193,7 @@ const INSTRUCCION_HILO =
   "Escribe «Lo esencial para ti»: UN solo párrafo de 80 a 130 palabras. Cuenta el hilo de esta marea en SU carta: empieza por la casa donde se detiene Plutón y únela, en una sola idea, con el contacto más importante de la lista (o con los planetas natales de esa casa si no hay contactos). Si hay un contacto a menos de 1° de la estación (los datos lo señalan), ese es el centro del párrafo: di la distancia tal como figura en los datos. Cierra con una frase sobre qué mirar. Sin título ni listas.";
 
 const INSTRUCCION_MAREA =
-  "Escribe «Dónde se mueve la marea en tu carta»: de 2 a 4 párrafos, de 170 a 260 palabras en total. Primero di por qué casas pasa Plutón en la marea baja y en la marea alta (si es una sola, dilo: no cambia de terreno). Después cuenta qué puede haber mostrado la marea baja (mayo a octubre) y qué pide la marea alta (octubre a mayo) en ese terreno, partiendo del MATERIAL BASE pero con tus palabras y ligado a los planetas natales que estén en esas casas, con su grado y su signo, si los hay: nombra primero los que Plutón atraviesa y di cómo lo que representan (su signo y su función) cambia la lectura de la casa; los que quedan fuera del recorrido, como telón de fondo. No repitas el aviso de precisión de la cúspide: va en otra sección. Sin títulos ni listas.";
+  "Escribe «Dónde se mueve la marea en tu carta»: de 2 a 4 párrafos, de 170 a 260 palabras en total. Primero di por qué casas pasa Plutón en la marea baja y en la marea alta (si es una sola, dilo: no cambia de terreno). Después cuenta qué puede haber mostrado la marea baja (mayo a octubre) y qué pide la marea alta (octubre a mayo) en ese terreno, partiendo del MATERIAL BASE pero con tus palabras y ligado a los planetas natales que estén en esas casas, con su grado y su signo, si los hay: nombra primero los que Plutón atraviesa y di cómo lo que representan (su signo y su función) cambia la lectura de la casa; los que quedan fuera del recorrido, como telón de fondo. Los puntos «dentro del recorrido» son EXACTAMENTE los de la lista de los datos: no digas que otro lo está, y no escribas los nombres de signos ni de planetas con faltas. No repitas el aviso de precisión de la cúspide: va en otra sección. Sin títulos ni listas.";
 
 function instruccionContactos(base: PlutonBase) {
   const lista = base.contactos.slice(0, 4).map((c, i) => `${i + 1}. ${nombreNatal(c.cuerpo)}`);
@@ -201,12 +252,15 @@ export async function redactarConIA(base: PlutonBase): Promise<ResultadoIA> {
     porParrafo: base.contactos.map((c) => ({ inicio: `**${nombreNatal(c.cuerpo)}`, propias: propiasDe(c) })),
   };
   const distanciasGlobales = { todas: distancias.todas, propiasGlobal: distancias.propiasGlobal };
+  const recorrido = {
+    dentro: base.naturales.filter((p) => p.id !== "asc" && p.id !== "mc" && p.id !== "pluto" && distanciaAlRecorrido(p.lon) === 0).map((p) => PUNTOS_PLUTON[p.id].nombre),
+  };
 
   const [hilo, marea, contactos] = await Promise.all([
-    pedir(sistema, INSTRUCCION_HILO, 700, permitido, { min: 60, max: 170, puntos, distancias: distanciasGlobales }, errores, "hilo"),
-    pedir(sistema, INSTRUCCION_MAREA, 1100, permitido, { min: 130, max: 340, puntos, distancias: distanciasGlobales }, errores, "marea"),
+    pedir(sistema, INSTRUCCION_HILO, 700, permitido, { min: 60, max: 170, puntos, distancias: distanciasGlobales, recorrido }, errores, "hilo"),
+    pedir(sistema, INSTRUCCION_MAREA, 1100, permitido, { min: 130, max: 340, puntos, distancias: distanciasGlobales, recorrido }, errores, "marea"),
     base.contactos.length
-      ? pedir(sistema, instruccionContactos(base), 2200, permitido, { min: 60 * nombres.length, max: 170 * nombres.length, debeContener: nombres, puntos, distancias }, errores, "contactos")
+      ? pedir(sistema, instruccionContactos(base), 2200, permitido, { min: 60 * nombres.length, max: 170 * nombres.length, debeContener: nombres, puntos, distancias, recorrido }, errores, "contactos")
       : Promise.resolve(undefined),
   ]);
   return { redaccion: { hilo, marea, contactos }, errores };
