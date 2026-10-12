@@ -273,9 +273,9 @@ function avisoCuspide(base: PlutonBase): string {
   const cuspide = posicion(cercania.cuspide);
   const vecina = CASAS_PLUTON[cercania.casaVecina - 1].tema;
   return (
-    `\n\n*Aviso de precisión: tu casa ${ROMAN[casa - 1]} ${cercania.lado} a ${cuspide}, solo a ${dist} del punto donde Plutón se detiene. ` +
+    `\n\nAviso de precisión: tu casa ${ROMAN[casa - 1]} ${cercania.lado} a ${cuspide}, solo a ${dist} del punto donde Plutón se detiene. ` +
     `Si tu hora de nacimiento no es exacta, ese punto podría quedar en tu casa ${ROMAN[cercania.casaVecina - 1]} (${vecina}) en lugar de en la ${ROMAN[casa - 1]}. ` +
-    `Comprueba tu hora antes de quedarte con una sola lectura.*`
+    `Comprueba tu hora antes de quedarte con una sola lectura.`
   );
 }
 
@@ -286,7 +286,7 @@ function seccionCasa(base: PlutonBase): GuideSection {
     texto:
       `Los 3°04′ de Acuario, donde Plutón cambia de sentido, caen en tu casa ${ROMAN[base.casa - 1]}, la de ${c.tema}.\n\n${c.aqui}` +
       avisoCuspide(base) +
-      `\n\nDos preguntas para llevarte:\n\n- *${c.preguntas[0]}*\n- *${c.preguntas[1]}*`,
+      `\n\nDos preguntas para llevarte:\n\n- ${c.preguntas[0]}\n- ${c.preguntas[1]}`,
   };
 }
 

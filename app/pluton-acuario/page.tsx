@@ -38,7 +38,7 @@ export default function PlutonAcuarioPage() {
               <strong>Plutón entró en Acuario el 19 de noviembre de 2024</strong> y se quedará hasta el 19 de enero de 2044.
             </li>
             <li>
-              <strong>Cada año hace lo mismo:</strong> retrograda en mayo (marea baja) y vuelve a ir directo en octubre (marea alta). Este año retrogradó el 6 de mayo, a 5°31′ de Acuario.
+              <strong>Cada año se repite un patrón:</strong> retrograda en mayo (marea baja) y vuelve a ir directo en octubre (marea alta). Este año retrogradó el 6 de mayo, a 5°31′ de Acuario.
             </li>
             <li>
               <strong>El 16 de octubre, a las 04:40 (hora de Madrid)</strong>, se detiene a 3°04′ de Acuario y vuelve a avanzar. Estará directo 204 días, hasta el 8 de mayo de 2027.
