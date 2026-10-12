@@ -120,7 +120,7 @@ export const CASAS_PLUTON: CasaPluton[] = [
 /** Qué significa que Plutón toque cada punto de tu carta. */
 export const PUNTOS_PLUTON: Record<string, { nombre: string; texto: string }> = {
   sun: { nombre: "Sol", texto: "Se toca tu identidad y tu manera de brillar. Plutón pide revisar qué parte de ti has puesto al servicio de ser aceptado y cuál has dejado sin usar." },
-  moon: { nombre: "Luna", texto: "Se tocan tus emociones y tu necesidad de seguridad. Lo que llevas dentro sube con más fuerza y se nota en el ánimo, en lo que necesitas de los demás y en lo que ya no estás dispuesto a sostener." },
+  moon: { nombre: "Luna", texto: "Se tocan tus emociones y tu necesidad de seguridad. Lo que llevas dentro sube con más fuerza y se nota en el ánimo, en lo que necesitas de los demás y en lo que ya no quieres sostener." },
   mercury: { nombre: "Mercurio", texto: "Se tocan tu mente y tu palabra. Las ideas, las conversaciones y lo que callas piden revisión: es un buen momento para decir con calma lo que quedó a medias." },
   venus: { nombre: "Venus", texto: "Se tocan lo que valoras y cómo quieres. Tus gustos, tus vínculos y el reparto de poder en ellos pasan por un examen profundo: la pregunta no es a quién quieres, sino desde dónde." },
   mars: { nombre: "Marte", texto: "Se tocan tu acción y tu deseo: lo que empujas y lo que contienes. Plutón convierte el impulso en decisión, y conviene frenar antes de actuar y elegir en qué gastas tu fuerza." },
@@ -199,7 +199,7 @@ export const FASES = {
   alta: {
     titulo: "Del 16 de octubre de 2026 al 8 de mayo de 2027 · La marea alta",
     texto:
-      "Plutón avanza de 3°04′ a 7°11′ de Acuario. Son 204 días, casi siete meses. Lo visto pide decisión y se concreta en pasos pequeños.\n\n**Qué mirar:** qué has decidido mantener y qué estás dispuesto a soltar.\n\n**Qué cuidar:** el vértigo de acelerar. Plutón transforma por acumulación, no por golpe.",
+      "Plutón avanza de 3°04′ a 7°11′ de Acuario. Son 204 días, casi siete meses. Lo visto pide decisión y se concreta en pasos pequeños.\n\n**Qué mirar:** qué has decidido mantener y qué quieres soltar.\n\n**Qué cuidar:** el vértigo de acelerar. Plutón transforma por acumulación, no por golpe.",
   },
   siguiente: {
     titulo: "Del 8 de mayo al 18 de octubre de 2027 · La marea baja otra vez",

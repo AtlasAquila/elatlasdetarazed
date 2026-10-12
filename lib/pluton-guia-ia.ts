@@ -77,6 +77,8 @@ export function validarTexto(texto: string, permitido: string, reglas: Reglas): 
   if (!/[.?»)*]$/.test(t)) return "termina a medias";
   if (/!|¡/.test(t)) return "lleva signos de exclamación";
   if (/\p{Extended_Pictographic}/u.test(t)) return "lleva emojis";
+  const genero = t.match(/\b(ti mism[oa]|dispuest[oa]|convencid[oa]|cansad[oa]|agotad[oa]|preparad[oa]|orgullos[oa]|decepcionad[oa])\b/i);
+  if (genero) return `marca el género de la persona («${genero[0]}»)`;
   if (/^#{1,6}\s/m.test(t) || /\|\s*---/.test(t)) return "lleva títulos o tablas";
 
   // Grados con minutos: deben figurar tal cual en los datos.
@@ -173,6 +175,7 @@ MÉTODO
 - Dato, tradición, interpretación: distínguelos con naturalidad.
 - Usa EXCLUSIVAMENTE los grados, las casas, los signos y las fechas de DATOS DE ESTA PERSONA. Escríbelos tal cual figuran (3°11′ de Acuario, 7 de noviembre de 2026, casa IX). No calcules ni añadas otros. No menciones años que no estén en los datos.
 - Sin consejo médico, psicológico, legal ni financiero.
+- No marques el género de la persona: evita «ti mismo/a», «dispuesto/a», «convencido/a» y similares; usa fórmulas neutras («cuidarte», «quieres soltar»).
 - Una ceñida estructura de párrafos separados por una línea en blanco; **negrita** solo donde se indique.
 
 DATOS DE ESTA PERSONA
