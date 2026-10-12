@@ -90,6 +90,7 @@ export async function requestPlutonGuide(_prev: PlutonGuideState, formData: Form
     if (errores.length) console.error(`pluton-guia: ${errores.join(" | ")}`);
     guide = componerGuia(base, redaccion);
   } else {
+    console.error("pluton-guia: falta ANTHROPIC_API_KEY en este entorno; la guía sale solo con el texto determinista");
     guide = componerGuia(base);
   }
 

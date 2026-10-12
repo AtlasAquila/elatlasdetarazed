@@ -134,7 +134,40 @@ export const PUNTOS_PLUTON: Record<string, { nombre: string; texto: string }> = 
   mc: { nombre: "Medio Cielo", texto: "Se toca tu lugar en el mundo y tu vocación. Plutón pregunta a quién sirve lo que haces y quién decide hacia dónde vas." },
 };
 
-export type AspectoPluton = "conjuncion" | "sextil" | "cuadratura" | "trigono" | "oposicion";
+/** Cómo vive cada signo lo que toca (para unir un punto de la carta con su signo). Índice 0 = Aries. */
+export const SIGNO_MODO = [
+  "de frente y con impulso",
+  "despacio, con los sentidos y buscando lo seguro",
+  "con palabras, curiosidad y movimiento",
+  "cuidando y desde la memoria emocional",
+  "con generosidad y necesidad de reconocimiento",
+  "con atención al detalle, al servicio y a la autoexigencia",
+  "buscando equilibrio y acuerdo",
+  "a fondo, con intensidad y sin medias tintas",
+  "con libertad, honestidad y ganas de ampliar la mirada",
+  "con constancia, reserva y sentido del deber",
+  "desde la amistad, la libertad y cierta distancia",
+  "sin fronteras, con empatía e idealismo",
+];
+
+/** Qué representa cada punto de la carta, en pocas palabras. */
+export const FUNCION: Record<string, string> = {
+  sun: "tu manera de brillar",
+  moon: "tus emociones y tu necesidad de seguridad",
+  mercury: "tu mente y tu palabra",
+  venus: "tu manera de querer y de valorar",
+  mars: "tu manera de actuar y de desear",
+  jupiter: "tu manera de crecer y de confiar",
+  saturn: "tus límites y tus compromisos",
+  uranus: "tu necesidad de libertad y de cambio",
+  neptune: "tus ideales y tus sueños",
+  pluto: "tu relación con el poder y con el cambio profundo",
+  chiron: "la herida que más te enseña",
+  asc: "tu manera de presentarte",
+  mc: "tu lugar en el mundo",
+};
+
+export type AspectoPluton ="conjuncion" | "sextil" | "cuadratura" | "trigono" | "oposicion";
 
 export const ASPECTOS_PLUTON: Record<AspectoPluton, { nombre: string; frase: string; matiz: string }> = {
   conjuncion: { nombre: "conjunción", frase: "en conjunción con", matiz: "La conjunción es el contacto más intenso: Plutón pasa justo encima de ese punto y lo activa de lleno." },

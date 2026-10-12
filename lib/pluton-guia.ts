@@ -6,7 +6,7 @@
  * Textos: lib/pluton-guia-textos.ts.
  */
 
-import { houseOf, norm360 } from "@/lib/engine";
+import { angleDiff, houseOf, norm360 } from "@/lib/engine";
 import { ROMAN, SIGN_NAMES } from "@/lib/engine/labels";
 import type { BodyId, Chart } from "@/lib/engine/types";
 import {
@@ -23,9 +23,11 @@ import {
   CALENDARIO,
   CASAS_PLUTON,
   FASES,
+  FUNCION,
   INTRO_CIELO,
   MATIZ_CERCA,
   PUNTOS_PLUTON,
+  SIGNO_MODO,
   SIN_CONTACTOS,
   TEXTO_CIERRE,
   type AspectoPluton,
@@ -199,21 +201,53 @@ const nombreDe = (id: string) => PUNTOS_PLUTON[id]?.nombre ?? id;
 /** «Venus natal» · «Plutón natal» · «Ascendente» · «Medio Cielo» */
 export const nombreNatal = (id: string) => (id === "asc" || id === "mc" || id === "pluto" ? nombreDe(id) : `${nombreDe(id)} natal`);
 
+/** Distancia (°) entre el grado exacto de un contacto y el punto de la estación (3°04′ de Acuario). */
+export function distanciaAEstacion(c: ContactoPluton) {
+  return Math.abs(angleDiff(c.objetivo, ESTACIONES.directo.lon));
+}
+
+/** El contacto cuyo grado exacto está a menos de 1° del punto de la estación, el más cercano; null si no hay ninguno. */
+export function contactoMasExacto(contactos: ContactoPluton[]): ContactoPluton | null {
+  const cercanos = contactos.filter((c) => c.tipo === "cruce" && distanciaAEstacion(c) < 1).sort((a, b) => distanciaAEstacion(a) - distanciaAEstacion(b));
+  return cercanos[0] ?? null;
+}
+
+/** «Tu Venus en Acuario se vive desde la amistad… Al estar en tu casa IX, esa manera se mezcla con las creencias…» */
+function lecturaSigno(c: ContactoPluton) {
+  const signo = SIGN_LON(c.natal);
+  return (
+    `Tu ${nombreDe(c.cuerpo)} en ${SIGN_NAMES[signo]} se vive ${SIGNO_MODO[signo]}. ` +
+    `Al estar en tu casa ${ROMAN[c.casa - 1]}, esa manera se mezcla con ${CASAS_PLUTON[c.casa - 1].tema}.`
+  );
+}
+
+type ContextoContactos = { aspectosVistos: Set<string>; masExacto: ContactoPluton | null };
+
 /** Sale del aspecto exacto: p. ej. un sextil al Plutón natal en 6°22′ de Sagitario se hace exacto cuando Plutón pasa por 6°22′ de Acuario. */
-function descripcionContacto(c: ContactoPluton) {
+function descripcionContacto(c: ContactoPluton, ctx: ContextoContactos) {
   const p = PUNTOS_PLUTON[c.cuerpo];
   const asp = ASPECTOS_PLUTON[c.aspecto];
   const cabecera = `**${nombreNatal(c.cuerpo)}, ${posicion(c.natal)} (casa ${ROMAN[c.casa - 1]}).**`;
+  // La descripción genérica del aspecto sale una sola vez por tipo, para que los contactos no repitan la misma frase.
+  const clave = c.tipo === "cerca" ? "cerca" : c.aspecto;
+  const matiz = ctx.aspectosVistos.has(clave) ? "" : ` ${c.tipo === "cerca" ? MATIZ_CERCA : asp.matiz}`;
+  ctx.aspectosVistos.add(clave);
+
   if (c.tipo === "cruce") {
     const grado = posicion(c.objetivo);
-    const cuerpo =
+    const paso =
       c.aspecto === "conjuncion"
         ? `Plutón pasa por encima de ese grado, ${textoCruces(c.cruces)}.`
         : `Plutón forma ${asp.nombre} con este punto cuando pasa por ${grado}, ${textoCruces(c.cruces)}.`;
-    return `${cabecera} ${cuerpo} ${p.texto} ${asp.matiz}`;
+    const d = distanciaAEstacion(c);
+    const estacion =
+      d < 1
+        ? ` Plutón se detiene a solo ${grados(d)} de ${c.aspecto === "conjuncion" ? "ese grado" : "ese punto del aspecto"}${ctx.masExacto === c ? ": es el contacto más exacto de tu carta con esta estación" : ""}.`
+        : "";
+    return `${cabecera} ${paso}${estacion} ${lecturaSigno(c)} ${p.texto}${matiz}`;
   }
   const dist = grados(c.distancia);
-  return `${cabecera} Plutón se queda a ${dist} del grado donde ${c.aspecto === "conjuncion" ? "caería exactamente sobre este punto" : `formaría ${asp.nombre} con él`} (${posicion(c.objetivo)}). ${p.texto} ${MATIZ_CERCA}`;
+  return `${cabecera} Plutón se queda a ${dist} del grado donde ${c.aspecto === "conjuncion" ? "caería exactamente sobre este punto" : `formaría ${asp.nombre} con él`} (${posicion(c.objetivo)}). ${lecturaSigno(c)} ${p.texto}${matiz}`;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -256,13 +290,44 @@ function seccionCasa(base: PlutonBase): GuideSection {
   };
 }
 
+/** «Tus planetas en esa casa»: qué puntos de la carta viven en las casas de la marea y cuáles atraviesa Plutón. */
+function planetasEnLaMarea(base: PlutonBase): string {
+  const casasMarea = new Set([...base.casasBaja, ...base.casasAlta]);
+  const enCasa = base.naturales.filter((p) => p.id !== "asc" && p.id !== "mc" && casasMarea.has(p.casa));
+  if (!enCasa.length) return "";
+  const nombrePropio = (id: string) => `tu ${nombreDe(id)}`;
+  const mayus = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+  const viven = [...casasMarea]
+    .sort((a, b) => a - b)
+    .map((h) => ({ h, ps: enCasa.filter((p) => p.casa === h) }))
+    .filter((x) => x.ps.length)
+    .map((x) => `En tu casa ${ROMAN[x.h - 1]} ${x.ps.length === 1 ? "vive" : "viven"} ${lista(x.ps.map((p) => `${nombrePropio(p.id)} (${posicion(p.lon)})`))}.`);
+  const dentro = enCasa.filter((p) => distanciaAlRecorrido(p.lon) === 0);
+  const fuera = enCasa.filter((p) => distanciaAlRecorrido(p.lon) !== 0);
+  const partes = [`**Tus planetas en ${casasMarea.size === 1 ? "esa casa" : "esas casas"}.** ${viven.join(" ")}`];
+  if (dentro.length) {
+    partes.push(
+      `Plutón pasa por encima de ${lista(dentro.map((p) => nombrePropio(p.id)))} durante esta marea, así que lo que ${dentro.length === 1 ? "representa" : "representan"} (${dentro.map((p) => FUNCION[p.id]).join("; ")}) se mezcla con el tema de la casa: la marea se vive a través de ${dentro.length === 1 ? "ese punto" : "esos puntos"}.`,
+    );
+  }
+  if (fuera.length) {
+    partes.push(
+      `${mayus(fuera.length === 1 ? `${nombrePropio(fuera[0].id)} comparte` : `${lista(fuera.map((p) => nombrePropio(p.id)))} comparten`)} casa con Plutón, pero ${fuera.length === 1 ? "queda" : "quedan"} fuera del recorrido de la marea: ${fuera.length === 1 ? "es" : "son"} telón de fondo, no un contacto directo.`,
+    );
+  }
+  return partes.join(" ");
+}
+
 function seccionMareaDeterminista(base: PlutonBase): string {
   const todas = [...new Set([...base.casasBaja, ...base.casasAlta])];
+  const planetas = planetasEnLaMarea(base);
+  const cola = planetas ? `\n\n${planetas}` : "";
   if (todas.length === 1) {
     const c = CASAS_PLUTON[todas[0] - 1];
     return (
       `Toda la marea de este año, de los 5°31′ a los 3°04′ en el retrógrado y de los 3°04′ a los 7°11′ en el directo, cae dentro de tu casa ${ROMAN[todas[0] - 1]}. No cambias de terreno: Plutón trabaja en el mismo sitio durante todo el ciclo.\n\n` +
-      `- **Mayo a octubre (marea baja).** ${c.baja}\n- **Octubre a mayo de 2027 (marea alta).** ${c.alta}`
+      `- **Mayo a octubre (marea baja).** ${c.baja}\n- **Octubre a mayo de 2027 (marea alta).** ${c.alta}` +
+      cola
     );
   }
   const baja = base.casasBaja.map((h) => `- **Marea baja · casa ${ROMAN[h - 1]} (${CASAS_PLUTON[h - 1].tema}).** ${CASAS_PLUTON[h - 1].baja}`);
@@ -270,25 +335,33 @@ function seccionMareaDeterminista(base: PlutonBase): string {
   return (
     `La marea de este año cruza más de una casa tuya: en el retrógrado, de los 5°31′ a los 3°04′, recorre ${lista(base.casasBaja.map((h) => `la casa ${ROMAN[h - 1]}`))}; ` +
     `en el directo, de los 3°04′ a los 7°11′, recorre ${lista(base.casasAlta.map((h) => `la casa ${ROMAN[h - 1]}`))}.\n\n` +
-    [...baja, ...alta].join("\n")
+    [...baja, ...alta].join("\n") +
+    cola
   );
 }
 
 function seccionContactosDeterminista(base: PlutonBase): string {
   if (!base.contactos.length) return SIN_CONTACTOS;
+  const ctx: ContextoContactos = { aspectosVistos: new Set(), masExacto: contactoMasExacto(base.contactos) };
   return (
     "Estos son los puntos de tu carta que Plutón toca por grado durante esta marea, del contacto más importante al menos importante.\n\n" +
-    base.contactos.map(descripcionContacto).join("\n\n")
+    base.contactos.map((c) => descripcionContacto(c, ctx)).join("\n\n")
   );
 }
 
 function hiloDeterminista(base: PlutonBase): string {
   const c = CASAS_PLUTON[base.casa - 1];
+  const inicio = `Plutón cambia de sentido en tu casa ${ROMAN[base.casa - 1]}, la de ${c.tema}, y esta marea trabaja ahí.`;
+  const exacto = contactoMasExacto(base.contactos);
+  if (exacto) {
+    const donde = exacto.casa === base.casa ? "que vive en esa misma casa" : `que está en tu casa ${ROMAN[exacto.casa - 1]}`;
+    return `${inicio} Además, se detiene a solo ${grados(distanciaAEstacion(exacto))} de tu ${nombreNatal(exacto.cuerpo)} (${posicion(exacto.natal)}), ${donde}: es el contacto más exacto de tu carta con esta estación.`;
+  }
   const primero = base.contactos[0];
   const toque = primero
     ? ` El contacto más importante de tu carta es con ${nombreNatal(primero.cuerpo)} (${posicion(primero.natal)}, casa ${ROMAN[primero.casa - 1]}).`
     : " Ningún punto de tu carta recibe un contacto exacto, así que lo vivirás sobre todo por esa casa.";
-  return `Plutón cambia de sentido en tu casa ${ROMAN[base.casa - 1]}, la de ${c.tema}, y esta marea trabaja ahí.${toque}`;
+  return `${inicio}${toque}`;
 }
 
 function eventosFase(contactos: ContactoPluton[], fase: Cruce["fase"]) {
@@ -378,9 +451,10 @@ export function buildPlutonGuide(chart: Chart, nombre: string): PlutonGuide {
 // Datos para la IA
 
 /** Distancia del grado del contacto al punto de la estación (3°04′), como dato para la IA. */
-function distanciaEstacion(c: ContactoPluton) {
-  const d = Math.abs(norm360(c.objetivo - ESTACIONES.directo.lon + 180) - 180);
-  return d < 0.001 ? "" : ` Ese grado está a ${grados(d)} del punto de la estación (3°04′ de Acuario).`;
+function distanciaEstacion(c: ContactoPluton, masExacto: ContactoPluton | null) {
+  const d = distanciaAEstacion(c);
+  if (d < 0.001) return "";
+  return ` Ese grado está a ${grados(d)} del punto de la estación (3°04′ de Acuario).${masExacto === c ? " Es el contacto más exacto de su carta con la estación (a menos de 1°)." : ""}`;
 }
 
 /** Todos los datos que la IA puede usar. Lo que no esté aquí no se puede afirmar. */
@@ -414,11 +488,12 @@ export function plutonFactsText(base: PlutonBase): string {
   out.push(`- Puntos natales que están dentro del recorrido de la marea (3°04′ a 7°11′ de Acuario): ${dentro.length ? dentro.join("; ") : "ninguno"}.`);
   out.push("");
   out.push("CONTACTOS DE PLUTÓN CON SU CARTA (del más importante al menos importante)");
+  const masExacto = contactoMasExacto(base.contactos);
   if (!base.contactos.length) out.push("- Ninguno: ningún punto natal recibe un contacto exacto ni cercano.");
   for (const c of base.contactos) {
     const asp = ASPECTOS_PLUTON[c.aspecto].frase;
     if (c.tipo === "cruce") {
-      out.push(`- ${nombreNatal(c.cuerpo)} (${posicion(c.natal)}, casa ${ROMAN[c.casa - 1]}): Plutón ${c.aspecto === "conjuncion" ? "pasa por su grado" : `forma ${ASPECTOS_PLUTON[c.aspecto].nombre} con este punto al pasar por ${posicion(c.objetivo)}`}, ${textoCruces(c.cruces)}. Aspecto: ${ASPECTOS_PLUTON[c.aspecto].nombre}.${distanciaEstacion(c)}`);
+      out.push(`- ${nombreNatal(c.cuerpo)} (${posicion(c.natal)}, casa ${ROMAN[c.casa - 1]}): Plutón ${c.aspecto === "conjuncion" ? "pasa por su grado" : `forma ${ASPECTOS_PLUTON[c.aspecto].nombre} con este punto al pasar por ${posicion(c.objetivo)}`}, ${textoCruces(c.cruces)}. Aspecto: ${ASPECTOS_PLUTON[c.aspecto].nombre}.${distanciaEstacion(c, masExacto)}`);
     } else {
       out.push(`- ${nombreNatal(c.cuerpo)} (${posicion(c.natal)}, casa ${ROMAN[c.casa - 1]}): Plutón no llega a pasar por ${posicion(c.objetivo)}, grado exacto de la ${ASPECTOS_PLUTON[c.aspecto].nombre}; se queda a ${grados(c.distancia)} de ese grado. Contacto cercano, no exacto.`);
     }
@@ -440,7 +515,14 @@ export function materialCasas(base: PlutonBase): string {
 /** Texto base de lo que significa que Plutón toque cada punto de la lista de contactos. */
 export function materialPuntos(base: PlutonBase): string {
   const ids = [...new Set(base.contactos.map((c) => c.cuerpo))];
-  return ids.map((id) => `${nombreDe(id)}: ${PUNTOS_PLUTON[id].texto}`).join("\n") + "\n\n" +
-    [...new Set(base.contactos.map((c) => c.aspecto))].map((a) => `${a}: ${ASPECTOS_PLUTON[a].matiz}`).join("\n");
+  const puntos = ids.map((id) => `${nombreDe(id)}: ${PUNTOS_PLUTON[id].texto}`).join("\n");
+  const signos = base.contactos
+    .map((c) => {
+      const signo = SIGN_LON(c.natal);
+      return `${nombreNatal(c.cuerpo)} en ${SIGN_NAMES[signo]} (${FUNCION[c.cuerpo]}): se vive ${SIGNO_MODO[signo]}. En su casa ${ROMAN[c.casa - 1]} se mezcla con ${CASAS_PLUTON[c.casa - 1].tema}.`;
+    })
+    .join("\n");
+  const aspectos = [...new Set(base.contactos.map((c) => c.aspecto))].map((a) => `${a}: ${ASPECTOS_PLUTON[a].matiz}`).join("\n");
+  return `${puntos}\n\nCÓMO VIVE CADA PUNTO SU SIGNO Y SU CASA (idea de partida: desarróllala con tus palabras)\n${signos}\n\n${aspectos}`;
 }
 
