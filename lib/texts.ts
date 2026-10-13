@@ -46,9 +46,9 @@ export const TEXT_GROUPS: TextGroup[] = [
       { key: "home.learn.title", label: "Bloque «aprende»: título", kind: "line", default: "Los fundamentos, explicados con calma" },
       { key: "home.learn.text", label: "Bloque «aprende»: texto", kind: "paragraph", default: "Qué son los signos, los planetas, las casas y los aspectos, y cómo nació un saber con más de tres mil años de historia." },
       { key: "home.waitlist.title", label: "Lista de espera: título", kind: "line", default: "Sé de los primeros en ver tu carta" },
-      { key: "home.waitlist.text", label: "Lista de espera: texto", kind: "paragraph", default: "Te escribiremos una sola vez: cuando El atlas de Tarazed abra. Sin boletines ni publicidad." },
+      { key: "home.waitlist.text", label: "Lista de espera: texto", kind: "paragraph", default: "Te escribiremos una sola vez: cuando Códice Orbital abra. Sin boletines ni publicidad." },
       { key: "home.author.title", label: "Bloque del autor: título", kind: "line", default: "Alshain, β Aquilae" },
-      { key: "home.author.text", label: "Bloque del autor: texto", kind: "paragraph", default: "Alshain es la estrella que acompaña a Altair en la constelación del Águila. Es también la voz de El atlas de Tarazed: quien firma el clima astral de cada semana y te acompaña en la lectura de tu cielo." },
+      { key: "home.author.text", label: "Bloque del autor: texto", kind: "paragraph", default: "Alshain es la estrella que acompaña a Altair en la constelación del Águila. Es también la voz de Códice Orbital: quien firma el clima astral de cada semana y te acompaña en la lectura de tu cielo." },
     ],
   },
   {

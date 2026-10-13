@@ -25,14 +25,14 @@ const isPublic = process.env.NEXT_PUBLIC_SITE_PUBLIC === "true";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "El atlas de Tarazed · Astrología de precisión",
-    template: "%s · El atlas de Tarazed",
+    default: "Códice Orbital · Astrología de precisión",
+    template: "%s · Códice Orbital",
   },
   description:
     "Cartas natales calculadas con precisión astronómica, el clima astral de cada semana y lecturas que interpretan tu cielo completo.",
   robots: isPublic ? { index: true, follow: true } : { index: false, follow: false },
   openGraph: {
-    siteName: "El atlas de Tarazed",
+    siteName: "Códice Orbital",
     locale: "es_ES",
     type: "website",
   },

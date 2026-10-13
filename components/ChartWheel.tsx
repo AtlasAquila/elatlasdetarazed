@@ -2,7 +2,7 @@ import { ASPECT_LABELS, BODY_LABELS, ROMAN, SIGN_ELEMENT, SIGN_GLYPHS, degMin, g
 import type { Chart } from "@/lib/engine/types";
 
 /**
- * Rueda de la carta natal en SVG, con el estilo de El atlas de Tarazed.
+ * Rueda de la carta natal en SVG, con el estilo de Códice Orbital.
  * El Ascendente se sitúa a la izquierda; el zodiaco avanza en sentido antihorario.
  * Los ejes (AC–DC, MC–IC) cruzan la rueda y se rotulan fuera con su grado.
  */

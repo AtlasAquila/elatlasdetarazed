@@ -1,7 +1,7 @@
 /**
  * Numerología pitagórica: cálculo exacto a partir del nombre completo y la fecha de nacimiento.
  *
- * Convenciones de El atlas de Tarazed:
+ * Convenciones de Códice Orbital:
  * - Tabla pitagórica: A J S = 1 · B K T = 2 · C L U = 3 · D M V = 4 · E N W = 5 · F O X = 6 · G P Y = 7 · H Q Z = 8 · I R = 9.
  * - Acentos y diéresis se ignoran; la ñ cuenta como n, la ç como c y la ele geminada (l·l) como dos eles.
  * - Vocales: a, e, i, o, u. La y cuenta como consonante.

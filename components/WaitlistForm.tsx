@@ -29,7 +29,7 @@ export function WaitlistForm() {
       <label className="check">
         <input type="checkbox" name="consent" required />
         <span>
-          Acepto que El atlas de Tarazed guarde mi correo para avisarme del lanzamiento, según la <Link href="/privacidad">política de privacidad</Link>.
+          Acepto que Códice Orbital guarde mi correo para avisarme del lanzamiento, según la <Link href="/privacidad">política de privacidad</Link>.
         </span>
       </label>
       {state.error && (

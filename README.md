@@ -1,4 +1,4 @@
-# El atlas de Tarazed
+# Códice Orbital
 
 Web de astrología en español: cartas natales calculadas con precisión astronómica, clima astral semanal, lecturas combinadas y un asistente astrológico con memoria.
 
@@ -6,7 +6,7 @@ Web de astrología en español: cartas natales calculadas con precisión astron�
 
 - **Next.js 15** (App Router), alojado en **Vercel**.
 - **Supabase** (región París): usuarios con contraseña, base de datos y reglas de seguridad por fila.
-- Estilo propio a partir del sistema de diseño de El atlas de Tarazed (tema Noche, Cormorant Garamond y EB Garamond).
+- Estilo propio a partir del sistema de diseño de Códice Orbital (tema Noche, Cormorant Garamond y EB Garamond).
 
 ## Estado: fases 1 y 2
 
