@@ -15,11 +15,9 @@ export function PlutonGuideForm() {
     const aviso =
       state.email === "enviado"
         ? "Te la hemos enviado también por correo."
-        : state.email === "anterior"
-          ? "Ese correo ya había pedido la guía, así que no te la reenviamos."
-          : state.email === "no"
-            ? "No hemos podido enviártela por correo; guarda esta página."
-            : "Guarda esta página si quieres volver a leerla.";
+        : state.email === "no"
+          ? "No hemos podido enviártela por correo; guarda esta página."
+          : "Guarda esta página si quieres volver a leerla.";
     return <PlutonGuideView guide={state.guide} aviso={aviso} />;
   }
 
