@@ -8,11 +8,11 @@ export default function AvisoLegalPage() {
     <LegalPage title="Aviso legal">
       <h2>Titular</h2>
       <p>
-        En cumplimiento de la Ley 34/2002, de servicios de la sociedad de la información (LSSI-CE), se informa de que este sitio web, elatlasdetarazed.com, es titularidad de Ferran Terol Romero, con NIF 79274302H, domicilio en C/ Anselm Clavé, 12, 08130 Santa Perpètua de Mogoda (Barcelona) y correo de contacto elatlasdetarazed@gmail.com.
+        En cumplimiento de la Ley 34/2002, de servicios de la sociedad de la información (LSSI-CE), se informa de que este sitio web, codiceorbital.com, es titularidad de Ferran Terol Romero, con NIF 79274302H, domicilio en C/ Anselm Clavé, 12, 08130 Santa Perpètua de Mogoda (Barcelona) y correo de contacto elatlasdetarazed@gmail.com.
       </p>
       <h2>Objeto</h2>
       <p>
-        El atlas de Tarazed ofrece contenidos divulgativos sobre astrología, el cálculo de cartas natales e interpretaciones personalizadas. Los contenidos tienen carácter orientativo y de entretenimiento y no sustituyen el consejo médico, psicológico, legal ni financiero de un profesional.
+        Códice Orbital ofrece contenidos divulgativos sobre astrología, el cálculo de cartas natales e interpretaciones personalizadas. Los contenidos tienen carácter orientativo y de entretenimiento y no sustituyen el consejo médico, psicológico, legal ni financiero de un profesional.
       </p>
       <h2>Compra de lecturas</h2>
       <p>

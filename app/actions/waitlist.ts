@@ -16,5 +16,5 @@ export async function joinWaitlist(_prev: FormState, formData: FormData): Promis
 
   const { error } = await supabase.from("waitlist").insert({ email });
   if (error && error.code !== "23505") return { error: "No hemos podido guardar tu correo. Inténtalo de nuevo." };
-  return { ok: true, message: "Estás en la lista. Te escribiremos en cuanto El atlas de Tarazed abra sus puertas." };
+  return { ok: true, message: "Estás en la lista. Te escribiremos en cuanto Códice Orbital abra sus puertas." };
 }

@@ -6,7 +6,7 @@ import { getTexts } from "@/lib/texts";
 
 export const metadata: Metadata = {
   title: "Más recursos astrológicos",
-  description: "Clima astral personalizado, revolución solar, sinastría y retorno de Saturno: las técnicas de El atlas de Tarazed, cada lectura por separado.",
+  description: "Clima astral personalizado, revolución solar, sinastría y retorno de Saturno: las técnicas de Códice Orbital, cada lectura por separado.",
 };
 
 export default async function RecursosPage() {

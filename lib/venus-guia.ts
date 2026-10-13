@@ -194,7 +194,7 @@ export function buildGuide(chart: Chart, nombre: string): GuideContent {
     aproximada,
     secciones,
     cta: {
-      texto: `${TEXTO_CIERRE}${tuyos}${eje}\n\nCrea tu carta natal gratis y mírala completa. Después podrás preguntarle a Alshain, el asistente de El atlas de Tarazed, cómo afecta la Luna Nueva con Venus retrógrado en Escorpio a tu carta.`,
+      texto: `${TEXTO_CIERRE}${tuyos}${eje}\n\nCrea tu carta natal gratis y mírala completa. Después podrás preguntarle a Alshain, el asistente de Códice Orbital, cómo afecta la Luna Nueva con Venus retrógrado en Escorpio a tu carta.`,
       boton: "Crear mi carta natal",
       ruta: `/registro?siguiente=${encodeURIComponent("/carta/nueva?origen=venus")}`,
     },
@@ -235,7 +235,7 @@ export function guideEmail(g: GuideContent) {
     .join("");
   const url = `${siteUrl}${g.cta.ruta}`;
   const html = `<div style="font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.65;color:#1a1204;max-width:600px;margin:0 auto;padding:8px 4px">
-<p style="font-size:13px;letter-spacing:0.16em;text-transform:uppercase;color:#8a6a3b;margin:0 0 6px">El atlas de Tarazed</p>
+<p style="font-size:13px;letter-spacing:0.16em;text-transform:uppercase;color:#8a6a3b;margin:0 0 6px">Códice Orbital</p>
 <h1 style="font-size:28px;line-height:1.2;margin:0 0 16px">Tu guía de la Luna Nueva con Venus retrógrado</h1>
 <p style="${P}">${g.nombre ? `Hola, ${esc(g.nombre)}:` : "Hola:"}</p>
 <p style="${P}">Esta guía lee el cielo del 10 de octubre y las semanas de Venus retrógrado sobre tu carta. Está hecha con tu fecha, tu hora y tu lugar de nacimiento. Tómate unos minutos: se lee en cinco.</p>
@@ -244,7 +244,7 @@ ${secciones}
 ${bloquesHtml(g.cta.texto)}
 <p style="margin:18px 0 0"><a href="${esc(url)}" style="display:inline-block;background:#d5a66f;color:#1a1204;text-decoration:none;font-weight:bold;padding:12px 22px;border-radius:8px">${esc(g.cta.boton)} →</a></p>
 </div>
-<p style="${P}margin-top:26px">— El atlas de Tarazed<br><span style="font-size:14px;color:#6b4f27">El cielo como mapa. La astrología como traducción.</span></p>
+<p style="${P}margin-top:26px">— Códice Orbital<br><span style="font-size:14px;color:#6b4f27">El cielo como mapa. La astrología como traducción.</span></p>
 </div>`;
   return { subject: "Tu guía de la Luna Nueva con Venus retrógrado", html };
 }

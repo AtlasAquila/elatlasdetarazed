@@ -24,7 +24,7 @@ export function AquilaConstellation({ size = 320, labels = false, title = "Const
       </g>
       <circle cx={180} cy={142} r={3} fill="var(--estrella)" />
       <circle cx={164} cy={118} r={4.2} fill="var(--oro)" />
-      {/* Tarazed (γ Aquilae), la estrella que da nombre a la web. */}
+      {/* Tarazed (γ Aquilae), la estrella del logo. */}
       <circle cx={148} cy={96} r={5.5} fill="var(--oro)" />
       {labels && (
         <g fontSize={7.5} fill="var(--ink-muted)" fontFamily="var(--font-serif), Georgia, serif">

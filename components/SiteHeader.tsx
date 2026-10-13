@@ -26,9 +26,9 @@ export async function SiteHeader() {
   return (
     <header className="site-header">
       <div className="container">
-        <Link href="/" className="brand" aria-label="El atlas de Tarazed, inicio">
+        <Link href="/" className="brand" aria-label="Códice Orbital, inicio">
           <AquilaMark />
-          El atlas de Tarazed
+          Códice Orbital
         </Link>
         <div className="nav-account">
           {session ? (
@@ -65,7 +65,7 @@ export async function SiteFooter() {
     <footer className="site-footer">
       <div className="container">
         <div>
-          <div style={{ fontFamily: "var(--font-display), Georgia, serif", fontSize: 22, color: "var(--ink)" }}>El atlas de Tarazed</div>
+          <div style={{ fontFamily: "var(--font-display), Georgia, serif", fontSize: 22, color: "var(--ink)" }}>Códice Orbital</div>
           <div>{t("footer.tagline")}</div>
           <div style={{ marginTop: 8 }}>{t("footer.disclaimer")}</div>
         </div>

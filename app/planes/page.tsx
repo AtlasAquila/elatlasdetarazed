@@ -7,7 +7,7 @@ import { getTexts } from "@/lib/texts";
 
 export const metadata: Metadata = {
   title: "Planes",
-  description: "El atlas de Tarazed es gratuito para empezar, con la lectura extensa de tus cartas. Premium añade el asistente con memoria y más cartas guardadas.",
+  description: "Códice Orbital es gratuito para empezar, con la lectura extensa de tus cartas. Premium añade el asistente con memoria y más cartas guardadas.",
 };
 
 type Props = { searchParams: Promise<{ pago?: string; error?: string }> };
@@ -72,7 +72,7 @@ export default async function PlanesPage({ searchParams }: Props) {
                 </span>
               ) : isPremium ? (
                 <form action={openPortal}>
-                  <p className="muted small">Ya eres Premium. Gracias por apoyar El atlas de Tarazed.</p>
+                  <p className="muted small">Ya eres Premium. Gracias por apoyar Códice Orbital.</p>
                   <button type="submit" className="btn btn-ghost">
                     Gestionar mi suscripción
                   </button>

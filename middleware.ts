@@ -19,9 +19,9 @@ export async function middleware(request: NextRequest) {
       ok = password === sitePassword;
     }
     if (!ok) {
-      return new NextResponse("El atlas de Tarazed está en construcción.", {
+      return new NextResponse("Códice Orbital está en construcción.", {
         status: 401,
-        headers: { "WWW-Authenticate": 'Basic realm="El atlas de Tarazed", charset="UTF-8"' },
+        headers: { "WWW-Authenticate": 'Basic realm="Códice Orbital", charset="UTF-8"' },
       });
     }
   }

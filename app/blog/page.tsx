@@ -5,7 +5,7 @@ import { getTexts } from "@/lib/texts";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Astrología, ciencia, historia, mitología, conocimientos antiguos, revelaciones del alma y aprendizajes humanos: el blog de El atlas de Tarazed.",
+  description: "Astrología, ciencia, historia, mitología, conocimientos antiguos, revelaciones del alma y aprendizajes humanos: el blog de Códice Orbital.",
 };
 
 export const revalidate = 300;

@@ -1,4 +1,4 @@
-/** Textos base de la numerología (plan gratuito). Escritos para El atlas de Tarazed. */
+/** Textos base de la numerología (plan gratuito). Escritos para Códice Orbital. */
 
 export type NumberMeaning = { name: string; keywords: string; text: string };
 
