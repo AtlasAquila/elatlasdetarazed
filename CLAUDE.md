@@ -1,6 +1,6 @@
 # Web de El atlas de Tarazed
 
-elatlasdetarazed.com · repo AtlasAquila/elatlasdetarazed · Vercel (proyecto `elatlasdetarazed`) · Supabase (proyecto `atlas-aquila`, París).
+codiceorbital.com (antes elatlasdetarazed.com) · repo AtlasAquila/elatlasdetarazed · Vercel (proyecto `elatlasdetarazed`) · Supabase (proyecto `atlas-aquila`, París).
 El README tiene el estado por páginas, las variables de entorno y la validación del motor: léelo solo si la tarea lo necesita.
 
 ## Stack
