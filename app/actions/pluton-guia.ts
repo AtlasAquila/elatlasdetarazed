@@ -11,8 +11,8 @@ import { createClient } from "@/lib/supabase/server";
 export type PlutonGuideState = {
   error?: string;
   guide?: PlutonGuide;
-  /** Solo si se pidió por correo. "enviado": el correo salió ahora. "anterior": ese correo ya había pedido la guía. "no": no se pudo enviar. */
-  email?: "enviado" | "anterior" | "no";
+  /** Solo si se pidió por correo. "enviado": el correo salió ahora. "no": no se pudo enviar. */
+  email?: "enviado" | "no";
 };
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -110,9 +110,8 @@ export async function requestPlutonGuide(_prev: PlutonGuideState, formData: Form
     secciones_ia: guide.seccionesIA,
     consent: quiereCorreo,
   });
-  // 23505: ese correo ya pidió la guía. Se la mostramos, pero no se le vuelve a escribir (evita usar el formulario para saturar un buzón).
+  // 23505: ese correo ya pidió la guía. No se guarda otra fila (hay una por correo), pero la guía se envía de nuevo.
   if (error && error.code !== "23505") return { error: "No hemos podido guardar tus datos. Inténtalo de nuevo." };
-  if (error) return { guide, email: "anterior" };
 
   if (!quiereCorreo) return { guide };
   return { guide, email: (await sendEmail(email, guide)) ? "enviado" : "no" };
