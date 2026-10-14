@@ -1,7 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { Cormorant_Garamond, EB_Garamond } from "next/font/google";
+import { AppAccountOnly, AppTabs } from "@/components/AppTabs";
+import { AppMore } from "@/components/AppMore";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
+import { isAppRequest } from "@/lib/app-mode";
 import { siteUrl } from "@/lib/supabase/config";
 import "./globals.css";
 
@@ -38,9 +41,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+// En la app de Android la web ocupa toda la pantalla, también bajo la barra de estado y los gestos.
+export async function generateViewport(): Promise<Viewport> {
+  return (await isAppRequest()) ? { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#00060f" } : { width: "device-width", initialScale: 1 };
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const app = await isAppRequest();
   return (
-    <html lang="es" className={`${display.variable} ${serif.variable}`}>
+    <html lang="es" className={`${display.variable} ${serif.variable}`} data-app={app ? "" : undefined}>
       <head>
         {/* Glifos astrológicos (planetas, signos, Quirón, Lilith, nodos). */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -51,9 +60,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#contenido" className="visually-hidden">
           Saltar al contenido
         </a>
-        <SiteHeader />
+        {!app && <SiteHeader />}
         <main id="contenido">{children}</main>
-        <SiteFooter />
+        {app ? (
+          <>
+            <AppAccountOnly>
+              <AppMore />
+              <SiteFooter />
+            </AppAccountOnly>
+            <AppTabs />
+          </>
+        ) : (
+          <SiteFooter />
+        )}
         <Analytics />
       </body>
     </html>
