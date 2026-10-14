@@ -843,3 +843,34 @@ create policy "Cualquiera pide la guía de Plutón" on public.pluton_guia
 drop policy if exists "Solo administradores ven las peticiones de Plutón" on public.pluton_guia;
 create policy "Solo administradores ven las peticiones de Plutón" on public.pluton_guia
   for select using ((select private.is_admin()));
+
+-- ════════════════════════════════════════════════════════════
+-- Avisos de la app de Android (notificaciones push)
+-- ════════════════════════════════════════════════════════════
+-- Un dispositivo por token de Firebase. Solo el servidor escribe; cada persona ve los suyos.
+create table if not exists public.push_devices (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users (id) on delete cascade,
+  token text not null unique check (char_length(token) between 20 and 4096),
+  platform text not null default 'android',
+  weekly_climate boolean not null default true,
+  chart_alerts boolean not null default true,
+  -- Carta para los avisos de tránsitos; si es null, la tuya (is_self) o la primera.
+  chart_id uuid references public.charts (id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists push_devices_user_id_idx on public.push_devices (user_id);
+alter table public.push_devices enable row level security;
+drop policy if exists "Cada usuario ve sus dispositivos" on public.push_devices;
+create policy "Cada usuario ve sus dispositivos" on public.push_devices
+  for select using ((select auth.uid()) = user_id);
+
+-- Avisos ya enviados, para no repetir ninguno si la tarea diaria se ejecuta dos veces. Solo el servidor.
+create table if not exists public.push_sent (
+  user_id uuid not null references auth.users (id) on delete cascade,
+  key text not null,
+  sent_at timestamptz not null default now(),
+  primary key (user_id, key)
+);
+alter table public.push_sent enable row level security;

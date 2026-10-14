@@ -3,8 +3,10 @@ import { Analytics } from "@vercel/analytics/next";
 import { Cormorant_Garamond, EB_Garamond } from "next/font/google";
 import { AppAccountOnly, AppTabs } from "@/components/AppTabs";
 import { AppMore } from "@/components/AppMore";
+import { AppPush } from "@/components/AppPush";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { isAppRequest } from "@/lib/app-mode";
+import { getSession } from "@/lib/supabase/server";
 import { siteUrl } from "@/lib/supabase/config";
 import "./globals.css";
 
@@ -48,6 +50,7 @@ export async function generateViewport(): Promise<Viewport> {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const app = await isAppRequest();
+  const loggedIn = app ? Boolean(await getSession()) : false;
   return (
     <html lang="es" className={`${display.variable} ${serif.variable}`} data-app={app ? "" : undefined}>
       <head>
@@ -69,6 +72,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <SiteFooter />
             </AppAccountOnly>
             <AppTabs />
+            <AppPush loggedIn={loggedIn} />
           </>
         ) : (
           <SiteFooter />
