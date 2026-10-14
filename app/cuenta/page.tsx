@@ -3,7 +3,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signOut } from "@/app/actions/auth";
 import { openPortal } from "@/app/actions/billing";
+import { AppAvisos } from "@/components/AppAvisos";
 import { DeleteAccountForm, ProfileForm } from "@/components/AuthForms";
+import { isAppRequest } from "@/lib/app-mode";
+import { listMyCharts } from "@/lib/charts";
 import { PRODUCTS } from "@/lib/purchase-info";
 import { listMyPurchases, returnPath, type PurchaseStatus } from "@/lib/purchases";
 import { billingReady, stripe, syncCustomer } from "@/lib/stripe";
@@ -50,6 +53,11 @@ export default async function CuentaPage({ searchParams }: Props) {
   // Las compras que no llegaron a pagarse (pantalla de pago abandonada) no se muestran.
   const purchases = (await listMyPurchases(10)).filter((p) => p.status !== "pending");
 
+  // Avisos de la app de Android: solo se muestran dentro de la app.
+  const inApp = await isAppRequest();
+  const avisos = inApp && supabase ? (await supabase.from("push_devices").select("weekly_climate, chart_alerts, chart_id").limit(1).maybeSingle()).data : null;
+  const avisosCharts = inApp ? (await listMyCharts()).map((c) => ({ id: c.id, name: c.name })) : [];
+
   return (
     <section className="hero">
       <div className="container reading">
@@ -64,6 +72,13 @@ export default async function CuentaPage({ searchParams }: Props) {
             Ver mis cartas
           </Link>
         </div>
+
+        {inApp && (
+          <AppAvisos
+            initial={{ weekly: avisos?.weekly_climate ?? true, alerts: avisos?.chart_alerts ?? true, chartId: avisos?.chart_id ?? null }}
+            charts={avisosCharts}
+          />
+        )}
 
         {justPaid && isPremium && (
           <p className="notice" style={{ marginTop: 32 }}>
