@@ -14,15 +14,16 @@ const svg = (children: ReactNode) => (
 
 const TABS: Tab[] = [
   {
-    href: "/reportes",
-    label: "Reportes",
+    href: "/",
+    label: "Inicio",
     icon: svg(
       <>
-        <path d="M6 16.5V11a6 6 0 1 1 12 0v5.5l1.5 1.5h-15L6 16.5Z" />
-        <path d="M10 20.5a2 2 0 0 0 4 0" />
+        <path d="M3 10.5 12 4l9 6.5" />
+        <path d="M5.5 9.5V20h13V9.5" />
+        <path d="M10 20v-5.5h4V20" />
       </>,
     ),
-    match: ["/reportes"],
+    match: ["/reportes", "/transitos", "/ciclo-lunar"],
     badge: true,
   },
   {
@@ -70,7 +71,7 @@ export function AppTabs({ unread = 0 }: { unread?: number }) {
   return (
     <nav className="app-tabs" aria-label="Principal">
       {TABS.map((t) => {
-        const active = inGroup(pathname, t.match);
+        const active = t.href === "/" ? pathname === "/" || inGroup(pathname, t.match) : inGroup(pathname, t.match);
         return (
           <Link key={t.href} href={t.href} className={active ? "app-tab activa" : "app-tab"} aria-current={active ? "page" : undefined}>
             <span className="app-tab-icono">
