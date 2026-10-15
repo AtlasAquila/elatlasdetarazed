@@ -38,7 +38,7 @@ async function claim(sb: Service, userId: string, key: string) {
 async function deliver(sb: Service, devices: Device[], message: PushMessage) {
   let sent = 0;
   for (const d of devices) {
-    const result = await sendPush(d.token, message);
+    const { result } = await sendPush(d.token, message);
     if (result === "ok") sent++;
     else if (result === "invalid") await sb.from("push_devices").delete().eq("id", d.id);
   }

@@ -55,5 +55,8 @@ export async function sendTestPush(): Promise<AvisosResult> {
   const { data } = await sb.from("push_devices").select("token").eq("user_id", session.userId);
   if (!data?.length) return { ok: false, error: "Este dispositivo aún no está registrado." };
   const results = await Promise.all(data.map((d) => sendPush(d.token, { title: "Códice Orbital", body: "Los avisos funcionan. El cielo te escribirá por aquí.", url: "/clima-astral" })));
-  return results.includes("ok") ? { ok: true } : { ok: false, error: "No se ha podido enviar. Inténtalo de nuevo en un momento." };
+  if (results.some((r) => r.result === "ok")) return { ok: true };
+  // El motivo técnico solo se enseña a los administradores.
+  const detail = session.isAdmin ? results.find((r) => r.detail)?.detail : undefined;
+  return { ok: false, error: `No se ha podido enviar.${detail ? ` Motivo: ${detail}` : " Inténtalo de nuevo en un momento."}` };
 }
