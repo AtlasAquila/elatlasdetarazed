@@ -1,4 +1,4 @@
-import { isAppRequest } from "@/lib/app-mode";
+import { hidePayments } from "@/lib/app-mode";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -23,7 +23,7 @@ const PLANETS: BodyId[] = ["sun", "moon", "mercury", "venus", "mars", "jupiter",
 
 export default async function ChartPage({ params, searchParams }: Props) {
   const session = await getSession();
-  const inApp = await isAppRequest();
+  const inApp = await hidePayments(); // true: sin nada de pago (app, salvo administradores)
   const { id } = await params;
   if (!session) redirect(`/entrar?siguiente=/carta/${id}`);
   const row = await getMyChart(id);

@@ -1,4 +1,4 @@
-import { isAppRequest } from "@/lib/app-mode";
+import { hidePayments } from "@/lib/app-mode";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function CartaPage() {
   const session = await getSession();
-  const inApp = await isAppRequest();
+  const inApp = await hidePayments(); // true: sin nada de pago (app, salvo administradores)
 
   if (!session) {
     return (

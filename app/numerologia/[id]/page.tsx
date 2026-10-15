@@ -1,4 +1,4 @@
-import { isAppRequest } from "@/lib/app-mode";
+import { hidePayments } from "@/lib/app-mode";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -78,7 +78,7 @@ function Locked({ title, text }: { title: string; text: string }) {
 
 export default async function PersonPage({ params, searchParams }: Props) {
   const session = await getSession();
-  const inApp = await isAppRequest();
+  const inApp = await hidePayments(); // true: sin nada de pago (app, salvo administradores)
   const { id } = await params;
   if (!session) redirect(`/entrar?siguiente=/numerologia/${id}`);
   const person = await getMyPerson(id);

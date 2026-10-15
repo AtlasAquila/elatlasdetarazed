@@ -1,4 +1,4 @@
-import { isAppRequest } from "@/lib/app-mode";
+import { hidePayments } from "@/lib/app-mode";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default async function IntroduccionPage() {
   const { t } = await getTexts();
-  const inApp = await isAppRequest();
+  const inApp = await hidePayments(); // true: sin nada de pago (app, salvo administradores)
   const blocks = t("intro.hero.lead").split(/\n\n+/);
   // Un primer bloque corto es un subtítulo; el resto de bloques son párrafos del mismo tamaño.
   const hasSubtitle = blocks.length > 1 && blocks[0].length <= 90;

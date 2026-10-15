@@ -58,7 +58,7 @@ const TABS: Tab[] = [
         <path d="M5 20c.8-3.6 3.5-5.5 7-5.5s6.2 1.9 7 5.5" />
       </>,
     ),
-    match: ["/cuenta", "/entrar", "/registro", "/recuperar", "/nueva-contrasena", "/introduccion", "/fundamentos", "/aviso-legal", "/privacidad", "/cookies"],
+    match: ["/cuenta", "/entrar", "/registro", "/recuperar", "/nueva-contrasena", "/planes", "/recursos", "/sinastria", "/introduccion", "/fundamentos", "/aviso-legal", "/privacidad", "/cookies"],
   },
 ];
 
