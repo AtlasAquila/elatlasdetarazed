@@ -49,6 +49,7 @@ export async function updateAvisos(prefs: AvisosPrefs): Promise<AvisosResult> {
 }
 
 const TEST_DELAY_MS = 10_000;
+const TEST_MESSAGE = { title: "Códice Orbital", body: "Los avisos funcionan. El cielo te escribirá por aquí.", url: "/clima-astral" };
 
 /** Envía un aviso de prueba a los dispositivos de la persona, a los 10 segundos para que dé tiempo a salir de la app. */
 export async function sendTestPush(): Promise<AvisosResult> {
@@ -60,9 +61,14 @@ export async function sendTestPush(): Promise<AvisosResult> {
   const { data } = await sb.from("push_devices").select("token").eq("user_id", session.userId);
   if (!data?.length) return { ok: false, error: "Este dispositivo aún no está registrado." };
 
+  // Solo los administradores guardan la prueba en Reportes, para ver cómo queda la lista.
+  if (session.isAdmin) {
+    await sb.from("reportes").insert({ user_id: session.userId, kind: "test", title: TEST_MESSAGE.title, body: TEST_MESSAGE.body, url: TEST_MESSAGE.url });
+  }
+
   after(async () => {
     await new Promise((resolve) => setTimeout(resolve, TEST_DELAY_MS));
-    await Promise.all(data.map((d) => sendPush(d.token, { title: "Códice Orbital", body: "Los avisos funcionan. El cielo te escribirá por aquí.", url: "/clima-astral" })));
+    await Promise.all(data.map((d) => sendPush(d.token, TEST_MESSAGE)));
   });
   return { ok: true };
 }

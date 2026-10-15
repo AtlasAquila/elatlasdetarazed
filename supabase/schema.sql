@@ -882,7 +882,7 @@ alter table public.push_sent enable row level security;
 create table if not exists public.reportes (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
-  kind text not null check (kind in ('weekly', 'transit')),
+  kind text not null check (kind in ('weekly', 'transit', 'test')),
   title text not null check (char_length(title) <= 200),
   body text not null check (char_length(body) <= 500),
   url text not null check (url like '/%' and url not like '//%'),
@@ -894,3 +894,7 @@ alter table public.reportes enable row level security;
 drop policy if exists "Cada usuario ve sus reportes" on public.reportes;
 create policy "Cada usuario ve sus reportes" on public.reportes
   for select using ((select auth.uid()) = user_id);
+
+-- El aviso de prueba de los administradores también se guarda en Reportes.
+alter table public.reportes drop constraint if exists reportes_kind_check;
+alter table public.reportes add constraint reportes_kind_check check (kind in ('weekly', 'transit', 'test'));
