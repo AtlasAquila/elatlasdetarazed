@@ -23,32 +23,8 @@ const TABS: Tab[] = [
         <path d="M10 20v-5.5h4V20" />
       </>,
     ),
-    match: ["/reportes", "/transitos", "/ciclo-lunar"],
+    match: ["/reportes", "/transitos", "/clima-astral", "/carta", "/numerologia", "/ciclo-lunar"],
     badge: true,
-  },
-  {
-    href: "/clima-astral",
-    label: "Clima",
-    icon: svg(<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" />),
-    match: ["/clima-astral"],
-  },
-  {
-    href: "/carta",
-    label: "Carta",
-    icon: svg(
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <circle cx="12" cy="12" r="3.5" />
-        <path d="M12 3v5.5M12 15.5V21M3 12h5.5M15.5 12H21" />
-      </>,
-    ),
-    match: ["/carta"],
-  },
-  {
-    href: "/numerologia",
-    label: "Numerología",
-    icon: svg(<path d="M12 4 21 19H3L12 4Z" />),
-    match: ["/numerologia"],
   },
   {
     href: "/cuenta",
