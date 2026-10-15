@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { EVENTO_VENUS, VENUS_PREGUNTA } from "@/lib/venus-retrogrado";
+import { ReportContent } from "./ReportContent";
 import { RichText } from "./RichText";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -99,6 +100,7 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
         {messages.map((m, i) => (
           <div key={i} className={`chat-msg chat-${m.role}`}>
             {m.role === "assistant" ? m.content ? <RichText text={m.content} /> : <p className="muted">Alshain está pensando…</p> : <p>{m.content}</p>}
+            {m.role === "assistant" && m.content && !(busy && i === messages.length - 1) && <ReportContent kind="asistente" content={m.content} />}
           </div>
         ))}
         <div ref={endRef} />

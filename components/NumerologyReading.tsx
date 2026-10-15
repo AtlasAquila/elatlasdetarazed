@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { RichText } from "./RichText";
+import { ReportContent } from "./ReportContent";
 
 type Props = {
   kind: "lectura" | "compatibilidad" | "carta";
@@ -89,6 +90,7 @@ export function NumerologyReading({ kind, personId, otherId, chartId, initial, t
           Lectura orientativa, generada con inteligencia artificial a partir de los cálculos numerológicos.
         </p>
       )}
+      {text && !loading && <ReportContent kind="numerologia" content={text} />}
     </div>
   );
 }

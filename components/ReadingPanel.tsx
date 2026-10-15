@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ReportContent } from "./ReportContent";
 import { RichText } from "./RichText";
 
 type Props = {
@@ -71,6 +72,7 @@ export function ReadingPanel({ chartId, reading, enabled }: Props) {
         )}
         {enabled && lectura.loading && !lectura.text && <p className="muted">Alshain está leyendo tu cielo. La lectura es larga y tardará entre uno y tres minutos en completarse; puedes ir leyendo mientras se escribe.</p>}
         {lectura.text && <RichText text={lectura.text} />}
+        {lectura.text && !lectura.loading && <ReportContent kind="lectura" content={lectura.text} />}
         {lectura.loading && lectura.text && (
           <p className="small muted" aria-live="polite">
             Alshain sigue escribiendo…

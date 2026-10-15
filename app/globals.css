@@ -859,3 +859,9 @@ html[data-app] .site-footer { margin-top: 24px; padding: 32px 0; }
 .reporte-fecha { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
 .reporte strong { font-family: var(--font-display), Georgia, serif; font-size: 20px; font-weight: 500; }
 .reporte span:last-child { color: var(--ink-muted); }
+
+/* Reportar contenido generado por IA (components/ReportContent.tsx). */
+.reportar { margin-top: 12px; }
+.reportar-boton { background: none; border: 0; padding: 4px 0; margin-top: 8px; font: inherit; font-size: 14px; color: var(--ink-muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.reportar-boton:hover { color: var(--ink); }
+@media print { .reportar, .reportar-boton { display: none !important; } }

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { ReportContent } from "./ReportContent";
 import { RichText } from "./RichText";
 
 type Props = {
@@ -97,6 +98,7 @@ export function StreamedReading({ endpoint, body, initial, title, description, b
       )}
       {loading && !text && <p className="muted">{waiting}</p>}
       {text && <RichText text={text} />}
+      {text && !loading && !error && <ReportContent kind="lectura" content={text} />}
       {loading && text && (
         <p className="small muted" aria-live="polite">
           Alshain sigue escribiendo…
