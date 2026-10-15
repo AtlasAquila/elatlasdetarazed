@@ -15,6 +15,7 @@ Next.js 15 (App Router, server actions) + React 19 + TypeScript, sin librería d
 - `lib/engine/`: motor astronómico propio (`computeChart()`), validado contra Swiss Ephemeris. No lo toques sin volver a validar (`scripts/validate-engine.ts`).
 - `lib/posts.ts`, `lib/post-shared.ts`: publicaciones `clima` y `blog`. El autor las publica desde `/admin`; no van en el código.
 - `lib/ai/`: llamadas a Claude y prompts.
+- `tests/`: `npm test` (motor frente a Swiss Ephemeris). Ejecútalo tras tocar `lib/engine`.
 
 ## Texto de las publicaciones (components/RichText.tsx)
 

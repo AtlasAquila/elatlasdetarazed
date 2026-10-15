@@ -12,7 +12,11 @@ import { FIXED_STARS } from "./stars";
 import { localToUtc } from "./time";
 import type { Aspect, AspectType, BodyId, BodyPosition, Chart, ChartInput, FixedStarContact, HouseSystem } from "./types";
 
-export const ENGINE_VERSION = 1;
+/**
+ * 2: dentro del círculo polar, el Ascendente ya no puede salir en el lugar del Descendente, y las casas de
+ * Porfirio (el sistema de respaldo cuando Placidus no se puede calcular) ya no dejan cúspides vacías.
+ */
+export const ENGINE_VERSION = 2;
 
 const DEG = Math.PI / 180;
 const RAD = 180 / Math.PI;
@@ -176,7 +180,11 @@ function porphyry(asc: number, mc: number) {
   cusps[0] = asc;
   cusps[1] = norm360(asc + q2 / 3);
   cusps[2] = norm360(asc + (2 * q2) / 3);
-  for (let i = 0; i < 6; i++) cusps[i + 6] = norm360(cusps[i] + 180);
+  // Las casas IV-VI son las opuestas de X-XII, y VII-IX las de I-III.
+  for (let i = 0; i < 3; i++) {
+    cusps[i + 3] = norm360(cusps[i + 9] + 180);
+    cusps[i + 6] = norm360(cusps[i] + 180);
+  }
   return cusps;
 }
 
@@ -233,8 +241,11 @@ function koch(ramc: number, eps: number, lat: number, asc: number, mc: number): 
 function computeHouses(time: A.AstroTime, lat: number, lon: number, system: HouseSystem) {
   const eps = A.e_tilt(time).tobl;
   const ramc = norm360(A.SiderealTime(time) * 15 + lon);
-  const asc = ascendant(ramc, eps, lat);
+  let asc = ascendant(ramc, eps, lat);
   const mc = midheaven(ramc, eps);
+  // Dentro del círculo polar la fórmula puede devolver el punto que se pone por el oeste: el Ascendente
+  // debe ir siempre en la mitad de la eclíptica que sigue al Medio Cielo (mismo criterio que Swiss Ephemeris).
+  if (Math.abs(lat) >= 90 - eps && norm360(asc - mc) > 180) asc = norm360(asc + 180);
   let cusps: number[] | null = null;
   let used: HouseSystem | "porphyry" = system;
   if (system === "placidus") cusps = placidus(ramc, eps, lat, asc, mc);
