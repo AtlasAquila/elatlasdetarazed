@@ -959,3 +959,32 @@ create policy "Solo administradores borran el clima diario" on public.clima_diar
 alter table public.push_devices add column if not exists daily_climate boolean not null default true;
 alter table public.reportes drop constraint if exists reportes_kind_check;
 alter table public.reportes add constraint reportes_kind_check check (kind in ('weekly', 'daily', 'transit', 'test'));
+
+-- ════════════════════════════════════════════════════════════
+-- Reportes de tránsito (pestaña «Tránsitos» de la app)
+-- ════════════════════════════════════════════════════════════
+-- Un reporte breve por cada evento importante (estación, lunación, ingreso de un planeta lento,
+-- aspecto fuerte) que toca la carta de una persona. Lo escribe la IA la primera vez que se abre y
+-- se guarda; event_key identifica el evento (ver lib/transitos-reportes.ts). Solo el servidor inserta.
+create table if not exists public.transit_reports (
+  id uuid primary key default gen_random_uuid(),
+  chart_id uuid not null references public.charts (id) on delete cascade,
+  user_id uuid not null references auth.users (id) on delete cascade,
+  event_key text not null,
+  event_at timestamptz not null,
+  title text not null,
+  content text not null,
+  model text not null,
+  created_at timestamptz not null default now(),
+  unique (chart_id, event_key)
+);
+create index if not exists transit_reports_chart_idx on public.transit_reports (chart_id, event_at desc);
+create index if not exists transit_reports_user_idx on public.transit_reports (user_id, created_at desc);
+alter table public.transit_reports enable row level security;
+drop policy if exists "Cada usuario ve sus reportes de tránsito" on public.transit_reports;
+create policy "Cada usuario ve sus reportes de tránsito" on public.transit_reports
+  for select using ((select auth.uid()) = user_id);
+drop policy if exists "Cada usuario borra sus reportes de tránsito" on public.transit_reports;
+create policy "Cada usuario borra sus reportes de tránsito" on public.transit_reports
+  for delete using ((select auth.uid()) = user_id);
+-- Sin política de inserción: solo el servidor guarda el reporte.

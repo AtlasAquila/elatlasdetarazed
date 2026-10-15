@@ -20,7 +20,8 @@ export function upcomingEvent(chart: Chart, now: Date): { event: TransitEvent; o
 
 const house = (h: number | null) => (h ? `, en tu casa ${ROMAN[h - 1]}` : "");
 
-function summary(e: TransitEvent): string {
+/** Titular de un evento sobre la carta: «Plutón se detiene y pasa a ser directo, en tu casa V». */
+export function eventSummary(e: TransitEvent): string {
   switch (e.kind) {
     case "lunation": {
       const sign = SIGN_NAMES[Math.floor(e.lon / 30) % 12];
@@ -41,5 +42,5 @@ function summary(e: TransitEvent): string {
 export function alertMessage(found: { event: TransitEvent; others: number }, now: Date): PushMessage {
   const today = madridDay.format(now) === madridDay.format(new Date(found.event.at));
   const more = found.others > 0 ? ` · y ${found.others} más` : "";
-  return { title: today ? "Tu cielo, hoy" : "Tu cielo, mañana", body: `${summary(found.event)}${more}`, url: "/carta" };
+  return { title: today ? "Tu cielo, hoy" : "Tu cielo, mañana", body: `${eventSummary(found.event)}${more}`, url: "/carta" };
 }
