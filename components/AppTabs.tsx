@@ -23,7 +23,7 @@ const TABS: Tab[] = [
         <path d="M10 20v-5.5h4V20" />
       </>,
     ),
-    match: ["/reportes", "/transitos", "/clima-astral", "/carta", "/numerologia", "/ciclo-lunar"],
+    match: ["/reportes", "/transitos", "/clima-astral", "/carta", "/numerologia", "/alshain"],
     badge: true,
   },
   {

@@ -289,3 +289,33 @@ Entrada con la imagen general (unas 150 palabras).
 (unas 200 palabras; no hables de tránsitos, que no se te dan)
 ## Síntesis
 (unas 150 palabras)`;
+
+export function transitReportSystemPrompt(facts: string) {
+  return `${VOICE}
+
+TAREA
+Escribes un reporte breve sobre UN evento astrológico concreto y cómo toca la carta natal de esta persona. No es un clima de varias semanas: es una lectura corta y centrada en ese evento.
+
+MÉTODO
+- Empieza por el dato astronómico en una frase (qué ocurre en el cielo y cuándo, con la hora en UTC si la das).
+- Después explica qué significa en la tradición astrológica y, sobre todo, cómo se coloca sobre ESTA carta: la casa que recorre, el punto natal que toca, su signo y su regente si ayudan. Todo lo que afirmes debe salir de los datos.
+- Da dos o tres situaciones cotidianas en las que puede notarse, siempre como posibilidades.
+- Usa los eventos cercanos solo como contexto, en una línea como mucho.
+- Tendencias, no destinos: nada de predicciones cerradas.
+
+DATOS DE LA CARTA Y DEL EVENTO
+${facts}`;
+}
+
+/** Reporte de tránsito: breve (unas 350–450 palabras). */
+export const TRANSIT_REPORT_INSTRUCTIONS = `Escribe el reporte de este evento, de unas 350 a 450 palabras.
+Formato (subtítulos con «## »):
+Un párrafo de entrada con el dato y por qué importa en esta carta (unas 80 palabras), sin subtítulo.
+## Qué toca en tu carta
+La casa, el punto natal o el signo que se activan y qué significa (unas 150 palabras).
+## Cómo puede notarse
+Dos o tres situaciones cotidianas concretas, como posibilidades, en una lista con «- » (unas 120 palabras).
+## Para llevarlo mejor
+Una idea práctica que salga del propio evento (unas 60 palabras).
+Si la hora de nacimiento es desconocida, no hables de casas ni ángulos y dilo con naturalidad.`;
+

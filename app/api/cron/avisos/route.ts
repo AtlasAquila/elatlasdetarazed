@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { alertMessage, upcomingEvent } from "@/lib/avisos";
 import { CHART_COLUMNS, chartFromRow, type ChartRow } from "@/lib/charts";
+import { eventPath } from "@/lib/transitos-reportes";
 import { pushConfigured, sendPush, type PushMessage } from "@/lib/push";
 import { createServiceClient } from "@/lib/supabase/server";
 
@@ -86,7 +87,7 @@ export async function GET(request: NextRequest) {
         const row = mine.find((c) => c.id === alerts[0].chart_id) ?? mine[0];
         const found = row ? upcomingEvent(chartFromRow(row), now) : null;
         if (row && found && (await claim(sb, userId, `event:${row.id}:${found.event.kind}:${Math.round(found.event.at / 60_000)}`))) {
-          stats.alerts += await deliver(sb, alerts, "transit", { ...alertMessage(found, now), url: `/carta/${row.id}` });
+          stats.alerts += await deliver(sb, alerts, "transit", { ...alertMessage(found, now), url: eventPath(row.id, found.event) });
         }
       }
     } catch {

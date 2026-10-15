@@ -896,3 +896,13 @@ html[data-app] .site-footer { margin-top: 24px; padding: 32px 0; }
 .app-home-tesela:active { border-color: var(--oro); background: var(--oro-soft); }
 .app-home-icono { position: relative; display: inline-flex; color: var(--oro); filter: drop-shadow(0 0 6px var(--glow)); }
 @media (max-width: 360px) { .app-home-tesela { font-size: 15px; min-height: 96px; } }
+
+/* Tránsitos personales de la semana (app/transitos/page.tsx). */
+.transitos-titulo { margin: 32px 0 16px; font-family: var(--font-display), Georgia, serif; font-size: 22px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--oro); }
+.transitos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.transito { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface-raised); color: var(--ink); text-decoration: none; }
+.transito:hover { color: var(--ink); border-color: var(--oro); }
+.transito.nuevo { border-color: var(--oro); }
+.transito-estado { font-size: 15px; color: var(--ink-muted); }
+.transito-fecha { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
+.transito-tipo { font-family: var(--font-display), Georgia, serif; font-size: 19px; color: var(--oro); }
