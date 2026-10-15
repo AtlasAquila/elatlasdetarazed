@@ -17,6 +17,19 @@ function account(): ServiceAccount | null {
 
 export const pushConfigured = () => account() !== null;
 
+/** Por qué no se puede enviar, sin revelar nada de la clave (para el aviso de prueba y los registros). */
+export function pushConfigProblem(): string | null {
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (!raw) return "falta la variable FIREBASE_SERVICE_ACCOUNT en este entorno de Vercel";
+  try {
+    const json = JSON.parse(raw) as Partial<ServiceAccount>;
+    const missing = ["project_id", "client_email", "private_key"].filter((k) => !json[k as keyof ServiceAccount]);
+    return missing.length ? `a FIREBASE_SERVICE_ACCOUNT le faltan campos: ${missing.join(", ")}` : null;
+  } catch {
+    return "FIREBASE_SERVICE_ACCOUNT no es un JSON válido (pega el archivo entero, tal cual)";
+  }
+}
+
 const b64url = (value: string | Buffer) => Buffer.from(value).toString("base64url");
 
 let cached: { token: string; expires: number } | null = null;
@@ -44,10 +57,11 @@ async function accessToken(acc: ServiceAccount): Promise<string> {
 export type PushMessage = { title: string; body: string; url: string };
 /** `invalid`: el dispositivo ya no existe (app desinstalada); hay que borrarlo. */
 export type PushResult = "ok" | "invalid" | "error";
+export type PushOutcome = { result: PushResult; detail?: string };
 
-export async function sendPush(token: string, message: PushMessage): Promise<PushResult> {
+export async function sendPush(token: string, message: PushMessage): Promise<PushOutcome> {
   const acc = account();
-  if (!acc) return "error";
+  if (!acc) return { result: "error", detail: pushConfigProblem() ?? "sin configurar" };
   try {
     const res = await fetch(`https://fcm.googleapis.com/v1/projects/${acc.project_id}/messages:send`, {
       method: "POST",
@@ -61,11 +75,15 @@ export async function sendPush(token: string, message: PushMessage): Promise<Pus
         },
       }),
     });
-    if (res.ok) return "ok";
+    if (res.ok) return { result: "ok" };
     const text = await res.text();
-    if (res.status === 404 || (res.status === 400 && /registration token/i.test(text))) return "invalid";
-    return "error";
-  } catch {
-    return "error";
+    if (res.status === 404 || (res.status === 400 && /registration token/i.test(text))) return { result: "invalid", detail: `Firebase no reconoce este dispositivo (${res.status}): ${text.replace(/\s+/g, " ").slice(0, 200)}` };
+    const detail = `Firebase respondió ${res.status}: ${text.replace(/\s+/g, " ").slice(0, 300)}`;
+    console.error("[push]", detail);
+    return { result: "error", detail };
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : "error desconocido";
+    console.error("[push]", detail);
+    return { result: "error", detail };
   }
 }
