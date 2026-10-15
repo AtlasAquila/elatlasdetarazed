@@ -865,3 +865,22 @@ html[data-app] .site-footer { margin-top: 24px; padding: 32px 0; }
 .reportar-boton { background: none; border: 0; padding: 4px 0; margin-top: 8px; font: inherit; font-size: 14px; color: var(--ink-muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .reportar-boton:hover { color: var(--ink); }
 @media print { .reportar, .reportar-boton { display: none !important; } }
+
+/* Clima astral del día */
+.clima-dia { margin: 32px 0 28px; padding: 28px 28px 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.clima-dia-fecha { margin: 0; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
+.clima-dia-titular { margin: 10px 0 18px; font-size: 32px; line-height: 1.2; color: var(--oro); }
+.clima-dia-cielo { list-style: none; margin: 0 0 20px; padding: 0; font-size: 17px; color: var(--estrella); }
+.clima-dia-cielo li { margin: 4px 0; }
+.clima-dia .article-body { font-size: 19px; }
+.clima-dia-cierre { margin: 22px 0 0; font-size: 20px; font-style: italic; color: var(--oro); }
+.clima-dia + .rueda-desplegable { margin-top: 16px; }
+.clima-dia-anterior { border-top: 1px solid var(--line); }
+.clima-dia-anterior:first-child { border-top: 0; }
+.clima-dia-anterior > summary { cursor: pointer; padding: 14px 0; color: var(--ink); }
+.clima-dia-anterior > summary:hover { color: var(--oro); }
+.clima-dia-anterior .clima-dia { margin: 0 0 16px; }
+@media (max-width: 560px) {
+  .clima-dia { padding: 20px 16px 18px; }
+  .clima-dia-titular { font-size: 26px; }
+}

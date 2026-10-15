@@ -25,7 +25,7 @@ export async function unregisterDevice(token: string): Promise<AvisosResult> {
   return { ok: !error };
 }
 
-export type AvisosPrefs = { weekly: boolean; alerts: boolean; chartId: string | null };
+export type AvisosPrefs = { daily: boolean; weekly: boolean; alerts: boolean; chartId: string | null };
 
 /** Preferencias de avisos de la persona (valen para todos sus dispositivos). */
 export async function updateAvisos(prefs: AvisosPrefs): Promise<AvisosResult> {
@@ -43,7 +43,7 @@ export async function updateAvisos(prefs: AvisosPrefs): Promise<AvisosResult> {
   }
   const { error } = await sb
     .from("push_devices")
-    .update({ weekly_climate: Boolean(prefs.weekly), chart_alerts: Boolean(prefs.alerts), chart_id: chartId, updated_at: new Date().toISOString() })
+    .update({ daily_climate: Boolean(prefs.daily), weekly_climate: Boolean(prefs.weekly), chart_alerts: Boolean(prefs.alerts), chart_id: chartId, updated_at: new Date().toISOString() })
     .eq("user_id", session.userId);
   return error ? { ok: false, error: "No se han podido guardar los cambios." } : { ok: true };
 }
