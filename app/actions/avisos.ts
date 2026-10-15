@@ -1,6 +1,7 @@
 "use server";
 
-import { sendPush } from "@/lib/push";
+import { after } from "next/server";
+import { pushConfigProblem, sendPush } from "@/lib/push";
 import { createClient, createServiceClient, getSession } from "@/lib/supabase/server";
 
 const TOKEN = /^[A-Za-z0-9:_.\-]{20,4096}$/;
@@ -47,16 +48,21 @@ export async function updateAvisos(prefs: AvisosPrefs): Promise<AvisosResult> {
   return error ? { ok: false, error: "No se han podido guardar los cambios." } : { ok: true };
 }
 
-/** Envía un aviso de prueba a los dispositivos de la persona. */
+const TEST_DELAY_MS = 10_000;
+
+/** Envía un aviso de prueba a los dispositivos de la persona, a los 10 segundos para que dé tiempo a salir de la app. */
 export async function sendTestPush(): Promise<AvisosResult> {
   const session = await getSession();
   const sb = createServiceClient();
   if (!session || !sb) return { ok: false, error: "No se ha podido enviar." };
+  const problem = pushConfigProblem();
+  if (problem) return { ok: false, error: session.isAdmin ? `Los avisos no están configurados: ${problem}.` : "Los avisos aún no están disponibles." };
   const { data } = await sb.from("push_devices").select("token").eq("user_id", session.userId);
   if (!data?.length) return { ok: false, error: "Este dispositivo aún no está registrado." };
-  const results = await Promise.all(data.map((d) => sendPush(d.token, { title: "Códice Orbital", body: "Los avisos funcionan. El cielo te escribirá por aquí.", url: "/clima-astral" })));
-  if (results.some((r) => r.result === "ok")) return { ok: true };
-  // El motivo técnico solo se enseña a los administradores.
-  const detail = session.isAdmin ? results.find((r) => r.detail)?.detail : undefined;
-  return { ok: false, error: `No se ha podido enviar.${detail ? ` Motivo: ${detail}` : " Inténtalo de nuevo en un momento."}` };
+
+  after(async () => {
+    await new Promise((resolve) => setTimeout(resolve, TEST_DELAY_MS));
+    await Promise.all(data.map((d) => sendPush(d.token, { title: "Códice Orbital", body: "Los avisos funcionan. El cielo te escribirá por aquí.", url: "/clima-astral" })));
+  });
+  return { ok: true };
 }

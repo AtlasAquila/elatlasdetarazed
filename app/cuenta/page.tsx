@@ -13,6 +13,8 @@ import { billingReady, stripe, syncCustomer } from "@/lib/stripe";
 import { createClient, getSession } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Mi cuenta" };
+// El aviso de prueba espera unos segundos antes de enviarse.
+export const maxDuration = 30;
 
 type Props = { searchParams: Promise<{ pago?: string; session_id?: string; error?: string }> };
 
