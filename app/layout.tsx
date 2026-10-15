@@ -51,7 +51,8 @@ export async function generateViewport(): Promise<Viewport> {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const app = await isAppRequest();
-  const loggedIn = app ? Boolean(await getSession()) : false;
+  const session = app ? await getSession() : null;
+  const loggedIn = Boolean(session);
   const unread = loggedIn ? await countUnreadReportes() : 0;
   return (
     <html lang="es" className={`${display.variable} ${serif.variable}`} data-app={app ? "" : undefined}>
@@ -70,7 +71,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {app ? (
           <>
             <AppAccountOnly>
-              <AppMore />
+              <AppMore admin={Boolean(session?.isAdmin)} />
               <SiteFooter />
             </AppAccountOnly>
             <AppTabs unread={unread} />

@@ -5,7 +5,7 @@ import { signOut } from "@/app/actions/auth";
 import { openPortal } from "@/app/actions/billing";
 import { AppAvisos } from "@/components/AppAvisos";
 import { DeleteAccountForm, ProfileForm } from "@/components/AuthForms";
-import { isAppRequest } from "@/lib/app-mode";
+import { hidePayments, isAppRequest } from "@/lib/app-mode";
 import { listMyCharts } from "@/lib/charts";
 import { PRODUCTS } from "@/lib/purchase-info";
 import { listMyPurchases, returnPath, type PurchaseStatus } from "@/lib/purchases";
@@ -57,6 +57,7 @@ export default async function CuentaPage({ searchParams }: Props) {
 
   // Avisos de la app de Android: solo se muestran dentro de la app.
   const inApp = await isAppRequest();
+  const sinPagos = await hidePayments();
   const avisos = inApp && supabase ? (await supabase.from("push_devices").select("weekly_climate, chart_alerts, chart_id").limit(1).maybeSingle()).data : null;
   const avisosCharts = inApp ? (await listMyCharts()).map((c) => ({ id: c.id, name: c.name })) : [];
 
@@ -93,6 +94,8 @@ export default async function CuentaPage({ searchParams }: Props) {
           </p>
         )}
 
+        {!sinPagos && (
+          <>
         <div className="panel" style={{ marginTop: 24 }}>
           <h3>Plan</h3>
           {isPremium ? (
@@ -159,6 +162,8 @@ export default async function CuentaPage({ searchParams }: Props) {
             </ul>
           )}
         </div>
+          </>
+        )}
 
         <div className="panel" style={{ marginTop: 24 }}>
           <h3>Tus datos</h3>

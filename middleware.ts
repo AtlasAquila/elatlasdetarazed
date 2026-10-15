@@ -1,11 +1,28 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { APP_UA_MARK } from "./lib/app-ua";
 
 const PROTECTED = ["/cuenta", "/admin", "/nueva-contrasena"];
+
+// En la app (gratuita para los testers) no existen las pantallas de pago: planes, recursos, sinastría, clima personal y revolución solar.
+const APP_NO_PAYMENTS = /^\/(planes|recursos|sinastria)(\/|$)/;
+const APP_NO_PAYMENTS_CHART = /^\/carta\/([^/]+)\/(clima|revolucion)(\/|$)/;
 
 export async function middleware(request: NextRequest) {
   // Los avisos de Stripe no llevan sesión ni contraseña: pasan directos (la ruta verifica cada evento).
   if (request.nextUrl.pathname === "/api/stripe/webhook") return NextResponse.next();
+
+  // Los administradores sí ven esas pantallas en la app (para probarlas): se decide al conocer al usuario.
+  let appPaymentRedirect: URL | null = null;
+  if ((request.headers.get("user-agent") ?? "").includes(APP_UA_MARK)) {
+    const path = request.nextUrl.pathname;
+    const chart = APP_NO_PAYMENTS_CHART.exec(path);
+    if (chart || APP_NO_PAYMENTS.test(path)) {
+      appPaymentRedirect = request.nextUrl.clone();
+      appPaymentRedirect.pathname = chart ? `/carta/${chart[1]}` : "/clima-astral";
+      appPaymentRedirect.search = "";
+    }
+  }
 
   // 1. Web privada durante el desarrollo (contraseña opcional).
   const sitePassword = process.env.SITE_PASSWORD;
@@ -29,7 +46,7 @@ export async function middleware(request: NextRequest) {
   // 2. Sesión de Supabase: la refrescamos en cada petición.
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return NextResponse.next({ request });
+  if (!url || !key) return appPaymentRedirect ? NextResponse.redirect(appPaymentRedirect) : NextResponse.next({ request });
 
   let response = NextResponse.next({ request });
   const supabase = createServerClient(url, key, {
@@ -48,6 +65,11 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (appPaymentRedirect) {
+    const { data: profile } = user ? await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle() : { data: null };
+    if (!profile?.is_admin) return NextResponse.redirect(appPaymentRedirect);
+  }
 
   const path = request.nextUrl.pathname;
   if (!user && PROTECTED.some((p) => path === p || path.startsWith(p + "/"))) {

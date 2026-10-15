@@ -3,6 +3,8 @@ import { AiError, MODELS, aiConfigured, complete, streamText, type AiMessage } f
 import { SUMMARY_PROMPT, assistantSystemPrompt } from "@/lib/ai/prompts";
 import { CHART_COLUMNS, birthSummary, chartFromRow, type ChartRow } from "@/lib/charts";
 import { chartFactsText } from "@/lib/engine/analysis";
+import { isAppRequest } from "@/lib/app-mode";
+import { WEB_FREE_QUESTIONS, effectiveQuestionStatus, type QuestionStatus } from "@/lib/assistant-limit";
 import { createClient } from "@/lib/supabase/server";
 import { venusEventFactsText } from "@/lib/venus-evento";
 import { EVENTO_VENUS, VENUS_PREGUNTA } from "@/lib/venus-retrogrado";
@@ -26,12 +28,16 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Tu sesión ha caducado. Vuelve a entrar." }, { status: 401 });
 
-  const { data: status } = await supabase.rpc("question_status").maybeSingle<{ plan: string; remaining: number; question_limit: number }>();
+  const inApp = await isAppRequest();
+  const { data: raw } = await supabase.rpc("question_status").maybeSingle<QuestionStatus>();
+  const status = raw ? effectiveQuestionStatus(raw, inApp) : null;
   if (!status || status.remaining <= 0) {
     const error =
       status?.plan === "premium"
         ? `Has usado tus ${status.question_limit} mensajes de este mes. Se renuevan el día 1.`
-        : "Has usado tus 3 preguntas gratuitas. Con Premium puedes seguir conversando con el asistente.";
+        : inApp
+          ? `Has usado tus ${status?.question_limit ?? 10} preguntas de prueba.`
+          : `Has usado tus ${WEB_FREE_QUESTIONS} preguntas gratuitas. Con Premium puedes seguir conversando con el asistente.`;
     return NextResponse.json({ error, limit: true }, { status: 402 });
   }
 
