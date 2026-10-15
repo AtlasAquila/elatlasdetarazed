@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
-type Tab = { href: string; label: string; icon: ReactNode; match: string[] };
+type Tab = { href: string; label: string; icon: ReactNode; match: string[]; badge?: boolean };
 
 const svg = (children: ReactNode) => (
   <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -13,6 +13,18 @@ const svg = (children: ReactNode) => (
 );
 
 const TABS: Tab[] = [
+  {
+    href: "/reportes",
+    label: "Reportes",
+    icon: svg(
+      <>
+        <path d="M6 16.5V11a6 6 0 1 1 12 0v5.5l1.5 1.5h-15L6 16.5Z" />
+        <path d="M10 20.5a2 2 0 0 0 4 0" />
+      </>,
+    ),
+    match: ["/reportes"],
+    badge: true,
+  },
   {
     href: "/clima-astral",
     label: "Clima",
@@ -38,17 +50,6 @@ const TABS: Tab[] = [
     match: ["/recursos", "/numerologia", "/sinastria", "/pluton-acuario", "/venus-retrogrado"],
   },
   {
-    href: "/blog",
-    label: "Blog",
-    icon: svg(
-      <>
-        <path d="M5 4.5h10a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3V4.5Z" />
-        <path d="M9 9h5M9 13h5" />
-      </>,
-    ),
-    match: ["/blog"],
-  },
-  {
     href: "/cuenta",
     label: "Cuenta",
     icon: svg(
@@ -64,7 +65,7 @@ const TABS: Tab[] = [
 const inGroup = (pathname: string, paths: string[]) => paths.some((p) => pathname === p || pathname.startsWith(p + "/"));
 
 /** Barra de pestañas inferior de la app de Android. Sustituye al menú de la web. */
-export function AppTabs() {
+export function AppTabs({ unread = 0 }: { unread?: number }) {
   const pathname = usePathname();
   return (
     <nav className="app-tabs" aria-label="Principal">
@@ -72,7 +73,10 @@ export function AppTabs() {
         const active = inGroup(pathname, t.match);
         return (
           <Link key={t.href} href={t.href} className={active ? "app-tab activa" : "app-tab"} aria-current={active ? "page" : undefined}>
-            {t.icon}
+            <span className="app-tab-icono">
+              {t.icon}
+              {t.badge && unread > 0 && <i className="app-tab-punto" aria-label={`${unread} sin leer`} />}
+            </span>
             <span>{t.label}</span>
           </Link>
         );

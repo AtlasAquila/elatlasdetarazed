@@ -6,6 +6,7 @@ import { AppMore } from "@/components/AppMore";
 import { AppPush } from "@/components/AppPush";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { isAppRequest } from "@/lib/app-mode";
+import { countUnreadReportes } from "@/lib/reportes";
 import { getSession } from "@/lib/supabase/server";
 import { siteUrl } from "@/lib/supabase/config";
 import "./globals.css";
@@ -51,6 +52,7 @@ export async function generateViewport(): Promise<Viewport> {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const app = await isAppRequest();
   const loggedIn = app ? Boolean(await getSession()) : false;
+  const unread = loggedIn ? await countUnreadReportes() : 0;
   return (
     <html lang="es" className={`${display.variable} ${serif.variable}`} data-app={app ? "" : undefined}>
       <head>
@@ -71,7 +73,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <AppMore />
               <SiteFooter />
             </AppAccountOnly>
-            <AppTabs />
+            <AppTabs unread={unread} />
             <AppPush loggedIn={loggedIn} />
           </>
         ) : (
