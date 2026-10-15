@@ -1,11 +1,27 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { APP_UA_MARK } from "./lib/app-ua";
 
 const PROTECTED = ["/cuenta", "/admin", "/nueva-contrasena"];
+
+// En la app (gratuita para los testers) no existen las pantallas de pago: planes, recursos, sinastría, clima personal y revolución solar.
+const APP_NO_PAYMENTS = /^\/(planes|recursos|sinastria)(\/|$)/;
+const APP_NO_PAYMENTS_CHART = /^\/carta\/([^/]+)\/(clima|revolucion)(\/|$)/;
 
 export async function middleware(request: NextRequest) {
   // Los avisos de Stripe no llevan sesión ni contraseña: pasan directos (la ruta verifica cada evento).
   if (request.nextUrl.pathname === "/api/stripe/webhook") return NextResponse.next();
+
+  if ((request.headers.get("user-agent") ?? "").includes(APP_UA_MARK)) {
+    const path = request.nextUrl.pathname;
+    const chart = APP_NO_PAYMENTS_CHART.exec(path);
+    if (chart || APP_NO_PAYMENTS.test(path)) {
+      const target = request.nextUrl.clone();
+      target.pathname = chart ? `/carta/${chart[1]}` : "/clima-astral";
+      target.search = "";
+      return NextResponse.redirect(target);
+    }
+  }
 
   // 1. Web privada durante el desarrollo (contraseña opcional).
   const sitePassword = process.env.SITE_PASSWORD;

@@ -1,3 +1,4 @@
+import { isAppRequest } from "@/lib/app-mode";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -77,6 +78,7 @@ function Locked({ title, text }: { title: string; text: string }) {
 
 export default async function PersonPage({ params, searchParams }: Props) {
   const session = await getSession();
+  const inApp = await isAppRequest();
   const { id } = await params;
   if (!session) redirect(`/entrar?siguiente=/numerologia/${id}`);
   const person = await getMyPerson(id);
@@ -397,11 +399,13 @@ export default async function PersonPage({ params, searchParams }: Props) {
               </div>
             </div>
           ) : (
+            inApp ? null : (
             <div className="grid-3" style={{ marginTop: 24 }}>
               <Locked title="Lectura numerológica completa" text="Todos los números relacionados entre sí en una lectura extensa escrita por Alshain." />
               <Locked title="Compatibilidad entre personas" text="Compara los números de dos personas de tu lista: pareja, familia, socios." />
               <Locked title="Numerología y carta astral" text="Cruza los números con la carta natal guardada para una lectura conjunta." />
             </div>
+            )
           )}
         </div>
 

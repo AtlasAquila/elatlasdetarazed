@@ -5,7 +5,6 @@ export function AppMore() {
   return (
     <nav className="app-more container" aria-label="Más">
       <Link href="/introduccion">Introducción a la astrología</Link>
-      <Link href="/planes">Planes</Link>
     </nav>
   );
 }

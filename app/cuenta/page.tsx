@@ -93,6 +93,8 @@ export default async function CuentaPage({ searchParams }: Props) {
           </p>
         )}
 
+        {!inApp && (
+          <>
         <div className="panel" style={{ marginTop: 24 }}>
           <h3>Plan</h3>
           {isPremium ? (
@@ -159,6 +161,8 @@ export default async function CuentaPage({ searchParams }: Props) {
             </ul>
           )}
         </div>
+          </>
+        )}
 
         <div className="panel" style={{ marginTop: 24 }}>
           <h3>Tus datos</h3>

@@ -1,3 +1,4 @@
+import { isAppRequest } from "@/lib/app-mode";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -22,6 +23,7 @@ const PLANETS: BodyId[] = ["sun", "moon", "mercury", "venus", "mars", "jupiter",
 
 export default async function ChartPage({ params, searchParams }: Props) {
   const session = await getSession();
+  const inApp = await isAppRequest();
   const { id } = await params;
   if (!session) redirect(`/entrar?siguiente=/carta/${id}`);
   const row = await getMyChart(id);
@@ -252,6 +254,7 @@ export default async function ChartPage({ params, searchParams }: Props) {
           </details>
         </div>
 
+        {!inApp && (
         <div className="reading-block" style={{ marginTop: 56 }}>
           <div className="card" style={{ padding: 28, display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
             <div>
@@ -276,6 +279,7 @@ export default async function ChartPage({ params, searchParams }: Props) {
             </Link>
           </div>
         </div>
+        )}
 
         <details className="panel" style={{ marginTop: 56 }}>
           <summary style={{ cursor: "pointer", color: "var(--ink-muted)" }}>Borrar esta carta</summary>

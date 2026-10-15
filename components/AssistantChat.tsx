@@ -13,6 +13,10 @@ type Props = {
   initial: Msg[];
   remaining: number;
   isPremium: boolean;
+  /** Preguntas gratuitas de quien no es Premium (3 en la web, más en la app). */
+  freeLimit?: number;
+  /** Dentro de la app no se ofrece Premium. */
+  inApp?: boolean;
   enabled: boolean;
   /** Llega desde la guía de Venus retrógrado: se destaca la pregunta sugerida. */
   suggestVenus?: boolean;
@@ -20,7 +24,7 @@ type Props = {
 
 const SUGGESTIONS = ["¿Qué dice mi carta sobre mi forma de amar?", "¿Cuál es mi mayor talento según mi carta?", "¿Qué significa mi Luna para mi vida emocional?", "¿Hacia qué vocación apunta mi Medio Cielo?"];
 
-export function AssistantChat({ chartId, chartName, initial, remaining: initialRemaining, isPremium, enabled, suggestVenus = false }: Props) {
+export function AssistantChat({ chartId, chartName, initial, remaining: initialRemaining, isPremium, freeLimit = 3, inApp = false, enabled, suggestVenus = false }: Props) {
   const [messages, setMessages] = useState<Msg[]>(initial);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -119,8 +123,8 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
         <p className="notice">El asistente se activará muy pronto.</p>
       ) : outOfQuestions ? (
         <div className="notice">
-          {isPremium ? "Has usado tus mensajes de este mes. Se renuevan el día 1." : "Has usado tus 3 preguntas gratuitas."}{" "}
-          {!isPremium && <Link href="/planes">Descubre Premium</Link>}
+          {isPremium ? "Has usado tus mensajes de este mes. Se renuevan el día 1." : `Has usado tus ${freeLimit} preguntas ${inApp ? "de prueba" : "gratuitas"}.`}{" "}
+          {!isPremium && !inApp && <Link href="/planes">Descubre Premium</Link>}
         </div>
       ) : (
         <form
@@ -155,7 +159,7 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
         </form>
       )}
       <p className="small muted" style={{ margin: 0 }}>
-        {remaining >= 9999 ? "Sin límite (administrador)." : isPremium ? `Te quedan ${remaining} mensajes este mes.` : `Te quedan ${remaining} de 3 preguntas gratuitas.`} Respuestas orientativas, generadas con inteligencia artificial.
+        {remaining >= 9999 ? "Sin límite (administrador)." : isPremium ? `Te quedan ${remaining} mensajes este mes.` : `Te quedan ${remaining} de ${freeLimit} preguntas ${inApp ? "de prueba" : "gratuitas"}.`} Respuestas orientativas, generadas con inteligencia artificial.
       </p>
     </div>
   );

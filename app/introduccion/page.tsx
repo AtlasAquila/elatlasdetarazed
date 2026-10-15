@@ -1,3 +1,4 @@
+import { isAppRequest } from "@/lib/app-mode";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 
 export default async function IntroduccionPage() {
   const { t } = await getTexts();
+  const inApp = await isAppRequest();
   const blocks = t("intro.hero.lead").split(/\n\n+/);
   // Un primer bloque corto es un subtítulo; el resto de bloques son párrafos del mismo tamaño.
   const hasSubtitle = blocks.length > 1 && blocks[0].length <= 90;
@@ -55,12 +57,14 @@ export default async function IntroduccionPage() {
               <span className="apartado-title">Tu carta</span>
               <span className="apartado-sub">Conócete en profundidad</span>
             </Link>
+            {!inApp && (
             <Link href="/recursos" className="apartado">
               <span className="apartado-icon" aria-hidden="true">
                 <svg width="30" height="30" viewBox="0 0 30 30"><g fill="none" stroke="var(--oro)" strokeWidth={1.2}><path d="M4 7c3-2.4 7-2.4 10.5 0v16c-3.5-2.4-7.5-2.4-10.5 0z" /><path d="M26 7c-3-2.4-7-2.4-10.5 0v16c3.5-2.4 7.5-2.4 10.5 0z" /></g></svg>
               </span>
               <span className="apartado-title apartado-title-grande">Recursos astrológicos</span>
             </Link>
+            )}
             <Link href="/numerologia" className="apartado">
               <span className="apartado-icon" aria-hidden="true">
                 <svg width="30" height="30" viewBox="0 0 30 30"><polygon points="15,3 27,25 3,25" fill="none" stroke="var(--oro)" strokeWidth={1.2} /></svg>

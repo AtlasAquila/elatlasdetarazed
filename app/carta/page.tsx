@@ -1,3 +1,4 @@
+import { isAppRequest } from "@/lib/app-mode";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 
 export default async function CartaPage() {
   const session = await getSession();
+  const inApp = await isAppRequest();
 
   if (!session) {
     return (
@@ -61,9 +63,13 @@ export default async function CartaPage() {
               {isPremium ? (
                 "Has llegado al máximo de cartas de tu plan. Borra alguna para crear otra."
               ) : (
-                <>
-                  Has llegado al máximo de cartas de tu plan. Borra alguna o hazte <Link href="/planes">premium</Link> para añadir más.
-                </>
+                inApp ? (
+                  "Has llegado al máximo de cartas. Borra alguna para crear otra."
+                ) : (
+                  <>
+                    Has llegado al máximo de cartas de tu plan. Borra alguna o hazte <Link href="/planes">premium</Link> para añadir más.
+                  </>
+                )
               )}
             </span>
           )}

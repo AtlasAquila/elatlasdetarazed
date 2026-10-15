@@ -44,10 +44,10 @@ const TABS: Tab[] = [
     match: ["/carta"],
   },
   {
-    href: "/recursos",
-    label: "Recursos",
-    icon: svg(<path d="M12 3c.6 4.8 2.2 6.4 7 7-4.8.6-6.4 2.2-7 7-.6-4.8-2.2-6.4-7-7 4.8-.6 6.4-2.2 7-7Z" />),
-    match: ["/recursos", "/numerologia", "/sinastria", "/pluton-acuario", "/venus-retrogrado"],
+    href: "/numerologia",
+    label: "Numerología",
+    icon: svg(<path d="M12 4 21 19H3L12 4Z" />),
+    match: ["/numerologia"],
   },
   {
     href: "/cuenta",
@@ -58,7 +58,7 @@ const TABS: Tab[] = [
         <path d="M5 20c.8-3.6 3.5-5.5 7-5.5s6.2 1.9 7 5.5" />
       </>,
     ),
-    match: ["/cuenta", "/entrar", "/registro", "/recuperar", "/nueva-contrasena", "/planes", "/introduccion", "/fundamentos", "/aviso-legal", "/privacidad", "/cookies"],
+    match: ["/cuenta", "/entrar", "/registro", "/recuperar", "/nueva-contrasena", "/introduccion", "/fundamentos", "/aviso-legal", "/privacidad", "/cookies"],
   },
 ];
 
