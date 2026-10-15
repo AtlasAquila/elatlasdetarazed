@@ -3,6 +3,7 @@ import { getSession } from "@/lib/supabase/server";
 import { getTexts } from "@/lib/texts";
 import { AquilaMark } from "./Art";
 import { SiteMenu } from "./SiteMenu";
+import { SiteNav } from "./SiteNav";
 
 const LINKS = [
   { href: "/introduccion", label: "Introducción" },
@@ -14,6 +15,9 @@ const LINKS = [
   // { href: "/fundamentos", label: "Fundamentos" }, // oculto hasta que tenga contenido
   { href: "/planes", label: "Planes" },
 ];
+
+/** Los que caben a la vista en la cabecera de escritorio. */
+const MAIN_LINKS = LINKS.filter((l) => ["/clima-astral", "/carta", "/recursos", "/numerologia", "/blog"].includes(l.href));
 
 export async function SiteHeader() {
   const session = await getSession();
@@ -30,6 +34,7 @@ export async function SiteHeader() {
           <AquilaMark />
           Códice Orbital
         </Link>
+        <SiteNav links={MAIN_LINKS} />
         <div className="nav-account">
           {session ? (
             <>
