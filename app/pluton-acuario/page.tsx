@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { PlutonGuideForm } from "@/components/PlutonGuideForm";
 
@@ -11,12 +12,23 @@ const DESCRIPTION = "Tu guía gratuita: en qué casa de tu carta se mueve Plutó
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  openGraph: { title: TITLE, description: DESCRIPTION },
+  openGraph: { title: TITLE, description: DESCRIPTION, images: [{ url: "/pluton-acuario-cabecera.webp", width: 1672, height: 941 }] },
 };
 
 export default function PlutonAcuarioPage() {
   return (
     <>
+      <div className="container venus-banner">
+        <Image
+          src="/pluton-acuario-cabecera.webp"
+          width={1672}
+          height={941}
+          priority
+          sizes="(max-width: 1120px) 100vw, 1072px"
+          alt="Un águila dorada sobrevuela Plutón y el símbolo de Acuario entre constelaciones"
+        />
+      </div>
+
       <section className="hero venus-hero">
         <div className="container">
           <p className="kicker">Plutón directo · 16 de octubre de 2026</p>
