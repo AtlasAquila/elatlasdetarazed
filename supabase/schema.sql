@@ -898,3 +898,30 @@ create policy "Cada usuario ve sus reportes" on public.reportes
 -- El aviso de prueba de los administradores también se guarda en Reportes.
 alter table public.reportes drop constraint if exists reportes_kind_check;
 alter table public.reportes add constraint reportes_kind_check check (kind in ('weekly', 'transit', 'test'));
+
+-- ════════════════════════════════════════════════════════════
+-- Contenido generado por IA reportado por las personas (botón «Reportar»)
+-- ════════════════════════════════════════════════════════════
+-- Cada persona puede enviar el suyo; solo los administradores los ven y los marcan como resueltos.
+create table if not exists public.contenido_reportado (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users (id) on delete cascade,
+  kind text not null check (kind in ('asistente', 'lectura', 'numerologia')),
+  reason text not null check (reason in ('inexacto', 'ofensivo', 'inapropiado', 'otro')),
+  comment text check (comment is null or char_length(comment) <= 1000),
+  content text not null check (char_length(content) between 1 and 4000),
+  path text check (path is null or char_length(path) <= 300),
+  created_at timestamptz not null default now(),
+  resolved_at timestamptz
+);
+create index if not exists contenido_reportado_created_idx on public.contenido_reportado (created_at desc);
+alter table public.contenido_reportado enable row level security;
+drop policy if exists "Cada usuario reporta contenido" on public.contenido_reportado;
+create policy "Cada usuario reporta contenido" on public.contenido_reportado
+  for insert with check ((select auth.uid()) = user_id);
+drop policy if exists "Solo administradores ven los reportes de contenido" on public.contenido_reportado;
+create policy "Solo administradores ven los reportes de contenido" on public.contenido_reportado
+  for select using ((select private.is_admin()));
+drop policy if exists "Solo administradores resuelven los reportes de contenido" on public.contenido_reportado;
+create policy "Solo administradores resuelven los reportes de contenido" on public.contenido_reportado
+  for update using ((select private.is_admin())) with check ((select private.is_admin()));

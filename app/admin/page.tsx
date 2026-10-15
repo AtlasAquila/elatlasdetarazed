@@ -57,6 +57,9 @@ export default async function AdminPage() {
           <Link href="/admin/textos" className="btn btn-ghost">
             Textos de la web
           </Link>
+          <Link href="/admin/reportes-ia" className="btn btn-ghost">
+            Contenido reportado
+          </Link>
           <span className="muted" style={{ alignSelf: "center" }}>
             Lista de espera: {waitlistCount ?? 0} {waitlistCount === 1 ? "persona" : "personas"}
           </span>
