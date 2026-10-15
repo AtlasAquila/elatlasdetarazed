@@ -67,7 +67,7 @@ export function AppAvisos({ initial, charts }: Props) {
     setMessage(null);
     start(async () => {
       const result = await sendTestPush();
-      setMessage(result.ok ? "Aviso enviado: debería llegar en unos segundos." : (result.error ?? "No se ha podido enviar."));
+      setMessage(result.ok ? "Te lo envío en 10 segundos. Sal de la app (botón de inicio) o bloquea el móvil para verlo en las notificaciones." : (result.error ?? "No se ha podido enviar."));
     });
   };
 
