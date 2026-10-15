@@ -12,6 +12,16 @@ const icon = (children: ReactNode) => (
 
 const TILES: Tile[] = [
   {
+    href: "/clima-astral",
+    label: "Clima astral",
+    icon: icon(
+      <>
+        <path d="M10 38h25a7 7 0 0 0 .6-14 10 10 0 0 0-19.2-1.5A8 8 0 0 0 10 38Z" />
+        <path d="M30 6v7M26.5 9.5h7M18 12l1.5 3M41 14l-2.5 2" />
+      </>,
+    ),
+  },
+  {
     href: "/transitos",
     label: "Tránsitos",
     icon: icon(
@@ -19,16 +29,6 @@ const TILES: Tile[] = [
         <circle cx="24" cy="24" r="8" />
         <ellipse cx="24" cy="24" rx="19" ry="6.5" transform="rotate(-24 24 24)" />
         <circle cx="39" cy="14" r="1.2" fill="currentColor" />
-      </>,
-    ),
-  },
-  {
-    href: "/clima-astral",
-    label: "Clima astral",
-    icon: icon(
-      <>
-        <path d="M10 38h25a7 7 0 0 0 .6-14 10 10 0 0 0-19.2-1.5A8 8 0 0 0 10 38Z" />
-        <path d="M30 6v7M26.5 9.5h7M18 12l1.5 3M41 14l-2.5 2" />
       </>,
     ),
   },
@@ -59,13 +59,12 @@ const TILES: Tile[] = [
     ),
   },
   {
-    href: "/ciclo-lunar",
-    label: "Ciclo lunar",
+    href: "/alshain",
+    label: "Alshain",
     icon: icon(
       <>
-        <circle cx="24" cy="24" r="9" fill="currentColor" />
-        <path d="M11 14a14 14 0 0 0 0 20a10 10 0 0 1 0-20Z" fill="currentColor" />
-        <path d="M37 14a14 14 0 0 1 0 20a10 10 0 0 0 0-20Z" fill="currentColor" />
+        <path d="M8 9a5 5 0 0 1 5-5h22a5 5 0 0 1 5 5v14a5 5 0 0 1-5 5H21l-9 9v-9h-.5A3.5 3.5 0 0 1 8 23.5V9Z" />
+        <path d="M24 11v10M19 16h10M20.5 12.5l7 7M27.5 12.5l-7 7" />
       </>,
     ),
   },

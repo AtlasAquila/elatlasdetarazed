@@ -22,7 +22,14 @@ export default async function ClimaAstralPage() {
       <div className="container reading">
         <h1 style={{ color: "var(--oro)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Clima astral</h1>
 
-        {today && <ClimaDiaCard reading={today} />}
+        {today && (
+          <details className="rueda-desplegable" open>
+            <summary>Clima de hoy</summary>
+            <div className="rueda-desplegable-cuerpo">
+              <ClimaDiaCard reading={today} />
+            </div>
+          </details>
+        )}
         {earlier.length > 0 && (
           <details className="rueda-desplegable">
             <summary>Días anteriores</summary>
