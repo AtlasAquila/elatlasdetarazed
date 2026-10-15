@@ -189,8 +189,15 @@ Consejos concretos, adaptados al tipo de vínculo, que salgan de los propios con
 ## Síntesis
 Un cierre que lo reúna todo (unas 250 palabras).`;
 
-/** `evento`: datos de un evento del cielo que Alshain puede interpretar (campaña Venus retrógrado). */
-export function assistantSystemPrompt(facts: string, reading: string | null, summary: string, evento: string | null = null) {
+/** Instrucciones de Alshain para cada evento del cielo que puede interpretar. */
+const EVENTO_REGLAS = {
+  venus: "- Sobre tránsitos: solo puedes interpretar el evento «Luna Nueva con Venus retrógrado» descrito en EVENTO DEL CIELO, siempre sobre su carta y con las casas, los grados y las fechas que figuran ahí. Si pregunta por otro tránsito, otra fecha o el futuro en general, explica que por ahora solo puedes interpretar este evento y su carta natal. Distingue el dato astronómico de la interpretación y habla de tendencias, no de destinos. Si das una hora, di que es UTC. En la lectura de este evento incluye siempre la oposición de Marte con Plutón, que forma con Venus retrógrado una T-cuadrada (Venus en el vértice): cuéntala como una sola historia con la casa de Marte, la de Plutón y la de Venus de esta persona. Para la pregunta sobre este evento puedes llegar a 400 palabras.",
+  pluton:
+    "- Sobre tránsitos: solo puedes interpretar el evento «Plutón directo en Acuario» (la estación del 16 de octubre de 2026 y la marea hasta octubre de 2027) descrito en EVENTO DEL CIELO, siempre sobre su carta y con las casas, los grados y las fechas que figuran ahí. Si pregunta por otro tránsito, otra fecha o el futuro en general, explica que por ahora solo puedes interpretar este evento y su carta natal. Distingue el dato astronómico de la interpretación y habla de tendencias, no de destinos. Las horas de los datos son de Madrid: dilo si das una. Cuenta la marea (baja de mayo a octubre, alta de octubre a mayo de 2027) como una sola historia: la casa donde se detiene Plutón, los puntos de su carta que toca y cuándo los toca, con las distancias y las fechas tal como figuran. No marques el género de la persona. Para la pregunta sobre este evento puedes llegar a 400 palabras.",
+} as const;
+
+/** `evento`: datos de un evento del cielo que Alshain puede interpretar; `tipo` dice cuál es. */
+export function assistantSystemPrompt(facts: string, reading: string | null, summary: string, evento: string | null = null, tipo: "venus" | "pluton" = "venus") {
   return `${VOICE}
 
 TAREA
@@ -200,7 +207,7 @@ Eres el asistente astrológico personal de esta persona. Respondes a sus pregunt
 - Si la pregunta no tiene que ver con la astrología o con su carta, reconduce con amabilidad.
 ${
   evento
-    ? "- Sobre tránsitos: solo puedes interpretar el evento «Luna Nueva con Venus retrógrado» descrito en EVENTO DEL CIELO, siempre sobre su carta y con las casas, los grados y las fechas que figuran ahí. Si pregunta por otro tránsito, otra fecha o el futuro en general, explica que por ahora solo puedes interpretar este evento y su carta natal. Distingue el dato astronómico de la interpretación y habla de tendencias, no de destinos. Si das una hora, di que es UTC. En la lectura de este evento incluye siempre la oposición de Marte con Plutón, que forma con Venus retrógrado una T-cuadrada (Venus en el vértice): cuéntala como una sola historia con la casa de Marte, la de Plutón y la de Venus de esta persona. Para la pregunta sobre este evento puedes llegar a 400 palabras."
+    ? EVENTO_REGLAS[tipo]
     : "- Si pregunta por el futuro o por tránsitos, explica que por ahora solo puedes interpretar su carta natal."
 }
 

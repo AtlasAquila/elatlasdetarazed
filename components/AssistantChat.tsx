@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { EVENTO_PLUTON, PLUTON_PREGUNTA } from "@/lib/pluton-campana";
 import { EVENTO_VENUS, VENUS_PREGUNTA } from "@/lib/venus-retrogrado";
 import { ReportContent } from "./ReportContent";
 import { RichText } from "./RichText";
@@ -21,11 +22,13 @@ type Props = {
   enabled: boolean;
   /** Llega desde la guía de Venus retrógrado: se destaca la pregunta sugerida. */
   suggestVenus?: boolean;
+  /** Llega desde la guía de Plutón directo en Acuario: se destaca la pregunta sugerida. */
+  suggestPluton?: boolean;
 };
 
 const SUGGESTIONS = ["¿Qué dice mi carta sobre mi forma de amar?", "¿Cuál es mi mayor talento según mi carta?", "¿Qué significa mi Luna para mi vida emocional?", "¿Hacia qué vocación apunta mi Medio Cielo?"];
 
-export function AssistantChat({ chartId, chartName, initial, remaining: initialRemaining, isPremium, freeLimit = 3, inApp = false, enabled, suggestVenus = false }: Props) {
+export function AssistantChat({ chartId, chartName, initial, remaining: initialRemaining, isPremium, freeLimit = 3, inApp = false, enabled, suggestVenus = false, suggestPluton = false }: Props) {
   const [messages, setMessages] = useState<Msg[]>(initial);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -81,6 +84,7 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
 
   const outOfQuestions = remaining <= 0;
   const showVenus = suggestVenus && enabled && !outOfQuestions && !messages.some((m) => m.content === VENUS_PREGUNTA);
+  const showPluton = suggestPluton && enabled && !outOfQuestions && !messages.some((m) => m.content === PLUTON_PREGUNTA);
 
   return (
     <div className="chat">
@@ -111,6 +115,15 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
           <p className="small muted">Viene de la guía de Venus retrógrado. Una pregunta para empezar:</p>
           <button type="button" className="btn btn-primary" onClick={() => send(VENUS_PREGUNTA, EVENTO_VENUS)} disabled={busy}>
             {VENUS_PREGUNTA}
+          </button>
+        </div>
+      )}
+
+      {showPluton && (
+        <div className="chat-suggest">
+          <p className="small muted">Viene de la guía de Plutón directo en Acuario. Una pregunta para empezar:</p>
+          <button type="button" className="btn btn-primary" onClick={() => send(PLUTON_PREGUNTA, EVENTO_PLUTON)} disabled={busy}>
+            {PLUTON_PREGUNTA}
           </button>
         </div>
       )}

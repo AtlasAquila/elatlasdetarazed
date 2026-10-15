@@ -70,8 +70,8 @@ export async function createChart(_prev: ChartFormState, formData: FormData): Pr
   if (error || !data) return { error: "No se ha podido guardar la carta. Inténtalo de nuevo." };
 
   revalidatePath("/carta");
-  // Quien llega desde la guía de Venus retrógrado pasa directo a Alshain, con la pregunta sugerida.
-  redirect(origen === "venus" ? `/carta/${data.id}/asistente?pregunta=venus` : `/carta/${data.id}`);
+  // Quien llega desde la guía de una campaña (Plutón directo en Acuario o Venus retrógrado) pasa directo a Alshain, con la pregunta sugerida.
+  redirect(origen === "venus" || origen === "pluton" ? `/carta/${data.id}/asistente?pregunta=${origen}` : `/carta/${data.id}`);
 }
 
 export async function deleteChart(formData: FormData) {

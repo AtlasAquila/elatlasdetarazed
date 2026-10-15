@@ -429,9 +429,9 @@ export function componerGuia(base: PlutonBase, ia: RedaccionIA = {}): PlutonGuid
     seccionesIA: [ia.hilo, ia.marea, ia.contactos].filter(Boolean).length,
     secciones,
     cta: {
-      texto: `${TEXTO_CIERRE}\n\nCrea tu carta natal gratis y mírala completa.`,
+      texto: `${TEXTO_CIERRE}\n\nCrea tu carta natal gratis y mírala completa. Después podrás preguntarle a Alshain, el asistente de Códice Orbital, cómo afecta Plutón directo en Acuario a tu carta.`,
       boton: "Crear mi carta natal",
-      ruta: `/registro?siguiente=${encodeURIComponent("/carta/nueva")}`,
+      ruta: `/registro?siguiente=${encodeURIComponent("/carta/nueva?origen=pluton")}`,
     },
   };
 }

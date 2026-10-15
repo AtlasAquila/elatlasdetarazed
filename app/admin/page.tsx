@@ -54,6 +54,9 @@ export default async function AdminPage() {
           <Link href="/admin/clima-diario" className="btn btn-ghost">
             Clima diario
           </Link>
+          <Link href="/admin/pluton" className="btn btn-ghost">
+            Guía de Plutón
+          </Link>
           <Link href="/admin/venus" className="btn btn-ghost">
             Guía de Venus
           </Link>

@@ -16,7 +16,7 @@ export default async function AsistentePage({ params, searchParams }: Props) {
   const { id } = await params;
   const { pregunta } = await searchParams;
   const session = await getSession();
-  if (!session) redirect(`/entrar?siguiente=${encodeURIComponent(`/carta/${id}/asistente${pregunta === "venus" ? "?pregunta=venus" : ""}`)}`);
+  if (!session) redirect(`/entrar?siguiente=${encodeURIComponent(`/carta/${id}/asistente${pregunta === "venus" || pregunta === "pluton" ? `?pregunta=${pregunta}` : ""}`)}`);
   const row = await getMyChart(id);
   if (!row) notFound();
 
@@ -50,7 +50,7 @@ export default async function AsistentePage({ params, searchParams }: Props) {
         </p>
         <h1>Pregunta a Alshain</h1>
         <p className="muted">{birthSummary(row)}</p>
-        <AssistantChat chartId={id} chartName={row.name} initial={messages} remaining={remaining} isPremium={isPremium} freeLimit={freeLimit} inApp={inApp} enabled={aiConfigured()} suggestVenus={pregunta === "venus"} />
+        <AssistantChat chartId={id} chartName={row.name} initial={messages} remaining={remaining} isPremium={isPremium} freeLimit={freeLimit} inApp={inApp} enabled={aiConfigured()} suggestVenus={pregunta === "venus"} suggestPluton={pregunta === "pluton"} />
       </div>
     </section>
   );

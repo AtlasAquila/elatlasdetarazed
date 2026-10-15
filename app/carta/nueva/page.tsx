@@ -11,9 +11,9 @@ type Props = { searchParams: Promise<{ origen?: string }> };
 
 export default async function NuevaCartaPage({ searchParams }: Props) {
   const { origen: origenParam } = await searchParams;
-  const origen = origenParam === "venus" ? "venus" : undefined;
+  const origen = origenParam === "venus" || origenParam === "pluton" ? origenParam : undefined;
   const session = await getSession();
-  if (!session) redirect(`/entrar?siguiente=${encodeURIComponent(origen ? "/carta/nueva?origen=venus" : "/carta/nueva")}`);
+  if (!session) redirect(`/entrar?siguiente=${encodeURIComponent(origen ? `/carta/nueva?origen=${origen}` : "/carta/nueva")}`);
   const charts = await listMyCharts();
   const hasSelf = charts.some((c) => c.is_self);
   const existing = charts.find((c) => c.is_self) ?? charts[0];
@@ -31,11 +31,13 @@ export default async function NuevaCartaPage({ searchParams }: Props) {
         <p className="lead">Con la fecha, la hora y el lugar exactos calculamos el cielo tal como era en ese instante.</p>
         {origen && (
           <p className="notice" style={{ marginTop: 24 }}>
-            Vienes de la guía de Venus retrógrado. Al guardar tu carta, Alshain te propondrá preguntar cómo afecta la Luna Nueva con Venus retrógrado en Escorpio a tu carta.
+            {origen === "pluton"
+              ? "Vienes de la guía de Plutón directo en Acuario. Al guardar tu carta, Alshain te propondrá preguntar cómo afecta la estación de Plutón a tu carta."
+              : "Vienes de la guía de Venus retrógrado. Al guardar tu carta, Alshain te propondrá preguntar cómo afecta la Luna Nueva con Venus retrógrado en Escorpio a tu carta."}
             {existing && (
               <>
                 {" "}
-                Si prefieres usar una carta que ya tienes, <Link href={`/carta/${existing.id}/asistente?pregunta=venus`}>pregúntale a Alshain desde la carta de {existing.name}</Link>.
+                Si prefieres usar una carta que ya tienes, <Link href={`/carta/${existing.id}/asistente?pregunta=${origen}`}>pregúntale a Alshain desde la carta de {existing.name}</Link>.
               </>
             )}
           </p>

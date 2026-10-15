@@ -6,6 +6,7 @@ import { chartFactsText } from "@/lib/engine/analysis";
 import { isAppRequest } from "@/lib/app-mode";
 import { WEB_FREE_QUESTIONS, effectiveQuestionStatus, type QuestionStatus } from "@/lib/assistant-limit";
 import { createClient } from "@/lib/supabase/server";
+import { EVENTO_PLUTON, PLUTON_PREGUNTA, plutonEventFactsText } from "@/lib/pluton-campana";
 import { venusEventFactsText } from "@/lib/venus-evento";
 import { EVENTO_VENUS, VENUS_PREGUNTA } from "@/lib/venus-retrogrado";
 
@@ -64,10 +65,12 @@ export async function POST(request: NextRequest) {
 
   const chart = chartFromRow(chartRow);
   const facts = chartFactsText(chart, chartRow.name, birthSummary(chartRow));
-  // El evento de la campaña Venus retrógrado se activa al llegar desde la guía y se mantiene
-  // mientras la conversación conserve la pregunta sugerida.
-  const conEvento = evento === EVENTO_VENUS || (history ?? []).some((m) => m.role === "user" && m.content === VENUS_PREGUNTA);
-  const system = assistantSystemPrompt(facts, reading, conv.summary, conEvento ? venusEventFactsText(chart) : null);
+  // El evento de una campaña (Plutón directo en Acuario o Venus retrógrado) se activa al llegar desde su guía y se
+  // mantiene mientras la conversación conserve la pregunta sugerida.
+  const conPluton = evento === EVENTO_PLUTON || (history ?? []).some((m) => m.role === "user" && m.content === PLUTON_PREGUNTA);
+  const conVenus = !conPluton && (evento === EVENTO_VENUS || (history ?? []).some((m) => m.role === "user" && m.content === VENUS_PREGUNTA));
+  const eventoTexto = conPluton ? plutonEventFactsText(chart) : conVenus ? venusEventFactsText(chart) : null;
+  const system = assistantSystemPrompt(facts, reading, conv.summary, eventoTexto, conPluton ? "pluton" : "venus");
   const messages: AiMessage[] = [...(history ?? []).map((m) => ({ role: m.role as "user" | "assistant", content: m.content })), { role: "user", content: question }];
 
   const encoder = new TextEncoder();
