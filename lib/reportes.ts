@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 /** Un aviso enviado a la persona, guardado para poder verlo cuando quiera (pestaña «Reportes» de la app). */
 export type Reporte = {
   id: string;
-  kind: "weekly" | "transit" | "test";
+  kind: "weekly" | "daily" | "transit" | "test";
   title: string;
   body: string;
   url: string;

@@ -925,3 +925,37 @@ create policy "Solo administradores ven los reportes de contenido" on public.con
 drop policy if exists "Solo administradores resuelven los reportes de contenido" on public.contenido_reportado;
 create policy "Solo administradores resuelven los reportes de contenido" on public.contenido_reportado
   for update using ((select private.is_admin())) with check ((select private.is_admin()));
+
+-- ════════════════════════════════════════════════════════════
+-- Clima astral de cada día (se escribe a diario y sale en la web, en la app y como aviso)
+-- ════════════════════════════════════════════════════════════
+-- Se publica por adelantado: cada lectura se ve a partir de su día (hora de Madrid). Solo escriben los administradores
+-- (o la tarea diaria, con acceso directo a la base de datos).
+create table if not exists public.clima_diario (
+  day date primary key,
+  icon text not null default '🌙✨' check (char_length(icon) <= 16),
+  headline text not null check (char_length(headline) between 1 and 200),
+  tags text[] not null default '{}',
+  body text not null check (char_length(body) between 1 and 6000),
+  closing text not null default '' check (char_length(closing) <= 300),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.clima_diario enable row level security;
+drop policy if exists "Todos leen el clima de los días ya llegados" on public.clima_diario;
+create policy "Todos leen el clima de los días ya llegados" on public.clima_diario
+  for select using (day <= (now() at time zone 'Europe/Madrid')::date or (select private.is_admin()));
+drop policy if exists "Solo administradores crean el clima diario" on public.clima_diario;
+create policy "Solo administradores crean el clima diario" on public.clima_diario
+  for insert with check ((select private.is_admin()));
+drop policy if exists "Solo administradores editan el clima diario" on public.clima_diario;
+create policy "Solo administradores editan el clima diario" on public.clima_diario
+  for update using ((select private.is_admin())) with check ((select private.is_admin()));
+drop policy if exists "Solo administradores borran el clima diario" on public.clima_diario;
+create policy "Solo administradores borran el clima diario" on public.clima_diario
+  for delete using ((select private.is_admin()));
+
+-- Aviso diario en el móvil (por defecto activado) y su historial en Reportes.
+alter table public.push_devices add column if not exists daily_climate boolean not null default true;
+alter table public.reportes drop constraint if exists reportes_kind_check;
+alter table public.reportes add constraint reportes_kind_check check (kind in ('weekly', 'daily', 'transit', 'test'));

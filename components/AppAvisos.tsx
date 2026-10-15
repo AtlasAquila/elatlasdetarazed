@@ -5,7 +5,7 @@ import { registerDevice, sendTestPush, unregisterDevice, updateAvisos } from "@/
 import { nativeBridge, registerForPush, storeToken, storedToken } from "@/lib/native";
 
 type Props = {
-  initial: { weekly: boolean; alerts: boolean; chartId: string | null };
+  initial: { daily: boolean; weekly: boolean; alerts: boolean; chartId: string | null };
   charts: { id: string; name: string }[];
 };
 
@@ -13,6 +13,7 @@ type Props = {
 export function AppAvisos({ initial, charts }: Props) {
   const [ready, setReady] = useState(false);
   const [enabled, setEnabled] = useState(false);
+  const [daily, setDaily] = useState(initial.daily);
   const [weekly, setWeekly] = useState(initial.weekly);
   const [alerts, setAlerts] = useState(initial.alerts);
   const [chartId, setChartId] = useState(initial.chartId ?? charts[0]?.id ?? "");
@@ -53,12 +54,13 @@ export function AppAvisos({ initial, charts }: Props) {
     });
   };
 
-  const save = (next: { weekly: boolean; alerts: boolean; chartId: string }) => {
+  const save = (next: { daily: boolean; weekly: boolean; alerts: boolean; chartId: string }) => {
+    setDaily(next.daily);
     setWeekly(next.weekly);
     setAlerts(next.alerts);
     setChartId(next.chartId);
     start(async () => {
-      const result = await updateAvisos({ weekly: next.weekly, alerts: next.alerts, chartId: next.chartId || null });
+      const result = await updateAvisos({ daily: next.daily, weekly: next.weekly, alerts: next.alerts, chartId: next.chartId || null });
       setMessage(result.ok ? "Guardado." : (result.error ?? "No se ha podido guardar."));
     });
   };
@@ -76,7 +78,7 @@ export function AppAvisos({ initial, charts }: Props) {
       <h3>Avisos</h3>
       {!enabled ? (
         <>
-          <p className="muted">Recibe en el móvil el clima astral de cada semana y un aviso cuando llegue algo importante a tu carta.</p>
+          <p className="muted">Recibe en el móvil el clima astral de cada día y de cada semana y un aviso cuando llegue algo importante a tu carta.</p>
           <button type="button" className="btn btn-primary btn-small" onClick={activate} disabled={pending}>
             {pending ? "Activando…" : "Activar avisos"}
           </button>
@@ -84,7 +86,15 @@ export function AppAvisos({ initial, charts }: Props) {
       ) : (
         <>
           <label style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 16 }}>
-            <input type="checkbox" checked={weekly} disabled={pending} onChange={(e) => save({ weekly: e.target.checked, alerts, chartId })} style={{ marginTop: 6 }} />
+            <input type="checkbox" checked={daily} disabled={pending} onChange={(e) => save({ daily: e.target.checked, weekly, alerts, chartId })} style={{ marginTop: 6 }} />
+            <span>
+              <strong>Clima astral del día</strong>
+              <br />
+              <span className="small muted">Cada mañana, hacia las 8:00 de España.</span>
+            </span>
+          </label>
+          <label style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 16 }}>
+            <input type="checkbox" checked={weekly} disabled={pending} onChange={(e) => save({ daily, weekly: e.target.checked, alerts, chartId })} style={{ marginTop: 6 }} />
             <span>
               <strong>Clima astral de la semana</strong>
               <br />
@@ -92,7 +102,7 @@ export function AppAvisos({ initial, charts }: Props) {
             </span>
           </label>
           <label style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 16 }}>
-            <input type="checkbox" checked={alerts} disabled={pending || charts.length === 0} onChange={(e) => save({ weekly, alerts: e.target.checked, chartId })} style={{ marginTop: 6 }} />
+            <input type="checkbox" checked={alerts} disabled={pending || charts.length === 0} onChange={(e) => save({ daily, weekly, alerts: e.target.checked, chartId })} style={{ marginTop: 6 }} />
             <span>
               <strong>Lunaciones y tránsitos importantes sobre tu carta</strong>
               <br />
@@ -102,7 +112,7 @@ export function AppAvisos({ initial, charts }: Props) {
           {alerts && charts.length > 1 && (
             <div className="field" style={{ marginBottom: 16 }}>
               <label htmlFor="carta-avisos">Carta para los avisos</label>
-              <select id="carta-avisos" className="input" value={chartId} disabled={pending} onChange={(e) => save({ weekly, alerts, chartId: e.target.value })}>
+              <select id="carta-avisos" className="input" value={chartId} disabled={pending} onChange={(e) => save({ daily, weekly, alerts, chartId: e.target.value })}>
                 {charts.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}

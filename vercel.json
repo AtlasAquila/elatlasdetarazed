@@ -1,3 +1,6 @@
 {
-  "crons": [{ "path": "/api/cron/avisos", "schedule": "0 7 * * *" }]
+  "crons": [
+    { "path": "/api/cron/clima-diario", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/avisos", "schedule": "0 7 * * *" }
+  ]
 }

@@ -58,7 +58,7 @@ export default async function CuentaPage({ searchParams }: Props) {
   // Avisos de la app de Android: solo se muestran dentro de la app.
   const inApp = await isAppRequest();
   const sinPagos = await hidePayments();
-  const avisos = inApp && supabase ? (await supabase.from("push_devices").select("weekly_climate, chart_alerts, chart_id").limit(1).maybeSingle()).data : null;
+  const avisos = inApp && supabase ? (await supabase.from("push_devices").select("daily_climate, weekly_climate, chart_alerts, chart_id").limit(1).maybeSingle()).data : null;
   const avisosCharts = inApp ? (await listMyCharts()).map((c) => ({ id: c.id, name: c.name })) : [];
 
   return (
@@ -78,7 +78,7 @@ export default async function CuentaPage({ searchParams }: Props) {
 
         {inApp && (
           <AppAvisos
-            initial={{ weekly: avisos?.weekly_climate ?? true, alerts: avisos?.chart_alerts ?? true, chartId: avisos?.chart_id ?? null }}
+            initial={{ daily: avisos?.daily_climate ?? true, weekly: avisos?.weekly_climate ?? true, alerts: avisos?.chart_alerts ?? true, chartId: avisos?.chart_id ?? null }}
             charts={avisosCharts}
           />
         )}
