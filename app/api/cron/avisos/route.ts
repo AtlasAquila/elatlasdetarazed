@@ -35,7 +35,9 @@ async function claim(sb: Service, userId: string, key: string) {
   return !error;
 }
 
-async function deliver(sb: Service, devices: Device[], message: PushMessage) {
+/** Guarda el aviso en los reportes de la persona (se ve en la app aunque la notificación no llegue) y lo envía. */
+async function deliver(sb: Service, devices: Device[], kind: "weekly" | "transit", message: PushMessage) {
+  await sb.from("reportes").insert({ user_id: devices[0].user_id, kind, title: message.title, body: message.body, url: message.url });
   let sent = 0;
   for (const d of devices) {
     const { result } = await sendPush(d.token, message);
@@ -75,7 +77,7 @@ export async function GET(request: NextRequest) {
     try {
       const weekly = list.filter((d) => d.weekly_climate);
       if (post && weekly.length && (await claim(sb, userId, `post:${post.id}`))) {
-        stats.weekly += await deliver(sb, weekly, { title: "El clima astral de la semana", body: post.title, url: `/clima-astral/${post.slug}` });
+        stats.weekly += await deliver(sb, weekly, "weekly", { title: "El clima astral de la semana", body: post.title, url: `/clima-astral/${post.slug}` });
       }
 
       const alerts = list.filter((d) => d.chart_alerts);
@@ -84,7 +86,7 @@ export async function GET(request: NextRequest) {
         const row = mine.find((c) => c.id === alerts[0].chart_id) ?? mine[0];
         const found = row ? upcomingEvent(chartFromRow(row), now) : null;
         if (row && found && (await claim(sb, userId, `event:${row.id}:${found.event.kind}:${Math.round(found.event.at / 60_000)}`))) {
-          stats.alerts += await deliver(sb, alerts, { ...alertMessage(found, now), url: `/carta/${row.id}` });
+          stats.alerts += await deliver(sb, alerts, "transit", { ...alertMessage(found, now), url: `/carta/${row.id}` });
         }
       }
     } catch {
