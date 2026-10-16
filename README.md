@@ -71,6 +71,8 @@ Toda la web pide las cartas a través de una sola función, `computeChart()`. La
 
 Validación (`npx tsx scripts/validate-engine.ts reference.json`) frente a 8 cartas de referencia (1920-2038, ambos hemisferios):
 
+Pruebas automáticas (`npm test`, sin dependencias: Node 22.6 o posterior). `tests/motor.test.ts` repite la validación frente a 55 cartas de referencia (1900-2099, latitudes polares incluidas), 44 conversiones de hora local de husos históricos y 4 revoluciones solares, con los valores de `tests/fixtures/referencia-swisseph.json` (generados fuera del repositorio con `herramientas/referencia_motor.py`). Errores máximos hasta 2050: planetas 20″, Luna 9″, casas, Ascendente y Medio Cielo 3″; más allá de 2050 la Luna difiere hasta 64″ por la extrapolación de ΔT. Motor versión 2: dentro del círculo polar el Ascendente ya no sale en el lugar del Descendente y las casas de Porfirio (el respaldo de Placidus) ya no dejan cúspides vacías.
+
 | Elemento | Error máximo |
 | --- | --- |
 | Sol, Luna, planetas | 14″ |
