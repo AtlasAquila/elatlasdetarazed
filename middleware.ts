@@ -8,9 +8,20 @@ const PROTECTED = ["/cuenta", "/admin", "/nueva-contrasena"];
 const APP_NO_PAYMENTS = /^\/(planes|recursos|sinastria)(\/|$)/;
 const APP_NO_PAYMENTS_CHART = /^\/carta\/([^/]+)\/(clima|revolucion)(\/|$)/;
 
+// Proyecto en pausa: cualquier enlace de la web muestra una página en blanco. El código queda intacto;
+// para reabrir la web, poner PAUSADA a false.
+const PAUSADA = true;
+
 export async function middleware(request: NextRequest) {
   // Los avisos de Stripe no llevan sesión ni contraseña: pasan directos (la ruta verifica cada evento).
   if (request.nextUrl.pathname === "/api/stripe/webhook") return NextResponse.next();
+
+  if (PAUSADA) {
+    return new NextResponse("<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex\"><title></title></head><body></body></html>", {
+      status: 200,
+      headers: { "Content-Type": "text/html; charset=utf-8", "X-Robots-Tag": "noindex", "Cache-Control": "no-store" },
+    });
+  }
 
   // Los administradores sí ven esas pantallas en la app (para probarlas): se decide al conocer al usuario.
   let appPaymentRedirect: URL | null = null;
