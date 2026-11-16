@@ -4,7 +4,16 @@ import { SUMMARY_PROMPT, assistantSystemPrompt } from "@/lib/ai/prompts";
 import { CHART_COLUMNS, birthSummary, chartFromRow, type ChartRow } from "@/lib/charts";
 import { chartFactsText } from "@/lib/engine/analysis";
 import { isAppRequest } from "@/lib/app-mode";
-import { WEB_FREE_QUESTIONS, effectiveQuestionStatus, type QuestionStatus } from "@/lib/assistant-limit";
+import {
+  ASSISTANT_MAX_CHARS,
+  ASSISTANT_MAX_CHARS_UNLIMITED,
+  ASSISTANT_MAX_TOKENS,
+  ASSISTANT_MAX_TOKENS_UNLIMITED,
+  WEB_FREE_QUESTIONS,
+  effectiveQuestionStatus,
+  isUnlimited,
+  type QuestionStatus,
+} from "@/lib/assistant-limit";
 import { createClient } from "@/lib/supabase/server";
 import { venusEventFactsText } from "@/lib/venus-evento";
 import { EVENTO_VENUS, VENUS_PREGUNTA } from "@/lib/venus-retrogrado";
@@ -18,8 +27,8 @@ const KEEP_RECENT = 12;
 
 export async function POST(request: NextRequest) {
   const { chartId, message, evento } = (await request.json().catch(() => ({}))) as { chartId?: string; message?: string; evento?: string };
-  const question = String(message ?? "").trim().slice(0, 2000);
-  if (!chartId || !question) return NextResponse.json({ error: "Escribe tu pregunta." }, { status: 400 });
+  const text = String(message ?? "").trim();
+  if (!chartId || !text) return NextResponse.json({ error: "Escribe tu pregunta." }, { status: 400 });
 
   const supabase = await createClient();
   if (!supabase) return NextResponse.json({ error: "La base de datos no está conectada." }, { status: 503 });
@@ -40,6 +49,8 @@ export async function POST(request: NextRequest) {
           : `Has usado tus ${WEB_FREE_QUESTIONS} preguntas gratuitas. Con Premium puedes seguir conversando con el asistente.`;
     return NextResponse.json({ error, limit: true }, { status: 402 });
   }
+  const unlimited = isUnlimited(status);
+  const question = text.slice(0, unlimited ? ASSISTANT_MAX_CHARS_UNLIMITED : ASSISTANT_MAX_CHARS);
 
   if (!aiConfigured()) return NextResponse.json({ error: "El asistente aún no está activado." }, { status: 503 });
 
@@ -77,7 +88,7 @@ export async function POST(request: NextRequest) {
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       try {
-        const { text } = await streamText({ model: MODELS.main, system, messages, maxTokens: 900, cache: true }, (chunk) => controller.enqueue(encoder.encode(chunk)));
+        const { text } = await streamText({ model: MODELS.main, system, messages, maxTokens: unlimited ? ASSISTANT_MAX_TOKENS_UNLIMITED : ASSISTANT_MAX_TOKENS, cache: true }, (chunk) => controller.enqueue(encoder.encode(chunk)));
         const answer = text.trim();
         if (answer) {
           const now = Date.now();

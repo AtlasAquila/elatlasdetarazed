@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { AssistantChat } from "@/components/AssistantChat";
 import { isAppRequest } from "@/lib/app-mode";
-import { WEB_FREE_QUESTIONS, effectiveQuestionStatus, type QuestionStatus } from "@/lib/assistant-limit";
+import { ASSISTANT_MAX_CHARS, ASSISTANT_MAX_CHARS_UNLIMITED, WEB_FREE_QUESTIONS, effectiveQuestionStatus, isUnlimited, type QuestionStatus } from "@/lib/assistant-limit";
 import { aiConfigured } from "@/lib/ai/anthropic";
 import { birthSummary, getMyChart } from "@/lib/charts";
 import { createClient, getSession } from "@/lib/supabase/server";
@@ -25,6 +25,7 @@ export default async function AsistentePage({ params, searchParams }: Props) {
   let remaining = 0;
   let isPremium = false;
   let freeLimit: number = WEB_FREE_QUESTIONS;
+  let unlimited = false;
   const inApp = await isAppRequest();
   if (supabase) {
     const { data: conv } = await supabase.from("conversations").select("id").eq("chart_id", id).maybeSingle();
@@ -37,6 +38,7 @@ export default async function AsistentePage({ params, searchParams }: Props) {
     remaining = status?.remaining ?? 0;
     isPremium = status?.plan === "premium";
     freeLimit = status && status.plan !== "premium" ? status.question_limit : WEB_FREE_QUESTIONS;
+    unlimited = isUnlimited(status);
   }
 
   return (
@@ -50,7 +52,7 @@ export default async function AsistentePage({ params, searchParams }: Props) {
         </p>
         <h1>Pregunta a Alshain</h1>
         <p className="muted">{birthSummary(row)}</p>
-        <AssistantChat chartId={id} chartName={row.name} initial={messages} remaining={remaining} isPremium={isPremium} freeLimit={freeLimit} inApp={inApp} enabled={aiConfigured()} suggestVenus={pregunta === "venus"} />
+        <AssistantChat chartId={id} chartName={row.name} initial={messages} remaining={remaining} unlimited={unlimited} maxChars={unlimited ? ASSISTANT_MAX_CHARS_UNLIMITED : ASSISTANT_MAX_CHARS} isPremium={isPremium} freeLimit={freeLimit} inApp={inApp} enabled={aiConfigured()} suggestVenus={pregunta === "venus"} />
       </div>
     </section>
   );

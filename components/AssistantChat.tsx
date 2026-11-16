@@ -13,6 +13,10 @@ type Props = {
   chartName: string;
   initial: Msg[];
   remaining: number;
+  /** Sin límite de mensajes (administradores y cuentas marcadas a mano). */
+  unlimited?: boolean;
+  /** Caracteres por mensaje. */
+  maxChars?: number;
   isPremium: boolean;
   /** Preguntas gratuitas de quien no es Premium (3 en la web, más en la app). */
   freeLimit?: number;
@@ -25,7 +29,7 @@ type Props = {
 
 const SUGGESTIONS = ["¿Qué dice mi carta sobre mi forma de amar?", "¿Cuál es mi mayor talento según mi carta?", "¿Qué significa mi Luna para mi vida emocional?", "¿Hacia qué vocación apunta mi Medio Cielo?"];
 
-export function AssistantChat({ chartId, chartName, initial, remaining: initialRemaining, isPremium, freeLimit = 3, inApp = false, enabled, suggestVenus = false }: Props) {
+export function AssistantChat({ chartId, chartName, initial, remaining: initialRemaining, unlimited = false, maxChars = 2000, isPremium, freeLimit = 3, inApp = false, enabled, suggestVenus = false }: Props) {
   const [messages, setMessages] = useState<Msg[]>(initial);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -69,7 +73,7 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
         }
         setMessages((m) => [...m.slice(0, -1), { role: "assistant", content: acc }]);
       }
-      setRemaining((r) => Math.max(0, r - 1));
+      if (!unlimited) setRemaining((r) => Math.max(0, r - 1));
     } catch {
       setError("Se ha perdido la conexión. Inténtalo de nuevo.");
       setMessages((m) => m.slice(0, -2));
@@ -79,7 +83,7 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
     }
   };
 
-  const outOfQuestions = remaining <= 0;
+  const outOfQuestions = !unlimited && remaining <= 0;
   const showVenus = suggestVenus && enabled && !outOfQuestions && !messages.some((m) => m.content === VENUS_PREGUNTA);
 
   return (
@@ -144,7 +148,7 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
             className="textarea"
             rows={2}
             value={input}
-            maxLength={2000}
+            maxLength={maxChars}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
@@ -161,7 +165,7 @@ export function AssistantChat({ chartId, chartName, initial, remaining: initialR
         </form>
       )}
       <p className="small muted" style={{ margin: 0 }}>
-        {remaining >= 9999 ? "Sin límite (administrador)." : isPremium ? `Te quedan ${remaining} mensajes este mes.` : `Te quedan ${remaining} de ${freeLimit} preguntas ${inApp ? "de prueba" : "gratuitas"}.`} Respuestas orientativas, generadas con inteligencia artificial.
+        {unlimited ? "Sin límite de mensajes." : isPremium ? `Te quedan ${remaining} mensajes este mes.` : `Te quedan ${remaining} de ${freeLimit} preguntas ${inApp ? "de prueba" : "gratuitas"}.`} Respuestas orientativas, generadas con inteligencia artificial.
       </p>
     </div>
   );
