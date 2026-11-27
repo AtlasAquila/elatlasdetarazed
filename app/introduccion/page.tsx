@@ -30,6 +30,10 @@ export default async function IntroduccionPage() {
           <div>
             <p className="kicker">El potencial de la astrología</p>
             <h1>{t("intro.hero.title")}</h1>
+            {/* En el móvil la rueda es pequeña y su botón se oculta: este lo sustituye bajo el título, en la primera pantalla. */}
+            <Link href="/carta" className="btn btn-primary hero-intro-cta">
+              Explora tu carta →
+            </Link>
             {hasSubtitle && <p className="hero-intro-subtitle">{first}</p>}
             {paragraphs.map((p, i) => (
               <p key={i} className="hero-intro-body">
