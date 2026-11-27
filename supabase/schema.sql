@@ -988,3 +988,34 @@ drop policy if exists "Cada usuario borra sus reportes de tránsito" on public.t
 create policy "Cada usuario borra sus reportes de tránsito" on public.transit_reports
   for delete using ((select auth.uid()) = user_id);
 -- Sin política de inserción: solo el servidor guarda el reporte.
+
+-- ════════════════════════════════════════════════════════════
+-- Asistente sin límite (migración asistente_sin_limite)
+-- ════════════════════════════════════════════════════════════
+-- Cuentas a las que el autor quita el límite de mensajes con Alshain sin hacerlas administradoras.
+-- Se marca a mano en Supabase; nadie puede marcarse desde la web (los usuarios solo pueden editar
+-- display_name de su perfil). Estas cuentas también tienen más caracteres por mensaje y respuestas
+-- más largas (ver lib/assistant-limit.ts).
+alter table public.profiles
+  add column if not exists unlimited_assistant boolean not null default false;
+
+create or replace function public.question_status()
+returns table (plan text, is_admin boolean, used int, question_limit int, remaining int)
+language sql stable security definer set search_path = ''
+as $$
+  with p as (
+    select coalesce(pr.plan, 'gratuito') as plan, coalesce(pr.is_admin, false) as is_admin,
+           coalesce(pr.unlimited_assistant, false) as unlimited
+    from public.profiles pr where pr.id = (select auth.uid())
+  ), period as (
+    select case when p.plan = 'premium' then to_char(now() at time zone 'Europe/Madrid', 'YYYY-MM') else 'total' end as k,
+           case when p.plan = 'premium' then 300 else 3 end as lim
+    from p
+  )
+  select p.plan, p.is_admin,
+         coalesce((select u.used from public.question_usage u where u.user_id = (select auth.uid()) and u.period = period.k), 0) as used,
+         period.lim as question_limit,
+         case when p.is_admin or p.unlimited then 9999
+              else greatest(period.lim - coalesce((select u.used from public.question_usage u where u.user_id = (select auth.uid()) and u.period = period.k), 0), 0) end as remaining
+  from p, period;
+$$;
